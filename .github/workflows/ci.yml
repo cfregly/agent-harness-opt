@@ -13,6 +13,7 @@ jobs:
         with:
           python-version: "3.11"
       - run: python scripts/deslop_check.py
+      - run: python scripts/check_value_bar.py
       - run: python -m compileall claude_agent_prompting scripts
       - run: python -m unittest discover -s tests -q
       - run: python -m claude_agent_prompting render recipes/agentic_search.json
