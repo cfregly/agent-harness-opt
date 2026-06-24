@@ -13,8 +13,8 @@ class TraceSuiteTests(unittest.TestCase):
     def test_trace_suite_expectations_pass(self):
         result = run_trace_suite(ROOT / "evals" / "suites" / "agent_trace_suite.json")
         self.assertTrue(result["passed"])
-        self.assertEqual(2, result["summary"]["cases"])
-        self.assertEqual(2, result["summary"]["met_expectations"])
+        self.assertEqual(3, result["summary"]["cases"])
+        self.assertEqual(3, result["summary"]["met_expectations"])
 
     def test_cli_trace_suite(self):
         result = subprocess.run(

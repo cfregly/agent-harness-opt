@@ -24,6 +24,10 @@
     {
       "name": "banana estimate trace",
       "trace": "agent_trace_good.json"
+    },
+    {
+      "name": "parallel banana estimate trace",
+      "trace": "agent_trace_parallel_good.json"
     }
   ],
   "value_bar": {

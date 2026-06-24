@@ -284,23 +284,23 @@ def _reasoning_findings(steps: list[dict[str, Any]], rubric: dict[str, Any]) -> 
         )
 
     if rubric.get("require_reasoning_after_tool_results", True):
-        for result_index in _tool_result_indexes(steps):
+        for label, result_index in _tool_result_review_targets(steps):
             has_reasoning = _has_reasoning_before_next_action(steps, result_index)
             findings.append(
                 TraceFinding(
                     "reasoning.after_tool_result",
                     has_reasoning,
                     (
-                        f"tool result at step {result_index} is followed by reasoning before next action"
+                        f"{label} is followed by reasoning before next action"
                         if has_reasoning
-                        else f"tool result at step {result_index} is not followed by reasoning before next action"
+                        else f"{label} is not followed by reasoning before next action"
                     ),
                     "high",
                 )
             )
 
     if rubric.get("require_result_quality_assessment", True):
-        for result_index in _tool_result_indexes(steps):
+        for label, result_index in _tool_result_review_targets(steps):
             reasoning = _reasoning_between_result_and_next_action(steps, result_index)
             has_quality_assessment = _contains_any(reasoning, QUALITY_TERMS)
             findings.append(
@@ -308,16 +308,16 @@ def _reasoning_findings(steps: list[dict[str, Any]], rubric: dict[str, Any]) -> 
                     "reasoning.result_quality_assessment",
                     has_quality_assessment,
                     (
-                        f"reasoning after result at step {result_index} assesses quality or evidence"
+                        f"reasoning after {label} assesses quality or evidence"
                         if has_quality_assessment
-                        else f"reasoning after result at step {result_index} does not assess quality or evidence"
+                        else f"reasoning after {label} does not assess quality or evidence"
                     ),
                     "medium",
                 )
             )
 
     if rubric.get("require_error_recovery_reasoning", True):
-        for result_index in _error_result_indexes(steps):
+        for label, result_index in _error_result_review_targets(steps):
             reasoning = _reasoning_between_result_and_next_action(steps, result_index)
             has_recovery = _contains_any(reasoning, ERROR_TERMS)
             findings.append(
@@ -325,9 +325,9 @@ def _reasoning_findings(steps: list[dict[str, Any]], rubric: dict[str, Any]) -> 
                     "reasoning.error_recovery",
                     has_recovery,
                     (
-                        f"error result at step {result_index} has recovery reasoning"
+                        f"error in {label} has recovery reasoning"
                         if has_recovery
-                        else f"error result at step {result_index} is missing recovery reasoning"
+                        else f"error in {label} is missing recovery reasoning"
                     ),
                     "high",
                 )
@@ -408,12 +408,42 @@ def _tool_result_indexes(steps: list[dict[str, Any]]) -> list[int]:
     return [index for index, step in enumerate(steps) if step.get("type") == "tool_result"]
 
 
-def _error_result_indexes(steps: list[dict[str, Any]]) -> list[int]:
-    indexes = []
+def _tool_result_review_targets(steps: list[dict[str, Any]]) -> list[tuple[str, int]]:
+    grouped: dict[str, list[int]] = {}
+    targets: list[tuple[str, int]] = []
+    for index in _tool_result_indexes(steps):
+        group = _parallel_group(steps[index])
+        if group:
+            grouped.setdefault(group, []).append(index)
+        else:
+            targets.append((f"tool result at step {index}", index))
+    for group, indexes in sorted(grouped.items(), key=lambda item: item[1][-1]):
+        targets.append((f"parallel group {group!r} ending at step {indexes[-1]}", indexes[-1]))
+    return sorted(targets, key=lambda item: item[1])
+
+
+def _error_result_review_targets(steps: list[dict[str, Any]]) -> list[tuple[str, int]]:
+    grouped: dict[str, list[int]] = {}
+    targets: list[tuple[str, int]] = []
     for index, step in enumerate(steps):
-        if step.get("type") == "tool_result" and (step.get("ok") is False or step.get("error")):
-            indexes.append(index)
-    return indexes
+        if step.get("type") != "tool_result" or not _is_error_result(step):
+            continue
+        group = _parallel_group(step)
+        if group:
+            grouped.setdefault(group, []).append(index)
+        else:
+            targets.append((f"tool result at step {index}", index))
+    for group, indexes in sorted(grouped.items(), key=lambda item: item[1][-1]):
+        targets.append((f"parallel group {group!r} ending at step {indexes[-1]}", indexes[-1]))
+    return sorted(targets, key=lambda item: item[1])
+
+
+def _is_error_result(step: dict[str, Any]) -> bool:
+    return step.get("ok") is False or bool(step.get("error"))
+
+
+def _parallel_group(step: dict[str, Any]) -> str:
+    return str(step.get("parallel_group") or step.get("batch_id") or "").strip()
 
 
 def _has_reasoning_before_next_action(steps: list[dict[str, Any]], result_index: int) -> bool:
@@ -443,10 +473,14 @@ def _compact_trace(steps: list[dict[str, Any]]) -> str:
             lines.append(f"{index}. reasoning: {step.get('summary', '')}")
         elif step_type == "tool_call":
             args = json.dumps(step.get("args", {}), sort_keys=True)
-            lines.append(f"{index}. tool_call {step.get('id')}: {step.get('name')} {args}")
+            group = _parallel_group(step)
+            group_text = f" parallel_group={group}" if group else ""
+            lines.append(f"{index}. tool_call {step.get('id')}: {step.get('name')}{group_text} {args}")
         elif step_type == "tool_result":
             output = str(step.get("output", step.get("error", ""))).replace("\n", " ")
-            lines.append(f"{index}. tool_result for {step.get('tool_call_id')}: {output[:500]}")
+            group = _parallel_group(step)
+            group_text = f" parallel_group={group}" if group else ""
+            lines.append(f"{index}. tool_result for {step.get('tool_call_id')}{group_text}: {output[:500]}")
         elif step_type == "final":
             lines.append(f"{index}. final: {step.get('text', '')}")
         else:

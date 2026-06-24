@@ -11,11 +11,15 @@ Checked on 2026-06-24.
   - [Think like the agent and simulate its tool environment](https://www.youtube.com/watch?v=XSZP9GhhuAc&t=448s)
   - [Reasonable heuristics and tool-call budgets](https://www.youtube.com/watch?v=XSZP9GhhuAc&t=587s)
   - [Tool selection guidance](https://www.youtube.com/watch?v=XSZP9GhhuAc&t=644s)
+  - [Interleaved thinking between tool calls](https://www.youtube.com/watch?v=XSZP9GhhuAc&t=738s)
   - [Plan, reflect after tool calls, and verify source quality](https://www.youtube.com/watch?v=XSZP9GhhuAc&t=702s)
   - [Unintended side effects and stop criteria](https://www.youtube.com/watch?v=XSZP9GhhuAc&t=776s)
   - [Context management with compaction, external files, and subagents](https://www.youtube.com/watch?v=XSZP9GhhuAc&t=821s)
+  - [Parallel web searches in the demo](https://www.youtube.com/watch?v=XSZP9GhhuAc&t=1123s)
   - [Start simple and iterate from test cases](https://www.youtube.com/watch?v=XSZP9GhhuAc&t=1597s)
   - [Agent evals: answer accuracy, tool use accuracy, and final state](https://www.youtube.com/watch?v=XSZP9GhhuAc&t=1428s)
+  - [LLM-as-judge with a clear rubric](https://www.youtube.com/watch?v=XSZP9GhhuAc&t=1360s)
+  - [Use realistic tasks](https://www.youtube.com/watch?v=XSZP9GhhuAc&t=1332s)
 
 ## Claude Docs
 
@@ -33,7 +37,7 @@ Checked on 2026-06-24.
 - [Tool use with Claude](https://platform.claude.com/docs/en/agents-and-tools/tool-use/overview)
   - Used for `tool_use` and `tool_result` content block terminology.
 - [Using the Messages API](https://platform.claude.com/docs/en/build-with-claude/working-with-messages)
-  - Used for the optional Claude judge path, which sends a full user message to Claude and reads the
+  - Used for the live Claude judge path, which sends a full user message to Claude and reads the
     returned text block.
 
 ## Local Screenshots

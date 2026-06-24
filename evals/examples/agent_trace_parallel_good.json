@@ -1,0 +1,117 @@
+{
+  "name": "agentic_search_trace_parallel_good",
+  "task": "Estimate how many bananas fit in a car cargo area.",
+  "rubric": {
+    "expected_call_args": [
+      {
+        "args_contains": {
+          "query": "Rivian R1S cargo volume"
+        },
+        "name": "web_search"
+      },
+      {
+        "args_contains": {
+          "query": "average banana dimensions"
+        },
+        "name": "web_search"
+      }
+    ],
+    "forbidden_tools": ["send_email"],
+    "max_duplicate_calls": 0,
+    "max_tool_calls": 6,
+    "min_tool_calls": 3,
+    "pass_score": 1.0,
+    "require_error_recovery_reasoning": true,
+    "require_reasoning_after_tool_results": true,
+    "require_reasoning_before_first_tool": true,
+    "require_result_quality_assessment": true,
+    "required_final_contains": ["estimate", "evidence", "uncertain"],
+    "required_tools": ["web_search", "web_fetch", "calculator"]
+  },
+  "steps": [
+    {
+      "source": "thinking_summary",
+      "summary": "This research task needs vehicle cargo volume and banana dimensions. The two searches are independent, so I should run them in parallel before deciding what to fetch or calculate.",
+      "type": "reasoning"
+    },
+    {
+      "args": {
+        "query": "Rivian R1S cargo volume"
+      },
+      "id": "call_1",
+      "name": "web_search",
+      "parallel_group": "initial_research",
+      "type": "tool_call"
+    },
+    {
+      "args": {
+        "query": "average banana dimensions"
+      },
+      "id": "call_2",
+      "name": "web_search",
+      "parallel_group": "initial_research",
+      "type": "tool_call"
+    },
+    {
+      "ok": true,
+      "output": "Search results include a manufacturer specs page for Rivian R1S cargo capacity.",
+      "parallel_group": "initial_research",
+      "tool_call_id": "call_1",
+      "type": "tool_result"
+    },
+    {
+      "ok": true,
+      "output": "Search results include multiple banana dimension references around 7 to 8 inches long.",
+      "parallel_group": "initial_research",
+      "tool_call_id": "call_2",
+      "type": "tool_result"
+    },
+    {
+      "source": "thinking_summary",
+      "summary": "The cargo search has a direct manufacturer source, which is higher quality than snippets. The banana result is enough for dimensions, but I need the direct cargo figure before calculating.",
+      "type": "reasoning"
+    },
+    {
+      "args": {
+        "url": "https://example.com/rivian-r1s-specs"
+      },
+      "id": "call_3",
+      "name": "web_fetch",
+      "type": "tool_call"
+    },
+    {
+      "ok": true,
+      "output": "Cargo volume is 104.7 cubic feet behind the first row.",
+      "tool_call_id": "call_3",
+      "type": "tool_result"
+    },
+    {
+      "source": "thinking_summary",
+      "summary": "The fetched source is direct and reliable. I can calculate an estimate using banana volume and a packing-efficiency assumption, then disclose uncertainty.",
+      "type": "reasoning"
+    },
+    {
+      "args": {
+        "expression": "104.7 * 1728 / 6.8 * 0.7"
+      },
+      "id": "call_4",
+      "name": "calculator",
+      "type": "tool_call"
+    },
+    {
+      "ok": true,
+      "output": "18629.15294117647",
+      "tool_call_id": "call_4",
+      "type": "tool_result"
+    },
+    {
+      "source": "thinking_summary",
+      "summary": "The calculation follows from the direct cargo source and estimated banana size. The packing factor is uncertain, so the final answer should be approximate.",
+      "type": "reasoning"
+    },
+    {
+      "text": "A reasonable estimate is about 19,000 bananas. The evidence is the direct cargo-volume source, banana dimensions from search results, and a packing-efficiency assumption. The result is uncertain because real packing depends on banana size and usable cargo shape.",
+      "type": "final"
+    }
+  ]
+}

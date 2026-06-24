@@ -17,10 +17,16 @@ Each trace has a `steps` array. The supported event types are:
 - `tool_result`: the output, error, or status returned by the tool
 - `final`: the final answer or final state summary
 
+For parallel tool calls, give each call and result the same `parallel_group`. The reviewer treats
+the group as one evidence batch and requires reasoning after the batch before the next action. This
+matches the agent demo pattern where independent searches run in parallel, then the agent reflects
+on the combined results.
+
 Run:
 
 ```bash
 python -m claude_agent_prompting review-trace evals/examples/agent_trace_good.json
+python -m claude_agent_prompting review-trace evals/examples/agent_trace_parallel_good.json
 python -m claude_agent_prompting review-trace evals/examples/agent_trace_bad.json
 python -m claude_agent_prompting trace-judge-prompt evals/examples/agent_trace_good.json
 python -m claude_agent_prompting normalize-claude evals/examples/claude_messages.json
@@ -35,6 +41,7 @@ python -m claude_agent_prompting audit-agent evals/examples/agent_audit_bundle.j
 The deterministic reviewer checks:
 
 - tool calls have ids, names, and matching results
+- parallel tool calls and results can be grouped into evidence batches
 - required tools were used and forbidden tools were avoided
 - arguments contain expected values
 - duplicate tool calls stay below the configured limit
@@ -91,9 +98,35 @@ Ask an agent owner to export one JSON file per run:
   },
   "steps": [
     {"type": "reasoning", "summary": "Why the first tool is needed"},
-    {"type": "tool_call", "id": "call_1", "name": "web_search", "args": {"query": "..."}},
-    {"type": "tool_result", "tool_call_id": "call_1", "ok": true, "output": "..."},
-    {"type": "reasoning", "summary": "Whether the result was reliable enough"},
+    {
+      "type": "tool_call",
+      "id": "call_1",
+      "name": "web_search",
+      "parallel_group": "initial_research",
+      "args": {"query": "..."}
+    },
+    {
+      "type": "tool_call",
+      "id": "call_2",
+      "name": "web_search",
+      "parallel_group": "initial_research",
+      "args": {"query": "..."}
+    },
+    {
+      "type": "tool_result",
+      "tool_call_id": "call_1",
+      "parallel_group": "initial_research",
+      "ok": true,
+      "output": "..."
+    },
+    {
+      "type": "tool_result",
+      "tool_call_id": "call_2",
+      "parallel_group": "initial_research",
+      "ok": true,
+      "output": "..."
+    },
+    {"type": "reasoning", "summary": "Whether the evidence batch was reliable enough"},
     {"type": "final", "text": "Final answer"}
   ]
 }

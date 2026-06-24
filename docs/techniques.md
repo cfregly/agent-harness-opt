@@ -1,7 +1,7 @@
 # Agent Prompting Techniques
 
-This repo implements these techniques as recipes, rendered prompts, linters, local evals, and an
-optional Claude judge for semantic trace review.
+This repo implements these techniques as recipes, rendered prompts, linters, local evals, and a live
+Claude judge for semantic trace review.
 
 ## 1. Fit The Task Before Prompting
 
@@ -79,6 +79,9 @@ and subagent policy. The goal is to preserve decisions, sources, open questions,
 
 Independent searches and independent file reads can run in parallel. Dependent actions should stay
 sequential because later tool inputs depend on earlier outputs.
+
+When traces include parallel calls, use `parallel_group` on the calls and results. The reviewer then
+checks reflection after the batch of results before the next action.
 
 ## 11. Evaluate Agents Three Ways
 

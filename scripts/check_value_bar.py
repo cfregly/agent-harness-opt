@@ -24,6 +24,7 @@ REQUIRED_VALUE_PHRASE_FILES = (
     "README.md",
     "docs/techniques.md",
     "docs/trace-review.md",
+    "docs/video-coverage-audit.md",
     "prompts/agent_system_template.md",
     ".claude/skills/agent-audit/SKILL.md",
 )

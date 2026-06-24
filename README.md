@@ -25,6 +25,7 @@ python -m claude_agent_prompting score recipes/agentic_search.json
 python -m claude_agent_prompting lint-tools recipes/agentic_search.json
 python -m claude_agent_prompting eval evals/examples/search_answer.json
 python -m claude_agent_prompting review-trace evals/examples/agent_trace_good.json
+python -m claude_agent_prompting review-trace evals/examples/agent_trace_parallel_good.json
 python -m claude_agent_prompting normalize-claude evals/examples/claude_messages.json
 python -m claude_agent_prompting trace-suite evals/suites/agent_trace_suite.json
 python -m claude_agent_prompting audit-agent evals/examples/agent_audit_bundle.json --markdown
@@ -124,7 +125,8 @@ python scripts/check_value_bar.py
 
 The technique map is grounded in Anthropic's public video and docs. See
 [docs/source-map.md](docs/source-map.md) for the source list and timestamps used while building the
-repo.
+repo. See [docs/video-coverage-audit.md](docs/video-coverage-audit.md) for the implementation
+coverage check against the talk.
 
 ## License
 

@@ -7,6 +7,12 @@
       "trace": "../examples/agent_trace_good.json"
     },
     {
+      "expect_passed": true,
+      "min_score": 1.0,
+      "name": "parallel trace passes",
+      "trace": "../examples/agent_trace_parallel_good.json"
+    },
+    {
       "expect_passed": false,
       "max_score": 0.75,
       "name": "bad trace fails",

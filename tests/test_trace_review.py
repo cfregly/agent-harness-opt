@@ -20,6 +20,15 @@ class TraceReviewTests(unittest.TestCase):
         self.assertFalse(result.passed)
         self.assertLess(result.score, 1.0)
 
+    def test_parallel_trace_passes(self):
+        result = review_trace(
+            load_trace(ROOT / "evals" / "examples" / "agent_trace_parallel_good.json")
+        )
+        self.assertTrue(result.passed)
+        self.assertEqual(1.0, result.score)
+        details = "\n".join(finding.detail for finding in result.findings)
+        self.assertIn("parallel group 'initial_research'", details)
+
     def test_cli_review_trace(self):
         result = subprocess.run(
             [
