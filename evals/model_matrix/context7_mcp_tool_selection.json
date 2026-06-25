@@ -151,6 +151,30 @@
       "forbidden_tools": ["resolve-library-id"],
       "name": "previously resolved id queries directly",
       "task": "I already resolved Supabase to /supabase/supabase. Use Context7 to fetch auth sign-in with OAuth docs."
+    },
+    {
+      "check_family": "error_recovery",
+      "expected_args_contains": {"libraryName": "Next.js", "query": "middleware"},
+      "expected_tools": ["resolve-library-id"],
+      "forbidden_tools": ["query-docs"],
+      "name": "invalid id error resolves library",
+      "task": "A previous Context7 query-docs call failed because libraryId nextjs was not a valid /org/project ID. Recover by resolving the correct Context7 library ID for Next.js middleware matcher docs."
+    },
+    {
+      "check_family": "output_budget",
+      "expected_args_contains": {"libraryId": "/vercel/next.js", "query": "middleware matcher examples"},
+      "expected_tools": ["query-docs"],
+      "forbidden_tools": ["resolve-library-id"],
+      "name": "exact id focused docs query",
+      "task": "Use Context7 docs for /vercel/next.js. Fetch only middleware matcher examples, not a broad routing overview."
+    },
+    {
+      "check_family": "resource_vs_tool",
+      "expected_args_contains": {"libraryId": "/reactjs/react.dev", "query": "useEffect cleanup"},
+      "expected_tools": ["query-docs"],
+      "forbidden_tools": ["resolve-library-id"],
+      "name": "selected docs id bypasses resolver",
+      "task": "The Context7 resolver already selected /reactjs/react.dev. Query that exact docs ID for useEffect cleanup examples."
     }
   ]
 }

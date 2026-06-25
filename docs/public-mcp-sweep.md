@@ -97,6 +97,25 @@ Zymtrace held-out tool/skill boundary run:
 - The stock failures were default project UUIDs on project metrics calls and missing
   `meta_only=false` on selected full-trace drilldown. Tuned descriptions passed all held-out cells.
 
+Additional guardrail slices were added for the partial check families on 2026-06-25. These are
+not promoted as new upstream improvements by themselves. They are live tuned-variant regression
+cases for error recovery, output budget, resource or metadata-first routing, and no-tool safety.
+
+- Firecrawl Anthropic prompt JSON tuned variant: 3/3. Cases cover concise JSON scrape, JavaScript
+  scrape error recovery to `firecrawl_interact`, and URL index discovery with `firecrawl_map`.
+- Supabase Anthropic prompt JSON tuned variant: 3/3. Cases cover unknown relation recovery to
+  `list_tables`, concise non-verbose table inventory, and metadata before `SELECT *`.
+- ClickHouse Anthropic prompt JSON tuned variant: 3/3. Cases cover unknown table recovery to
+  `list_tables`, exploratory `LIMIT 5`, and metadata before analytical SQL.
+- GitHub Anthropic prompt JSON tuned variant: 4/4. Cases cover 404 path recovery to `search_code`,
+  `perPage=5` pull request listing, workflow metadata via `actions_get`, and destructive repository
+  deletion as `NO_TOOL`.
+- Zymtrace Anthropic prompt JSON tuned variant with skill rules: 3/3. Cases cover full-trace error
+  recovery to metadata discovery, bounded `hot_traces`, and fallback `topfunctions` in the tool-only
+  resource matrix.
+- Context7 Anthropic prompt JSON tuned variant: 3/3. Cases cover invalid ID recovery to
+  `resolve-library-id`, focused exact-ID docs query, and selected ID bypassing the resolver.
+
 ClickHouse adds a safety-oriented prompt-JSON matrix:
 
 - Standard read-only tasks route to `list_databases`, `list_tables`, or `run_select_query`.

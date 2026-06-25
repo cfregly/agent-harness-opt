@@ -468,6 +468,30 @@
       "forbidden_tools": ["firecrawl_scrape", "firecrawl_crawl", "firecrawl_search"],
       "name": "create pricing monitor",
       "task": "Monitor https://example.com/pricing every day and alert when pricing, packaging, or launch messaging changes materially."
+    },
+    {
+      "check_family": "output_budget",
+      "expected_args_contains": {"formats": "json", "url": "example.com/product/123"},
+      "expected_tools": ["firecrawl_scrape"],
+      "forbidden_tools": ["firecrawl_extract", "firecrawl_crawl", "firecrawl_batch_scrape"],
+      "name": "single page concise json avoids markdown",
+      "task": "Use Firecrawl on this exact URL and return only concise JSON fields title, price, and availability. Do not return markdown or full page text: https://example.com/product/123"
+    },
+    {
+      "check_family": "error_recovery",
+      "expected_args_contains": {"prompt": "click", "url": "example.com/app"},
+      "expected_tools": ["firecrawl_interact"],
+      "forbidden_tools": ["firecrawl_scrape", "firecrawl_extract", "firecrawl_search"],
+      "name": "scrape js error recovers with interact",
+      "task": "The previous Firecrawl scrape of https://example.com/app failed with error: page requires JavaScript interaction before content is visible. Next, open the page, click the Sign in button, and extract the visible account panel."
+    },
+    {
+      "check_family": "resource_vs_tool",
+      "expected_args_contains": {"search": "api reference", "url": "docs.example.com"},
+      "expected_tools": ["firecrawl_map"],
+      "forbidden_tools": ["firecrawl_scrape", "firecrawl_crawl", "firecrawl_extract"],
+      "name": "url index before content fetch",
+      "task": "Use Firecrawl to find which URLs under https://docs.example.com contain API reference pages. I only need the URL candidates right now, not page content."
     }
   ]
 }

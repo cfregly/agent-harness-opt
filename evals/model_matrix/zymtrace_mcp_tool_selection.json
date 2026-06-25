@@ -235,6 +235,30 @@
       "forbidden_tools": ["flamegraph", "topfunctions", "project_events_raw"],
       "name": "selected trace drilldown is bounded",
       "task": "Drill into hot trace prefix_hash 981237 and fetch exactly that full trace for the CPU profile from 2026-06-25T04:00:00+00:00 to 2026-06-25T05:00:00+00:00."
+    },
+    {
+      "check_family": "error_recovery",
+      "expected_args_contains": {"meta_only": "true"},
+      "expected_tools": ["hot_traces"],
+      "forbidden_tools": ["flamegraph", "topfunctions", "project_events_raw"],
+      "name": "full trace error recovers to discovery",
+      "task": "The previous Zymtrace hot_traces call failed because meta_only=false was requested without a selected prefix_hash. Recover by doing first-pass CPU hot trace discovery for the default project between 2026-06-25T04:00:00+00:00 and 2026-06-25T05:00:00+00:00."
+    },
+    {
+      "check_family": "output_budget",
+      "expected_args_contains": {"limit": "3", "meta_only": "true"},
+      "expected_tools": ["hot_traces"],
+      "forbidden_tools": ["flamegraph", "topfunctions", "project_events_raw"],
+      "name": "hot trace discovery is bounded",
+      "task": "Show only the top 3 hot trace candidates as metadata for CPU between 2026-06-25T04:00:00+00:00 and 2026-06-25T05:00:00+00:00. Do not return full stacks yet."
+    },
+    {
+      "check_family": "resource_vs_tool",
+      "expected_args_contains": {"profile_type": "CPU"},
+      "expected_tools": ["topfunctions"],
+      "forbidden_tools": ["hot_traces", "flamegraph", "project_metrics_query"],
+      "name": "resource fallback hot functions",
+      "task": "In this tool-only Zymtrace matrix, choose the fallback call for the topfunctions MCP resource to rank hottest CPU functions between 2026-06-25T04:00:00+00:00 and 2026-06-25T05:00:00+00:00."
     }
   ]
 }

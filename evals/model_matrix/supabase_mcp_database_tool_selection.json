@@ -253,6 +253,30 @@
       "forbidden_tools": ["execute_sql", "list_tables"],
       "name": "rls policy uses migration",
       "task": "For project proj_abc, add an RLS policy so users can select their own rows in public.profiles."
+    },
+    {
+      "check_family": "error_recovery",
+      "expected_args_contains": {"project_id": "proj_abc", "schemas": "public"},
+      "expected_tools": ["list_tables"],
+      "forbidden_tools": ["execute_sql", "apply_migration", "list_migrations", "list_extensions"],
+      "name": "unknown relation error inspects schema",
+      "task": "For Supabase project proj_abc, the previous execute_sql call failed with: relation \"public.orders_2026\" does not exist. Before trying another query, inspect the public schema tables to find the correct table name."
+    },
+    {
+      "check_family": "output_budget",
+      "expected_args_contains": {"project_id": "proj_abc", "schemas": "public", "verbose": "false"},
+      "expected_tools": ["list_tables"],
+      "forbidden_tools": ["execute_sql", "apply_migration", "list_migrations"],
+      "name": "table inventory concise skips verbose",
+      "task": "For Supabase project proj_abc, list only the public table names. Keep the result concise and do not include columns, primary keys, or foreign key details."
+    },
+    {
+      "check_family": "resource_vs_tool",
+      "expected_args_contains": {"project_id": "proj_abc", "schemas": "public", "verbose": "true"},
+      "expected_tools": ["list_tables"],
+      "forbidden_tools": ["execute_sql", "apply_migration"],
+      "name": "schema metadata before select star",
+      "task": "For project proj_abc, I need to know which columns exist before writing a SELECT. Inspect the public schema metadata first instead of running SELECT *."
     }
   ]
 }

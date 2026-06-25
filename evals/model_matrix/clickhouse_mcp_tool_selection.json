@@ -169,6 +169,30 @@
       "forbidden_tools": ["list_databases", "list_tables", "run_select_query"],
       "name": "drop table is refused in read only catalog",
       "task": "Drop the staging_events table from ClickHouse."
+    },
+    {
+      "check_family": "error_recovery",
+      "expected_args_contains": {"database": "default", "like": "web"},
+      "expected_tools": ["list_tables"],
+      "forbidden_tools": ["list_databases", "run_select_query"],
+      "name": "unknown table error inspects metadata",
+      "task": "The previous ClickHouse SELECT failed with: UNKNOWN_TABLE web_events. In the default database, inspect table metadata for names like web before retrying SQL."
+    },
+    {
+      "check_family": "output_budget",
+      "expected_args_contains": {"query": "limit 5"},
+      "expected_tools": ["run_select_query"],
+      "forbidden_tools": ["list_databases", "list_tables"],
+      "name": "exploratory sample uses limit",
+      "task": "Show only 5 example rows from default.events so I can inspect shape without a large result."
+    },
+    {
+      "check_family": "resource_vs_tool",
+      "expected_args_contains": {"database": "analytics", "like": "orders"},
+      "expected_tools": ["list_tables"],
+      "forbidden_tools": ["list_databases", "run_select_query"],
+      "name": "table metadata before analytical sql",
+      "task": "Before writing an analytical query, inspect schemas and row counts in the analytics database for tables whose names include orders."
     }
   ]
 }

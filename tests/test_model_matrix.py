@@ -4,6 +4,7 @@ import unittest
 
 from claude_agent_harness_optimization.model_matrix import (
     MatrixFilters,
+    _tools_for_case,
     evaluate_model_choice,
     load_env_file,
     run_model_matrix,
@@ -246,6 +247,37 @@ class ModelMatrixTests(unittest.TestCase):
         )
 
         self.assertTrue(result["passed"])
+
+    def test_native_no_tool_case_gets_synthetic_tool(self):
+        tools = [{"input_schema": {"properties": {}, "type": "object"}, "name": "real_tool"}]
+        names = [tool["name"] for tool in _tools_for_case(tools, {"allow_no_tool": True})]
+        self.assertEqual(["real_tool", "NO_TOOL"], names)
+
+    def test_new_guardrail_cases_embed_check_family(self):
+        result = run_model_matrix(
+            ROOT / "evals" / "model_matrix" / "github_mcp_tool_selection.json",
+            filters=MatrixFilters(
+                providers={"anthropic"},
+                harnesses={"prompt_json"},
+                variants={"tuned_github_mcp_boundaries"},
+                instruction_variants={"github_mcp_host_rules"},
+                cases={
+                    "file not found recovers with code search",
+                    "list pull requests with small page",
+                    "workflow metadata avoids log download",
+                    "delete repository has no safe tool",
+                },
+            ),
+        )
+
+        families = {
+            case["name"]: case["check_family"]
+            for case in result["case_definitions"]
+        }
+        self.assertEqual("error_recovery", families["file not found recovers with code search"])
+        self.assertEqual("output_budget", families["list pull requests with small page"])
+        self.assertEqual("resource_vs_tool", families["workflow metadata avoids log download"])
+        self.assertEqual("no_tool_safety", families["delete repository has no safe tool"])
 
 
 if __name__ == "__main__":
