@@ -114,6 +114,23 @@ class ModelMatrixTests(unittest.TestCase):
         self.assertEqual(2, result["summary"]["total"])
         self.assertEqual("planned", result["results"][0]["status"])
 
+    def test_github_mcp_matrix_plans_selected_cells(self):
+        result = run_model_matrix(
+            ROOT / "evals" / "model_matrix" / "github_mcp_tool_selection.json",
+            filters=MatrixFilters(
+                providers={"anthropic"},
+                harnesses={"prompt_json"},
+                variants={"stock_github_mcp"},
+                instruction_variants={"github_mcp_host_rules"},
+            ),
+            max_cases=2,
+        )
+
+        self.assertTrue(result["passed"])
+        self.assertFalse(result["live"])
+        self.assertEqual(2, result["summary"]["total"])
+        self.assertEqual("planned", result["results"][0]["status"])
+
 
 if __name__ == "__main__":
     unittest.main()

@@ -1,0 +1,570 @@
+{
+  "name": "github mcp tool-selection matrix",
+  "description": "Compare stock and tuned tool descriptions for common GitHub MCP Server repository, issue, pull request, and Actions workflows.",
+  "source": {
+    "repo": "https://github.com/github/github-mcp-server",
+    "commit": "9430064a2becb382644042ce9fe5752ace1d8409",
+    "snapshots": "pkg/github/__toolsnaps__",
+    "docs": [
+      "README.md#tool-configuration",
+      "docs/server-configuration.md"
+    ]
+  },
+  "profiles": [
+    {
+      "api_key_env": "ANTHROPIC_API_KEY",
+      "harnesses": ["native_tools", "prompt_json"],
+      "model": "claude-sonnet-4-5",
+      "model_env": "ANTHROPIC_MATRIX_MODEL",
+      "name": "anthropic-sonnet",
+      "provider": "anthropic"
+    },
+    {
+      "api_key_env": "OPENAI_API_KEY",
+      "harnesses": ["native_tools", "prompt_json"],
+      "model": "gpt-4.1",
+      "model_env": "OPENAI_MATRIX_MODEL",
+      "name": "openai-default",
+      "provider": "openai"
+    },
+    {
+      "api_key_env": "GEMINI_API_KEY",
+      "harnesses": ["native_tools", "prompt_json"],
+      "max_tokens": 4096,
+      "model": "gemini-2.5-pro",
+      "model_env": "GEMINI_MATRIX_MODEL",
+      "name": "gemini-default",
+      "provider": "gemini"
+    }
+  ],
+  "instruction_variants": [
+    {
+      "instructions": "Choose the single GitHub MCP tool that should be called next. Use write tools only when the user explicitly asks to create, update, comment, or open something. Prefer exact-id read tools when an issue, pull request, workflow run, or job id is provided. Prefer search tools when the user does not know the exact id or path.",
+      "name": "github_mcp_host_rules"
+    }
+  ],
+  "tool_variants": [
+    {
+      "name": "stock_github_mcp",
+      "tools": [
+        {
+          "input_schema": {
+            "properties": {
+              "owner": {"description": "Repository owner (username or organization)", "type": "string"},
+              "path": {"default": "/", "description": "Path to file/directory", "type": "string"},
+              "ref": {"description": "Accepts optional git refs such as refs/tags/{tag}, refs/heads/{branch} or refs/pull/{pr_number}/head", "type": "string"},
+              "repo": {"description": "Repository name", "type": "string"},
+              "sha": {"description": "Accepts optional commit SHA. If specified, it will be used instead of ref", "type": "string"}
+            },
+            "required": ["owner", "repo"],
+            "type": "object"
+          },
+          "name": "get_file_contents",
+          "purpose": "Get the contents of a file or directory from a GitHub repository"
+        },
+        {
+          "input_schema": {
+            "properties": {
+              "order": {"description": "Sort order for results", "enum": ["asc", "desc"], "type": "string"},
+              "page": {"description": "Page number for pagination (min 1)", "minimum": 1, "type": "number"},
+              "perPage": {"description": "Results per page for pagination (min 1, max 100)", "maximum": 100, "minimum": 1, "type": "number"},
+              "query": {"description": "Search query (GitHub code search REST). Implicit AND between terms; supports OR, NOT, and quoted phrases. Qualifiers include repo:owner/repo, org:, user:, language:, path:, filename:, extension:, in:file, in:path, size:, is:archived, is:fork.", "type": "string"},
+              "sort": {"description": "Sort field ('indexed' only)", "type": "string"}
+            },
+            "required": ["query"],
+            "type": "object"
+          },
+          "name": "search_code",
+          "purpose": "Fast and precise code search across ALL GitHub repositories using GitHub's native search engine. Best for finding exact symbols, functions, classes, or specific code patterns."
+        },
+        {
+          "input_schema": {
+            "properties": {
+              "order": {"description": "Sort order", "enum": ["asc", "desc"], "type": "string"},
+              "owner": {"description": "Optional repository owner. If provided with repo, only issues for this repository are listed.", "type": "string"},
+              "page": {"description": "Page number for pagination (min 1)", "minimum": 1, "type": "number"},
+              "perPage": {"description": "Results per page for pagination (min 1, max 100)", "maximum": 100, "minimum": 1, "type": "number"},
+              "query": {"description": "Search query using GitHub issues search syntax", "type": "string"},
+              "repo": {"description": "Optional repository name. If provided with owner, only issues for this repository are listed.", "type": "string"},
+              "sort": {"description": "Sort field by number of matches of categories, defaults to best match", "type": "string"}
+            },
+            "required": ["query"],
+            "type": "object"
+          },
+          "name": "search_issues",
+          "purpose": "Search for issues in GitHub repositories using issues search syntax already scoped to is:issue"
+        },
+        {
+          "input_schema": {
+            "properties": {
+              "issue_number": {"description": "The number of the issue", "type": "number"},
+              "method": {"description": "The read operation to perform on a single issue: get, get_comments, get_sub_issues, get_parent, get_labels", "enum": ["get", "get_comments", "get_sub_issues", "get_parent", "get_labels"], "type": "string"},
+              "owner": {"description": "The owner of the repository", "type": "string"},
+              "page": {"description": "Page number for pagination (min 1)", "minimum": 1, "type": "number"},
+              "perPage": {"description": "Results per page for pagination (min 1, max 100)", "maximum": 100, "minimum": 1, "type": "number"},
+              "repo": {"description": "The name of the repository", "type": "string"}
+            },
+            "required": ["method", "owner", "repo", "issue_number"],
+            "type": "object"
+          },
+          "name": "issue_read",
+          "purpose": "Get information about a specific issue in a GitHub repository."
+        },
+        {
+          "input_schema": {
+            "properties": {
+              "body": {"description": "Issue body content (optional)", "type": "string"},
+              "owner": {"description": "Repository owner (username or organization)", "type": "string"},
+              "repo": {"description": "Repository name", "type": "string"},
+              "title": {"description": "Issue title", "type": "string"}
+            },
+            "required": ["owner", "repo", "title"],
+            "type": "object"
+          },
+          "name": "create_issue",
+          "purpose": "Create a new issue in a GitHub repository with a title and optional body."
+        },
+        {
+          "input_schema": {
+            "properties": {
+              "body": {"description": "Comment content", "type": "string"},
+              "issue_number": {"description": "Issue number to comment on", "type": "number"},
+              "owner": {"description": "Repository owner", "type": "string"},
+              "repo": {"description": "Repository name", "type": "string"}
+            },
+            "required": ["owner", "repo", "issue_number", "body"],
+            "type": "object"
+          },
+          "name": "add_issue_comment",
+          "purpose": "Add a comment to a specific issue in a GitHub repository. Use this tool to add comments to pull requests as well (in this case pass pull request number as issue_number), but only if user is not asking specifically to add review comments."
+        },
+        {
+          "input_schema": {
+            "properties": {
+              "base": {"description": "Filter by base branch", "type": "string"},
+              "direction": {"description": "Sort direction", "enum": ["asc", "desc"], "type": "string"},
+              "head": {"description": "Filter by head user/org and branch", "type": "string"},
+              "owner": {"description": "Repository owner", "type": "string"},
+              "page": {"description": "Page number for pagination (min 1)", "minimum": 1, "type": "number"},
+              "perPage": {"description": "Results per page for pagination (min 1, max 100)", "maximum": 100, "minimum": 1, "type": "number"},
+              "repo": {"description": "Repository name", "type": "string"},
+              "sort": {"description": "Sort by created, updated, popularity, or long-running", "type": "string"},
+              "state": {"description": "Filter by state", "enum": ["open", "closed", "all"], "type": "string"}
+            },
+            "required": ["owner", "repo"],
+            "type": "object"
+          },
+          "name": "list_pull_requests",
+          "purpose": "List pull requests in a GitHub repository. If the user specifies an author, then DO NOT use this tool and use the search_pull_requests tool instead."
+        },
+        {
+          "input_schema": {
+            "properties": {
+              "order": {"description": "Sort order", "enum": ["asc", "desc"], "type": "string"},
+              "owner": {"description": "Optional repository owner. If provided with repo, only pull requests for this repository are listed.", "type": "string"},
+              "page": {"description": "Page number for pagination (min 1)", "minimum": 1, "type": "number"},
+              "perPage": {"description": "Results per page for pagination (min 1, max 100)", "maximum": 100, "minimum": 1, "type": "number"},
+              "query": {"description": "Search query using GitHub pull request search syntax", "type": "string"},
+              "repo": {"description": "Optional repository name. If provided with owner, only pull requests for this repository are listed.", "type": "string"},
+              "sort": {"description": "Sort field by number of matches of categories, defaults to best match", "type": "string"}
+            },
+            "required": ["query"],
+            "type": "object"
+          },
+          "name": "search_pull_requests",
+          "purpose": "Search for pull requests in GitHub repositories using issues search syntax already scoped to is:pr"
+        },
+        {
+          "input_schema": {
+            "properties": {
+              "after": {"description": "Cursor for pagination, used only by get_review_comments", "type": "string"},
+              "method": {"description": "Action to retrieve PR data: get, get_diff, get_status, get_files, get_commits, get_review_comments, get_reviews, get_comments, get_check_runs", "enum": ["get", "get_diff", "get_status", "get_files", "get_commits", "get_review_comments", "get_reviews", "get_comments", "get_check_runs"], "type": "string"},
+              "owner": {"description": "Repository owner", "type": "string"},
+              "page": {"description": "Page number for pagination (min 1)", "minimum": 1, "type": "number"},
+              "perPage": {"description": "Results per page for pagination (min 1, max 100)", "maximum": 100, "minimum": 1, "type": "number"},
+              "pullNumber": {"description": "Pull request number", "type": "number"},
+              "repo": {"description": "Repository name", "type": "string"}
+            },
+            "required": ["method", "owner", "repo", "pullNumber"],
+            "type": "object"
+          },
+          "name": "pull_request_read",
+          "purpose": "Get information on a specific pull request in GitHub repository."
+        },
+        {
+          "input_schema": {
+            "properties": {
+              "base": {"description": "Branch to merge into", "type": "string"},
+              "body": {"description": "PR description", "type": "string"},
+              "draft": {"description": "Create as draft PR", "type": "boolean"},
+              "head": {"description": "Branch containing changes", "type": "string"},
+              "maintainer_can_modify": {"description": "Allow maintainer edits", "type": "boolean"},
+              "owner": {"description": "Repository owner", "type": "string"},
+              "repo": {"description": "Repository name", "type": "string"},
+              "reviewers": {"description": "GitHub usernames or ORG/team-slug team reviewers", "items": {"type": "string"}, "type": "array"},
+              "show_ui": {"description": "Whether to render the MCP App form instead of executing immediately", "type": "boolean"},
+              "title": {"description": "PR title", "type": "string"}
+            },
+            "required": ["owner", "repo", "title", "head", "base"],
+            "type": "object"
+          },
+          "name": "create_pull_request",
+          "purpose": "Create a new pull request in a GitHub repository."
+        },
+        {
+          "input_schema": {
+            "properties": {
+              "method": {"description": "Method: get_workflow, get_workflow_run, get_workflow_job, download_workflow_run_artifact, get_workflow_run_usage, get_workflow_run_logs_url", "enum": ["get_workflow", "get_workflow_run", "get_workflow_job", "download_workflow_run_artifact", "get_workflow_run_usage", "get_workflow_run_logs_url"], "type": "string"},
+              "owner": {"description": "Repository owner", "type": "string"},
+              "repo": {"description": "Repository name", "type": "string"},
+              "resource_id": {"description": "Unique identifier of the workflow, workflow run, job, or artifact resource", "type": "string"}
+            },
+            "required": ["method", "owner", "repo", "resource_id"],
+            "type": "object"
+          },
+          "name": "actions_get",
+          "purpose": "Get details about specific GitHub Actions resources. Use this tool to get details about individual workflows, workflow runs, jobs, and artifacts by their unique IDs."
+        },
+        {
+          "input_schema": {
+            "properties": {
+              "failed_only": {"description": "When true, gets logs for all failed jobs in run_id", "type": "boolean"},
+              "job_id": {"description": "The unique identifier of the workflow job", "type": "number"},
+              "owner": {"description": "Repository owner", "type": "string"},
+              "repo": {"description": "Repository name", "type": "string"},
+              "return_content": {"description": "Returns actual log content instead of URLs", "type": "boolean"},
+              "run_id": {"description": "Workflow run ID", "type": "number"},
+              "tail_lines": {"default": 500, "description": "Number of lines to return from the end of the log", "type": "number"}
+            },
+            "required": ["owner", "repo"],
+            "type": "object"
+          },
+          "name": "get_job_logs",
+          "purpose": "Download logs for a specific workflow job or efficiently get all failed job logs for a workflow run"
+        }
+      ]
+    },
+    {
+      "name": "tuned_github_mcp_boundaries",
+      "tools": [
+        {
+          "avoid_when": "Avoid when the path is unknown, the user is asking for a symbol/text search, or the task is to discover files across repositories.",
+          "input_schema": {
+            "properties": {
+              "owner": {"description": "Repository owner (username or organization).", "type": "string"},
+              "path": {"default": "/", "description": "Exact known path to file or directory. Use '/' only for repository root listing.", "type": "string"},
+              "ref": {"description": "Optional branch, tag, or PR ref when the user asks for a non-default revision.", "type": "string"},
+              "repo": {"description": "Repository name.", "type": "string"},
+              "sha": {"description": "Optional commit SHA; prefer this over ref when the user gives an exact SHA.", "type": "string"}
+            },
+            "required": ["owner", "repo"],
+            "type": "object"
+          },
+          "name": "get_file_contents",
+          "purpose": "Read one known file or list one known directory in a GitHub repository.",
+          "quality_checks": ["Include owner and repo.", "Include path when the user names a path.", "Use ref or sha only when the user asks for a specific revision."],
+          "use_when": "Use when the user already knows the repository and path, such as README.md, package.json, or src/main.go."
+        },
+        {
+          "avoid_when": "Avoid when the user gives an exact path to read or asks about issues, pull requests, Actions, releases, or repository metadata.",
+          "input_schema": {
+            "properties": {
+              "order": {"description": "Sort order for results.", "enum": ["asc", "desc"], "type": "string"},
+              "page": {"description": "Page number for pagination.", "minimum": 1, "type": "number"},
+              "perPage": {"description": "Results per page for pagination.", "maximum": 100, "minimum": 1, "type": "number"},
+              "query": {"description": "GitHub code search query. Add repo:owner/repo when the repository is known. Use quoted phrases for exact text.", "type": "string"},
+              "sort": {"description": "Sort field; normally omit unless the user specifies it.", "type": "string"}
+            },
+            "required": ["query"],
+            "type": "object"
+          },
+          "name": "search_code",
+          "purpose": "Find code by symbol, function, class, filename, or text pattern when the exact path is unknown.",
+          "quality_checks": ["Put the symbol or phrase in query.", "Scope query with repo:owner/repo when possible.", "Do not use this as a file reader."],
+          "use_when": "Use for questions like where is X implemented, find usages of Y, or search for an exact code pattern."
+        },
+        {
+          "avoid_when": "Avoid when the user gives a specific issue number, asks about pull requests, or asks to create/comment/update an issue.",
+          "input_schema": {
+            "properties": {
+              "order": {"description": "Sort order.", "enum": ["asc", "desc"], "type": "string"},
+              "owner": {"description": "Repository owner when scoping to one repo.", "type": "string"},
+              "page": {"description": "Page number for pagination.", "minimum": 1, "type": "number"},
+              "perPage": {"description": "Results per page for pagination.", "maximum": 100, "minimum": 1, "type": "number"},
+              "query": {"description": "Issue search query. Include terms, labels, states, or authors. The tool is already scoped to issues.", "type": "string"},
+              "repo": {"description": "Repository name when scoping to one repo.", "type": "string"},
+              "sort": {"description": "Sort field if requested.", "type": "string"}
+            },
+            "required": ["query"],
+            "type": "object"
+          },
+          "name": "search_issues",
+          "purpose": "Search issues by keywords, labels, state, author, or other issue-search qualifiers.",
+          "quality_checks": ["Use issue_read instead when issue_number is known.", "Include owner and repo when the repo is known."],
+          "use_when": "Use when the user wants to find existing issues but does not provide an exact issue number."
+        },
+        {
+          "avoid_when": "Avoid when the task is to search for issues, create an issue, or add a new comment.",
+          "input_schema": {
+            "properties": {
+              "issue_number": {"description": "Exact issue number.", "type": "number"},
+              "method": {"description": "Issue read method: get, get_comments, get_sub_issues, get_parent, get_labels.", "enum": ["get", "get_comments", "get_sub_issues", "get_parent", "get_labels"], "type": "string"},
+              "owner": {"description": "Repository owner.", "type": "string"},
+              "page": {"description": "Page number for pagination.", "minimum": 1, "type": "number"},
+              "perPage": {"description": "Results per page for pagination.", "maximum": 100, "minimum": 1, "type": "number"},
+              "repo": {"description": "Repository name.", "type": "string"}
+            },
+            "required": ["method", "owner", "repo", "issue_number"],
+            "type": "object"
+          },
+          "name": "issue_read",
+          "purpose": "Read details, comments, labels, parent, or sub-issues for one known issue number.",
+          "quality_checks": ["Set method=get for details.", "Set method=get_comments for comments.", "Do not use for pull requests."],
+          "use_when": "Use when owner, repo, and issue number are known and the user asks to inspect issue state or metadata."
+        },
+        {
+          "avoid_when": "Avoid when the user asks to comment on an existing issue, read an issue, or open a pull request.",
+          "input_schema": {
+            "properties": {
+              "body": {"description": "Issue body content.", "type": "string"},
+              "owner": {"description": "Repository owner.", "type": "string"},
+              "repo": {"description": "Repository name.", "type": "string"},
+              "title": {"description": "Issue title.", "type": "string"}
+            },
+            "required": ["owner", "repo", "title"],
+            "type": "object"
+          },
+          "name": "create_issue",
+          "purpose": "Create a new GitHub issue.",
+          "quality_checks": ["Use only for a new issue.", "Include title exactly from the user when supplied.", "Include body when supplied."],
+          "use_when": "Use when the user explicitly asks to file, open, or create an issue."
+        },
+        {
+          "avoid_when": "Avoid when the user asks for review comments on a diff, wants to create a new issue, or only wants to read comments.",
+          "input_schema": {
+            "properties": {
+              "body": {"description": "Comment content.", "type": "string"},
+              "issue_number": {"description": "Issue or PR number for a top-level comment.", "type": "number"},
+              "owner": {"description": "Repository owner.", "type": "string"},
+              "repo": {"description": "Repository name.", "type": "string"}
+            },
+            "required": ["owner", "repo", "issue_number", "body"],
+            "type": "object"
+          },
+          "name": "add_issue_comment",
+          "purpose": "Add a top-level comment to an existing issue or pull request by number.",
+          "quality_checks": ["Use pull request number as issue_number for top-level PR comments.", "Use pull_request_read for reading PR comments."],
+          "use_when": "Use when the user explicitly asks to post or add a top-level comment."
+        },
+        {
+          "avoid_when": "Avoid when the user filters by author, text, label, review state, status text, or any query-like condition; use search_pull_requests then. Avoid when a specific PR number is given.",
+          "input_schema": {
+            "properties": {
+              "base": {"description": "Base branch filter.", "type": "string"},
+              "direction": {"description": "Sort direction.", "enum": ["asc", "desc"], "type": "string"},
+              "head": {"description": "Head branch filter.", "type": "string"},
+              "owner": {"description": "Repository owner.", "type": "string"},
+              "page": {"description": "Page number for pagination.", "minimum": 1, "type": "number"},
+              "perPage": {"description": "Results per page for pagination.", "maximum": 100, "minimum": 1, "type": "number"},
+              "repo": {"description": "Repository name.", "type": "string"},
+              "sort": {"description": "Sort by created, updated, popularity, or long-running.", "type": "string"},
+              "state": {"description": "PR state filter.", "enum": ["open", "closed", "all"], "type": "string"}
+            },
+            "required": ["owner", "repo"],
+            "type": "object"
+          },
+          "name": "list_pull_requests",
+          "purpose": "List pull requests in one repository by simple state, base branch, head branch, sort, or pagination filters.",
+          "quality_checks": ["Use search_pull_requests for author or keyword filters.", "Use pull_request_read when pullNumber is known."],
+          "use_when": "Use when the user asks to list or browse PRs in a repository without keyword or author search."
+        },
+        {
+          "avoid_when": "Avoid for simple state/base/head listing, specific PR numbers, or creating PRs.",
+          "input_schema": {
+            "properties": {
+              "order": {"description": "Sort order.", "enum": ["asc", "desc"], "type": "string"},
+              "owner": {"description": "Repository owner when scoping to one repo.", "type": "string"},
+              "page": {"description": "Page number for pagination.", "minimum": 1, "type": "number"},
+              "perPage": {"description": "Results per page for pagination.", "maximum": 100, "minimum": 1, "type": "number"},
+              "query": {"description": "Pull request search query. Include author, keywords, state, labels, or review qualifiers. The tool is already scoped to PRs.", "type": "string"},
+              "repo": {"description": "Repository name when scoping to one repo.", "type": "string"},
+              "sort": {"description": "Sort field if requested.", "type": "string"}
+            },
+            "required": ["query"],
+            "type": "object"
+          },
+          "name": "search_pull_requests",
+          "purpose": "Search pull requests by author, keywords, state, label, review, status, or other GitHub PR search qualifiers.",
+          "quality_checks": ["Include owner and repo when known.", "Use list_pull_requests for simple state/base/head lists."],
+          "use_when": "Use when the user asks for PRs by author, text, status phrase, review state, or other query-like criteria."
+        },
+        {
+          "avoid_when": "Avoid when the user wants to list/search many PRs, create a PR, or add a top-level PR comment.",
+          "input_schema": {
+            "properties": {
+              "after": {"description": "Cursor for review-comment pagination.", "type": "string"},
+              "method": {"description": "PR read method: get, get_diff, get_status, get_files, get_commits, get_review_comments, get_reviews, get_comments, get_check_runs.", "enum": ["get", "get_diff", "get_status", "get_files", "get_commits", "get_review_comments", "get_reviews", "get_comments", "get_check_runs"], "type": "string"},
+              "owner": {"description": "Repository owner.", "type": "string"},
+              "page": {"description": "Page number for pagination.", "minimum": 1, "type": "number"},
+              "perPage": {"description": "Results per page for pagination.", "maximum": 100, "minimum": 1, "type": "number"},
+              "pullNumber": {"description": "Exact pull request number.", "type": "number"},
+              "repo": {"description": "Repository name.", "type": "string"}
+            },
+            "required": ["method", "owner", "repo", "pullNumber"],
+            "type": "object"
+          },
+          "name": "pull_request_read",
+          "purpose": "Read one known pull request's details, diff, files, commits, reviews, comments, status, or check runs.",
+          "quality_checks": ["Use method=get_files for changed files.", "Use method=get_diff for patch content.", "Use method=get_check_runs for check runs.", "Use method=get_review_comments for line review threads."],
+          "use_when": "Use when owner, repo, and pull request number are known and the user asks to inspect the PR."
+        },
+        {
+          "avoid_when": "Avoid when the user asks to read, list, search, or comment on PRs. Avoid if head/base/title are missing unless using the MCP App form is intended.",
+          "input_schema": {
+            "properties": {
+              "base": {"description": "Target branch to merge into.", "type": "string"},
+              "body": {"description": "PR description.", "type": "string"},
+              "draft": {"description": "Create as draft PR.", "type": "boolean"},
+              "head": {"description": "Source branch containing changes.", "type": "string"},
+              "maintainer_can_modify": {"description": "Allow maintainer edits.", "type": "boolean"},
+              "owner": {"description": "Repository owner.", "type": "string"},
+              "repo": {"description": "Repository name.", "type": "string"},
+              "reviewers": {"description": "GitHub usernames or ORG/team-slug reviewers.", "items": {"type": "string"}, "type": "array"},
+              "show_ui": {"description": "Whether to render the MCP App form before executing.", "type": "boolean"},
+              "title": {"description": "PR title.", "type": "string"}
+            },
+            "required": ["owner", "repo", "title", "head", "base"],
+            "type": "object"
+          },
+          "name": "create_pull_request",
+          "purpose": "Open a new pull request from an existing head branch into a base branch.",
+          "quality_checks": ["Confirm owner, repo, title, head, and base.", "Set draft=true when the user asks for a draft.", "Use show_ui=true when confirmation or missing fields are needed."],
+          "use_when": "Use only when the user explicitly asks to create or open a pull request."
+        },
+        {
+          "avoid_when": "Avoid when the user asks for actual log content, failed job log excerpts, or tail lines; use get_job_logs for that.",
+          "input_schema": {
+            "properties": {
+              "method": {"description": "Method: get_workflow, get_workflow_run, get_workflow_job, download_workflow_run_artifact, get_workflow_run_usage, get_workflow_run_logs_url.", "enum": ["get_workflow", "get_workflow_run", "get_workflow_job", "download_workflow_run_artifact", "get_workflow_run_usage", "get_workflow_run_logs_url"], "type": "string"},
+              "owner": {"description": "Repository owner.", "type": "string"},
+              "repo": {"description": "Repository name.", "type": "string"},
+              "resource_id": {"description": "Workflow id/name, workflow run id, job id, or artifact id depending on method.", "type": "string"}
+            },
+            "required": ["method", "owner", "repo", "resource_id"],
+            "type": "object"
+          },
+          "name": "actions_get",
+          "purpose": "Get metadata or URLs for one GitHub Actions workflow, workflow run, job, artifact, or run usage record.",
+          "quality_checks": ["Set method to match the requested resource type.", "Use resource_id as workflow id/name, run id, job id, or artifact id as appropriate."],
+          "use_when": "Use when the user asks for workflow/run/job/artifact details, usage, or a logs URL by id."
+        },
+        {
+          "avoid_when": "Avoid when the user only wants workflow run metadata, job metadata, artifact metadata, or a logs URL.",
+          "input_schema": {
+            "properties": {
+              "failed_only": {"description": "True to fetch logs for all failed jobs in a workflow run.", "type": "boolean"},
+              "job_id": {"description": "Workflow job id for one job log.", "type": "number"},
+              "owner": {"description": "Repository owner.", "type": "string"},
+              "repo": {"description": "Repository name.", "type": "string"},
+              "return_content": {"description": "True to return log content instead of URLs.", "type": "boolean"},
+              "run_id": {"description": "Workflow run id for failed_only log retrieval.", "type": "number"},
+              "tail_lines": {"default": 500, "description": "Number of tail lines to return.", "type": "number"}
+            },
+            "required": ["owner", "repo"],
+            "type": "object"
+          },
+          "name": "get_job_logs",
+          "purpose": "Return actual GitHub Actions log content for one job or for all failed jobs in a workflow run.",
+          "quality_checks": ["Use job_id for one job.", "Use run_id plus failed_only=true for all failed jobs.", "Set return_content=true when the user asks to see logs."],
+          "use_when": "Use when the user asks to download, inspect, tail, or return workflow job logs."
+        }
+      ]
+    }
+  ],
+  "cases": [
+    {
+      "expected_args_contains": {"owner": "github", "path": "README.md", "repo": "github-mcp-server"},
+      "expected_tools": ["get_file_contents"],
+      "forbidden_tools": ["search_code", "search_issues", "issue_read", "create_issue", "add_issue_comment", "list_pull_requests", "search_pull_requests", "pull_request_read", "create_pull_request", "actions_get", "get_job_logs"],
+      "name": "read known repository file",
+      "task": "Read README.md from github/github-mcp-server."
+    },
+    {
+      "expected_args_contains": {"query": "create_pull_request"},
+      "expected_tools": ["search_code"],
+      "forbidden_tools": ["get_file_contents", "search_issues", "issue_read", "create_issue", "add_issue_comment", "list_pull_requests", "search_pull_requests", "pull_request_read", "create_pull_request", "actions_get", "get_job_logs"],
+      "name": "find code symbol with unknown path",
+      "task": "In github/github-mcp-server, find where the create_pull_request MCP tool is implemented. I do not know the file path."
+    },
+    {
+      "expected_args_contains": {"query": "fetch"},
+      "expected_tools": ["search_issues"],
+      "forbidden_tools": ["get_file_contents", "search_code", "issue_read", "create_issue", "add_issue_comment", "list_pull_requests", "search_pull_requests", "pull_request_read", "create_pull_request", "actions_get", "get_job_logs"],
+      "name": "search issues by phrase",
+      "task": "Search github/github-mcp-server issues for reports about being unable to fetch file contents."
+    },
+    {
+      "expected_args_contains": {"issue_number": "782", "method": "get", "owner": "github", "repo": "github-mcp-server"},
+      "expected_tools": ["issue_read"],
+      "forbidden_tools": ["get_file_contents", "search_code", "search_issues", "create_issue", "add_issue_comment", "list_pull_requests", "search_pull_requests", "pull_request_read", "create_pull_request", "actions_get", "get_job_logs"],
+      "name": "read specific issue",
+      "task": "Get the details for issue #782 in github/github-mcp-server."
+    },
+    {
+      "expected_args_contains": {"body": "Thanks", "issue_number": "782", "owner": "github", "repo": "github-mcp-server"},
+      "expected_tools": ["add_issue_comment"],
+      "forbidden_tools": ["get_file_contents", "search_code", "search_issues", "issue_read", "create_issue", "list_pull_requests", "search_pull_requests", "pull_request_read", "create_pull_request", "actions_get", "get_job_logs"],
+      "name": "comment on existing issue",
+      "task": "Add this comment to issue #782 in github/github-mcp-server: Thanks for the repro."
+    },
+    {
+      "expected_args_contains": {"owner": "github", "repo": "github-mcp-server", "title": "Improve MCP tool descriptions"},
+      "expected_tools": ["create_issue"],
+      "forbidden_tools": ["get_file_contents", "search_code", "search_issues", "issue_read", "add_issue_comment", "list_pull_requests", "search_pull_requests", "pull_request_read", "create_pull_request", "actions_get", "get_job_logs"],
+      "name": "create new issue",
+      "task": "Create a new issue in github/github-mcp-server titled \"Improve MCP tool descriptions\"."
+    },
+    {
+      "expected_args_contains": {"base": "main", "owner": "github", "repo": "github-mcp-server", "state": "open"},
+      "expected_tools": ["list_pull_requests"],
+      "forbidden_tools": ["get_file_contents", "search_code", "search_issues", "issue_read", "create_issue", "add_issue_comment", "search_pull_requests", "pull_request_read", "create_pull_request", "actions_get", "get_job_logs"],
+      "name": "list open pull requests by base branch",
+      "task": "List open pull requests in github/github-mcp-server targeting the main branch."
+    },
+    {
+      "expected_args_contains": {"query": "octocat"},
+      "expected_tools": ["search_pull_requests"],
+      "forbidden_tools": ["get_file_contents", "search_code", "search_issues", "issue_read", "create_issue", "add_issue_comment", "list_pull_requests", "pull_request_read", "create_pull_request", "actions_get", "get_job_logs"],
+      "name": "search pull requests by author and phrase",
+      "task": "Find pull requests in github/github-mcp-server authored by octocat that mention CI failure."
+    },
+    {
+      "expected_args_contains": {"method": "get_files", "owner": "github", "pullNumber": "42", "repo": "github-mcp-server"},
+      "expected_tools": ["pull_request_read"],
+      "forbidden_tools": ["get_file_contents", "search_code", "search_issues", "issue_read", "create_issue", "add_issue_comment", "list_pull_requests", "search_pull_requests", "create_pull_request", "actions_get", "get_job_logs"],
+      "name": "read changed files for specific pull request",
+      "task": "For PR #42 in github/github-mcp-server, show the files changed."
+    },
+    {
+      "expected_args_contains": {"base": "main", "draft": "true", "head": "feature/mcp-tool-tune", "owner": "github", "repo": "github-mcp-server", "title": "Tune MCP tool descriptions"},
+      "expected_tools": ["create_pull_request"],
+      "forbidden_tools": ["get_file_contents", "search_code", "search_issues", "issue_read", "create_issue", "add_issue_comment", "list_pull_requests", "search_pull_requests", "pull_request_read", "actions_get", "get_job_logs"],
+      "name": "create draft pull request",
+      "task": "Create a draft pull request in github/github-mcp-server from feature/mcp-tool-tune into main titled \"Tune MCP tool descriptions\"."
+    },
+    {
+      "expected_args_contains": {"failed_only": "true", "owner": "github", "repo": "github-mcp-server", "run_id": "123456"},
+      "expected_tools": ["get_job_logs"],
+      "forbidden_tools": ["get_file_contents", "search_code", "search_issues", "issue_read", "create_issue", "add_issue_comment", "list_pull_requests", "search_pull_requests", "pull_request_read", "create_pull_request", "actions_get"],
+      "name": "get failed job log content",
+      "task": "For workflow run 123456 in github/github-mcp-server, return the actual logs for failed jobs only."
+    },
+    {
+      "expected_args_contains": {"method": "get_workflow_run", "owner": "github", "repo": "github-mcp-server", "resource_id": "123456"},
+      "expected_tools": ["actions_get"],
+      "forbidden_tools": ["get_file_contents", "search_code", "search_issues", "issue_read", "create_issue", "add_issue_comment", "list_pull_requests", "search_pull_requests", "pull_request_read", "create_pull_request", "get_job_logs"],
+      "name": "get workflow run metadata",
+      "task": "Get metadata for workflow run 123456 in github/github-mcp-server. I do not need logs."
+    }
+  ]
+}
