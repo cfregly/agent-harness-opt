@@ -89,7 +89,8 @@ matrix and trace review score. The keep or reject rule is the value bar.
 
 ## Adapter Contract
 
-For a new Agent SDK, IDE agent, or Cursor-like harness, add an adapter that does two things:
+For a new Agent SDK, Codex JSONL export, IDE agent, or Cursor-like harness, add an adapter that does
+two things:
 
 - converts raw runtime events into the trace contract
 - maps the harness into matrix profiles and harness names
@@ -100,6 +101,7 @@ about the harness. Normalize the event export first:
 ```bash
 python -m claude_agent_harness_optimization normalize-runtime path/to/events.json > path/to/trace.json
 python -m claude_agent_harness_optimization import-run path/to/events.json --adapter cursor --out-dir /tmp/imported-run
+python -m claude_agent_harness_optimization import-run path/to/codex-events.jsonl --adapter codex_jsonl --out-dir /tmp/imported-codex-run
 ```
 
 Once a real trace exists, run:
@@ -122,6 +124,14 @@ python -m claude_agent_harness_optimization model-matrix evals/model_matrix/harn
   --harnesses agent_sdk_trace,cursor_trace \
   --variants exported_trace_tools \
   --instruction-variants exported_trace \
+  --markdown
+python -m claude_agent_harness_optimization model-matrix evals/model_matrix/codex_harness_trace_adapter.json \
+  --live \
+  --require-live \
+  --providers trace_fixture \
+  --harnesses codex_exec_jsonl \
+  --variants codex_exported_trace_tools \
+  --instruction-variants codex_exported_trace \
   --markdown
 ```
 

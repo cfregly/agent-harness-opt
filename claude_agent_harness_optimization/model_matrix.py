@@ -11,7 +11,7 @@ import time
 from typing import Any
 from urllib import error, parse, request
 
-from .adapters import load_json, normalize_run_export
+from .adapters import load_run_export, normalize_run_export
 
 
 DEFAULT_TIMEOUT = 90
@@ -352,8 +352,9 @@ def _call_trace_fixture(
     case: dict[str, Any],
 ) -> dict[str, Any]:
     path = _trace_fixture_path(profile, harness, case)
-    payload = load_json(path)
-    adapter = str(profile.get("adapter", payload.get("adapter", "runtime_events")))
+    payload = load_run_export(path)
+    payload_adapter = payload.get("adapter", "runtime_events") if isinstance(payload, dict) else "runtime_events"
+    adapter = str(profile.get("adapter", payload_adapter))
     try:
         trace = normalize_run_export(payload, adapter)
     except ValueError as exc:

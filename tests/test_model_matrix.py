@@ -101,6 +101,24 @@ class ModelMatrixTests(unittest.TestCase):
         self.assertEqual(4, result["summary"]["passed_cases"])
         self.assertEqual({"Task"}, {item["chosen_tools"][0] for item in result["results"]})
 
+    def test_codex_trace_fixture_matrix_evaluates_jsonl_exports(self):
+        result = run_model_matrix(
+            ROOT / "evals" / "model_matrix" / "codex_harness_trace_adapter.json",
+            live=True,
+            require_live=True,
+            filters=MatrixFilters(
+                providers={"trace_fixture"},
+                harnesses={"codex_exec_jsonl"},
+                variants={"codex_exported_trace_tools"},
+                instruction_variants={"codex_exported_trace"},
+            ),
+        )
+
+        self.assertTrue(result["passed"])
+        self.assertEqual(2, result["summary"]["total"])
+        self.assertEqual(2, result["summary"]["passed_cases"])
+        self.assertEqual({"Bash", "mcp__context7__get-library-docs"}, {item["chosen_tools"][0] for item in result["results"]})
+
     def test_agent_audit_skill_matrix_plans_selected_cells(self):
         result = run_model_matrix(
             ROOT / "evals" / "model_matrix" / "agent_audit_skill_selection.json",

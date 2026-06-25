@@ -17,6 +17,8 @@ class HarnessCheckTests(unittest.TestCase):
         self.assertIn("argument_quality", ids)
         self.assertIn("directed_thinking", ids)
         self.assertIn("harness_parity", ids)
+        self.assertIn("model_migration_api", ids)
+        self.assertIn("prompt_migration_eval", ids)
         self.assertIn("reproducibility", ids)
         self.assertIn("Harness Optimization Checks", render_check_catalog_markdown(catalog))
 

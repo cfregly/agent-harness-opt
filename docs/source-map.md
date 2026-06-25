@@ -1,6 +1,6 @@
 # Source Map
 
-Checked on 2026-06-24.
+Checked on 2026-06-25.
 
 ## Public Video
 
@@ -41,6 +41,25 @@ Checked on 2026-06-24.
 - [Using the Messages API](https://platform.claude.com/docs/en/build-with-claude/working-with-messages)
   - Used for the live Claude judge path, which sends a full user message to Claude and reads the
     returned text block.
+- [Migration guide](https://platform.claude.com/docs/en/about-claude/models/migration-guide)
+  - Used for model-migration coverage: `/claude-api migrate`, model ID swaps, breaking parameter
+    changes, prefill replacement, effort calibration, platform-specific model ID formats, thinking
+    output handling, refusal stop details, and migration checklists.
+- [Console prompting tools](https://platform.claude.com/docs/en/build-with-claude/prompt-engineering/prompting-tools)
+  - Used for prompt improver and test-case generator coverage: generated prompt changes and
+    examples must be validated by evals instead of promoted from prose alone.
+- [Define tools](https://platform.claude.com/docs/en/agents-and-tools/tool-use/define-tools)
+  - Used for tool-description coverage: descriptions should explain what a tool does, when to use
+    it, what it returns, and argument meaning.
+- [Claude Code skills](https://code.claude.com/docs/en/skills)
+  - Used for Claude Code skill migration coverage and the custom-command-to-skill transition.
+
+## OpenAI Codex Docs
+
+- [Codex manual](https://developers.openai.com/codex/codex-manual.md)
+  - Used for Codex harness coverage: AGENTS.md discovery, skills, MCP configuration, hooks,
+    `codex exec --json`, Codex SDK, app-server, Codex MCP server, GitHub Action, plugins, and
+    import behavior.
 
 ## Anthropic Engineering
 

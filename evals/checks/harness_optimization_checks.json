@@ -64,6 +64,27 @@
       "prompt_pattern": "Package source pins, matrix hashes, result JSON, exact commands, and examples for every claim.",
       "promotion_evidence": "Another maintainer can rerun the matrix from the PR packet and observe the same boundary.",
       "signal": "Suggested changes lack source pins, commands, or exact examples."
+    },
+    {
+      "id": "model_migration_api",
+      "name": "Model migration API compatibility",
+      "prompt_pattern": "Run a model-version migration fixture that includes model IDs, unsupported parameters, prefill replacement, thinking settings, effort calibration, stop reasons, prompt caching, and provider-specific model formats.",
+      "promotion_evidence": "Candidate migration removes or rewrites incompatible fields, updates model identifiers, preserves behavior, and leaves a manual checklist for unresolved provider or product-surface items.",
+      "signal": "A model upgrade changes API behavior but the harness only swaps model names."
+    },
+    {
+      "id": "prompt_migration_eval",
+      "name": "Prompt migration eval loop",
+      "prompt_pattern": "Compare baseline and migrated prompts on realistic cases with flexible verifiers, held-out failures, and model-specific effort or thinking settings.",
+      "promotion_evidence": "The migrated prompt beats the baseline on live model cells and does not regress held-out cases or cost/latency budgets.",
+      "signal": "Prompt-improver or migration-tool output sounds better but lacks eval evidence."
+    },
+    {
+      "id": "instruction_surface_migration",
+      "name": "Instruction surface migration",
+      "prompt_pattern": "Check whether a migration should touch tool descriptions, system prompts, CLAUDE.md, AGENTS.md, skills, MCP server instructions, hooks, or SDK loop rules.",
+      "promotion_evidence": "The change lands on the smallest durable surface that explains the failure and the matrix proves that surface changes behavior for the target harness.",
+      "signal": "The same guidance is copied into every prompt surface instead of being placed where the harness actually reads it."
     }
   ]
 }

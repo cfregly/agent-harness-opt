@@ -7,7 +7,7 @@ from pathlib import Path
 import re
 from typing import Any
 
-from .adapters import load_json, normalize_run_export
+from .adapters import load_json, load_run_export, normalize_run_export
 
 
 def import_run_export(
@@ -23,7 +23,7 @@ def import_run_export(
     """Normalize one harness export and write a trace plus audit bundle."""
 
     source_path = Path(input_path)
-    payload = load_json(source_path)
+    payload = load_run_export(source_path)
     trace = normalize_run_export(payload, adapter)
     if name:
         trace["name"] = name

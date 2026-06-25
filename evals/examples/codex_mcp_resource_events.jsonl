@@ -1,0 +1,7 @@
+{"type":"thread.started","thread_id":"codex-thread-2"}
+{"type":"turn.started"}
+{"type":"item.completed","item":{"id":"reason_1","type":"reasoning","summary":"This is a standard MCP documentation lookup. Budget one MCP call, stop when the selected resource returns the package docs, and verify that the output matches the requested package before answering."}}
+{"type":"item.started","item":{"id":"mcp_1","type":"mcp_tool_call","server":"context7","tool_name":"mcp__context7__get-library-docs","input":{"context7CompatibleLibraryID":"/upstash/context7","topic":"mcp server setup","tokens":1200}}}
+{"type":"item.completed","item":{"id":"mcp_1","type":"mcp_tool_call","status":"completed","output":"Context7 MCP server setup docs for /upstash/context7."}}
+{"type":"item.completed","item":{"id":"reason_2","type":"reasoning","summary":"The tool output is high-quality because it is scoped to the selected Context7 library ID. Verification is complete, so stop and summarize the setup path."}}
+{"type":"item.completed","item":{"id":"msg_1","type":"agent_message","text":"Use the Context7 MCP package and call get-library-docs with the exact selected library ID."}}

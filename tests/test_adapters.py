@@ -6,6 +6,7 @@ import unittest
 from claude_agent_harness_optimization.adapters import (
     claude_messages_to_trace,
     load_json,
+    load_run_export,
     normalize_run_export,
     runtime_events_to_trace,
     supported_adapters,
@@ -87,6 +88,29 @@ class AdapterTests(unittest.TestCase):
         self.assertEqual("call_1", trace["steps"][2]["tool_call_id"])
         self.assertTrue(review_trace(trace).passed)
 
+    def test_codex_jsonl_export_normalizes_nested_item_events(self):
+        payload = load_run_export(ROOT / "evals" / "examples" / "codex_repo_inspection_events.jsonl")
+        trace = normalize_run_export(
+            {
+                "adapter": "codex_jsonl",
+                "events": payload,
+                "harness": "codex_exec_jsonl",
+                "rubric": {
+                    "expected_args_contains": {"command": "rg"},
+                    "required_tools": ["Bash"],
+                    "require_directed_after_tool_reasoning": True,
+                    "require_reasoning_before_first_tool": True,
+                },
+            }
+        )
+
+        self.assertEqual("reasoning", trace["steps"][0]["type"])
+        self.assertEqual("Bash", trace["steps"][1]["name"])
+        self.assertIn("rg", trace["steps"][1]["args"]["command"])
+        self.assertEqual("tool_result", trace["steps"][2]["type"])
+        self.assertEqual("final", trace["steps"][-1]["type"])
+        self.assertTrue(review_trace(trace).passed)
+
     def test_cli_normalize_runtime(self):
         result = subprocess.run(
             [
@@ -111,6 +135,7 @@ class AdapterTests(unittest.TestCase):
         self.assertEqual("cursor_trace_review_events", trace["name"])
         self.assertEqual("Task", trace["steps"][1]["name"])
         self.assertIn("openai_agents", supported_adapters())
+        self.assertIn("codex_jsonl", supported_adapters())
 
 
 if __name__ == "__main__":

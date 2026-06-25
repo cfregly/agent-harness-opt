@@ -134,6 +134,8 @@ confirmed tuning wins, guardrails without promotion, and the upstream MCP versio
 apply to.
 Use [docs/upstream-pr-flywheel.md](docs/upstream-pr-flywheel.md) when turning a confirmed matrix win
 into an upstream pull request packet with reproducible evidence.
+Use [docs/codex-and-model-migration-harnesses.md](docs/codex-and-model-migration-harnesses.md)
+when treating Codex exports or provider model-migration tools as harnesses under test.
 Use [docs/firecrawl-mcp-tool-tuning.md](docs/firecrawl-mcp-tool-tuning.md) for the confirmed
 Firecrawl scrape-versus-extract description optimization.
 Use [docs/supabase-mcp-tool-tuning.md](docs/supabase-mcp-tool-tuning.md) for the confirmed
@@ -229,11 +231,11 @@ python -m claude_agent_harness_optimization grind-harness evals/model_matrix/cod
 ```
 
 Treat each runtime as a harness target. Provider native tools, prompt JSON wrappers, Agent SDK
-loops, IDE agents, and Cursor-like environments should export the same visible trace contract:
-decision notes, tool calls, tool results, and final answers. Once the adapter emits that contract,
-the trace suite, Claude judge, model matrix, and harness grind can compare it against other
-harnesses. See [docs/harness-optimization.md](docs/harness-optimization.md) for the adapter and
-upgrade loop.
+loops, Codex JSONL exports, IDE agents, and Cursor-like environments should export the same visible
+trace contract: decision notes, tool calls, tool results, and final answers. Once the adapter emits
+that contract, the trace suite, Claude judge, model matrix, and harness grind can compare it against
+other harnesses. See [docs/harness-optimization.md](docs/harness-optimization.md) for the adapter
+and upgrade loop.
 
 To test an exported harness without an API key, normalize a runtime event file and run the fixture
 matrix:
@@ -247,6 +249,14 @@ python -m claude_agent_harness_optimization model-matrix evals/model_matrix/harn
   --harnesses agent_sdk_trace,cursor_trace \
   --variants exported_trace_tools \
   --instruction-variants exported_trace \
+  --markdown
+python -m claude_agent_harness_optimization model-matrix evals/model_matrix/codex_harness_trace_adapter.json \
+  --live \
+  --require-live \
+  --providers trace_fixture \
+  --harnesses codex_exec_jsonl \
+  --variants codex_exported_trace_tools \
+  --instruction-variants codex_exported_trace \
   --markdown
 ```
 
@@ -276,6 +286,7 @@ python -m claude_agent_harness_optimization model-matrix evals/model_matrix/supa
 python -m claude_agent_harness_optimization model-matrix evals/model_matrix/clickhouse_mcp_tool_selection.json --providers anthropic --harnesses prompt_json --variants tuned_clickhouse_readonly_boundaries --instruction-variants clickhouse_host_rules --max-cases 2
 python -m claude_agent_harness_optimization model-matrix evals/model_matrix/zymtrace_mcp_tool_selection.json --providers anthropic --harnesses prompt_json --variants tuned_zymtrace_mcp_boundaries --instruction-variants zymtrace_host_and_skill_rules --max-cases 2
 python -m claude_agent_harness_optimization model-matrix evals/model_matrix/harness_trace_adapters.json --live --require-live --providers trace_fixture
+python -m claude_agent_harness_optimization model-matrix evals/model_matrix/codex_harness_trace_adapter.json --live --require-live --providers trace_fixture
 python -m claude_agent_harness_optimization model-matrix evals/model_matrix/harness_trace_adapters.json --providers trace_fixture --harnesses agent_sdk_trace --max-cases 1 --out /tmp/harness-matrix.json
 python -m claude_agent_harness_optimization render-report /tmp/harness-matrix.json --out /tmp/harness-matrix.html
 python -m claude_agent_harness_optimization pr-comment /tmp/harness-matrix.json --out /tmp/harness-matrix.md

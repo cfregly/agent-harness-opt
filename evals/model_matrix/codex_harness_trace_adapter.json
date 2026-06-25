@@ -1,0 +1,114 @@
+{
+  "name": "codex harness trace adapter matrix",
+  "description": "Evaluate Codex CLI JSONL exports after normalizing them into the shared trace contract.",
+  "profiles": [
+    {
+      "adapter": "codex_jsonl",
+      "harnesses": ["codex_exec_jsonl"],
+      "model": "exported-codex-run",
+      "name": "codex-cli-export",
+      "provider": "trace_fixture",
+      "trace_cases": {
+        "codex_exec_jsonl": {
+          "codex repo inspection uses shell search": "../examples/codex_repo_inspection_events.jsonl",
+          "codex mcp docs call preserves tool name": "../examples/codex_mcp_resource_events.jsonl"
+        }
+      }
+    }
+  ],
+  "instruction_variants": [
+    {
+      "instructions": "Evaluate the first selected Codex tool from an exported JSONL trace after adapter normalization.",
+      "name": "codex_exported_trace"
+    }
+  ],
+  "tool_variants": [
+    {
+      "name": "codex_exported_trace_tools",
+      "tools": [
+        {
+          "avoid_when": "Avoid for external MCP lookups or app-specific tools.",
+          "input_schema": {
+            "properties": {
+              "command": {
+                "description": "Shell command executed by Codex.",
+                "type": "string"
+              }
+            },
+            "required": ["command"],
+            "type": "object"
+          },
+          "name": "Bash",
+          "purpose": "Run shell commands from Codex CLI or app-server traces.",
+          "quality_checks": ["Commands should be scoped to the task and produce verifiable evidence."],
+          "use_when": "Use when a Codex trace uses a local shell command for repository inspection or verification."
+        },
+        {
+          "avoid_when": "Avoid when the requested information should come from local files or shell commands.",
+          "input_schema": {
+            "properties": {
+              "context7CompatibleLibraryID": {
+                "description": "Exact Context7 library ID.",
+                "type": "string"
+              },
+              "tokens": {
+                "description": "Bounded token budget for the docs response.",
+                "type": "integer"
+              },
+              "topic": {
+                "description": "Focused documentation topic.",
+                "type": "string"
+              }
+            },
+            "required": ["context7CompatibleLibraryID"],
+            "type": "object"
+          },
+          "name": "mcp__context7__get-library-docs",
+          "purpose": "Read focused Context7 documentation from a Codex MCP tool call.",
+          "quality_checks": ["Use an exact selected library ID.", "Bound the output with a focused topic and token limit."],
+          "use_when": "Use when a Codex trace calls Context7 for package documentation."
+        }
+      ]
+    }
+  ],
+  "cases": [
+    {
+      "check_family": "harness_parity",
+      "expected_args_contains": {
+        "command": "rg"
+      },
+      "expected_tools": ["Bash"],
+      "forbidden_tools": ["mcp__context7__get-library-docs"],
+      "name": "codex repo inspection uses shell search",
+      "task": "Inspect the repo to find the harness optimization docs."
+    },
+    {
+      "check_family": "resource_vs_tool",
+      "expected_args_contains": {
+        "context7CompatibleLibraryID": "/upstash/context7"
+      },
+      "expected_tools": ["mcp__context7__get-library-docs"],
+      "forbidden_tools": ["Bash"],
+      "name": "codex mcp docs call preserves tool name",
+      "task": "Use Codex's MCP trace export to confirm the exact Context7 docs call is preserved."
+    }
+  ],
+  "value_bar": {
+    "claim": "Codex JSONL trace normalization adds value when Codex CLI or app-server exports can be evaluated under the same trace and matrix checks as other harnesses.",
+    "metric": "model_matrix.score",
+    "baseline": {
+      "score": 0.0,
+      "source": "raw Codex JSONL before adapter normalization"
+    },
+    "candidate": {
+      "score": 1.0,
+      "source": "codex_harness_trace_adapter matrix"
+    },
+    "minimum_delta": 0.1,
+    "adversarial_review": {
+      "challenge": "The Codex adapter must preserve shell commands, MCP tool names, arguments, reasoning summaries, tool outputs, and final messages from JSONL event streams.",
+      "failed_to_disprove": true,
+      "open_objections": []
+    }
+  }
+}

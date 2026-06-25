@@ -18,6 +18,11 @@ CLAUDE_MESSAGE_ADAPTERS = {
 }
 RUNTIME_EVENT_ADAPTERS = {
     "agent_sdk",
+    "codex",
+    "codex_cli",
+    "codex_exec",
+    "codex_jsonl",
+    "codex_trace",
     "cursor",
     "cursor_trace",
     "generic_runtime",
@@ -33,6 +38,21 @@ RUNTIME_EVENT_ADAPTERS = {
 def load_json(path: str | Path) -> Any:
     with Path(path).open("r", encoding="utf-8") as handle:
         return json.load(handle)
+
+
+def load_run_export(path: str | Path) -> Any:
+    """Load a JSON or JSONL harness export."""
+
+    source_path = Path(path)
+    text = source_path.read_text(encoding="utf-8")
+    stripped = text.strip()
+    if not stripped:
+        return []
+    if source_path.suffix == ".jsonl" or (
+        "\n" in stripped and not stripped.startswith(("{", "["))
+    ):
+        return [json.loads(line) for line in stripped.splitlines() if line.strip()]
+    return json.loads(stripped)
 
 
 def supported_adapters() -> list[str]:
@@ -215,6 +235,8 @@ def _runtime_events(payload: dict[str, Any]) -> list[dict[str, Any]]:
 
 def _runtime_event_to_step(event: dict[str, Any]) -> dict[str, Any]:
     event_type = _event_type(event)
+    if event_type.startswith("item_"):
+        return _codex_item_event_to_step(event)
     if event_type in {"reasoning", "thinking", "assistant_thinking", "thought", "plan", "reflection", "decision"}:
         return {
             "source": event.get("source", event_type),
@@ -249,6 +271,82 @@ def _runtime_event_to_step(event: dict[str, Any]) -> dict[str, Any]:
     if _looks_like_reasoning(event):
         return _runtime_event_to_step({**event, "type": "reasoning"})
     return {}
+
+
+def _codex_item_event_to_step(event: dict[str, Any]) -> dict[str, Any]:
+    item = event.get("item")
+    if not isinstance(item, dict):
+        return {}
+    status = str(event.get("type", "")).lower()
+    item_type = _event_type(item)
+    if "started" in status:
+        if item_type in {"command_execution", "command"}:
+            return {
+                "args": {"command": _first_text(item, "command", "cmd")},
+                "id": _first_value(item, "id"),
+                "name": "Bash",
+                "type": "tool_call",
+            }
+        if item_type in {"mcp_tool_call", "mcp_call", "tool_call"}:
+            tool_name = _codex_tool_name(item)
+            return {
+                "args": _event_args(item),
+                "id": _first_value(item, "id", "call_id", "tool_call_id"),
+                "name": tool_name,
+                "type": "tool_call",
+            }
+        if item_type in {"web_search", "web_search_call"}:
+            return {
+                "args": {"query": _first_text(item, "query", "text")},
+                "id": _first_value(item, "id"),
+                "name": "web_search",
+                "type": "tool_call",
+            }
+    if "completed" in status:
+        if item_type in {"reasoning", "agent_reasoning"}:
+            return {
+                "source": "codex_reasoning",
+                "summary": _first_text(item, "summary", "text", "message", "content"),
+                "type": "reasoning",
+            }
+        if item_type in {"agent_message", "message", "assistant_message"}:
+            return {
+                "text": _first_text(item, "text", "message", "content"),
+                "type": "final",
+            }
+        if item_type in {"command_execution", "command"}:
+            return {
+                "ok": str(item.get("status", "")).lower() not in {"failed", "error"},
+                "output": _first_text(item, "output", "result", "text", "message"),
+                "tool_call_id": _first_value(item, "id"),
+                "type": "tool_result",
+            }
+        if item_type in {"mcp_tool_call", "mcp_tool_result", "mcp_call", "tool_call", "tool_result"}:
+            return {
+                "ok": not bool(item.get("error") or item.get("is_error")),
+                "output": _first_text(item, "output", "result", "content", "text", "message"),
+                "tool_call_id": _first_value(item, "id", "call_id", "tool_call_id"),
+                "type": "tool_result",
+            }
+        if item_type in {"web_search", "web_search_call"}:
+            return {
+                "ok": not bool(item.get("error")),
+                "output": _first_text(item, "output", "result", "content", "text", "message"),
+                "tool_call_id": _first_value(item, "id"),
+                "type": "tool_result",
+            }
+    return {}
+
+
+def _codex_tool_name(item: dict[str, Any]) -> str:
+    raw = _first_value(item, "tool_name", "tool", "name")
+    if raw:
+        return str(raw)
+    server = _first_value(item, "server", "server_name", "mcp_server")
+    tool = _first_value(item, "mcp_tool", "mcp_tool_name")
+    if server and tool:
+        return f"mcp__{server}__{tool}"
+    return "mcp_tool"
 
 
 def _event_type(event: dict[str, Any]) -> str:

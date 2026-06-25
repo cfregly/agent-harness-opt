@@ -52,6 +52,20 @@ class ImportRunTests(unittest.TestCase):
             self.assertEqual(0, result.returncode, result.stderr)
             self.assertIn("agent_audit_bundle.json", result.stdout)
 
+    def test_import_run_accepts_codex_jsonl(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            result = import_run_export(
+                ROOT / "evals" / "examples" / "codex_repo_inspection_events.jsonl",
+                adapter="codex_jsonl",
+                name="codex repo inspection",
+                out_dir=tmp,
+            )
+            trace = json.loads(Path(result["trace"]).read_text(encoding="utf-8"))
+
+            self.assertEqual("codex repo inspection", trace["name"])
+            self.assertEqual("Bash", trace["steps"][1]["name"])
+            self.assertEqual(5, result["trace_steps"])
+
 
 if __name__ == "__main__":
     unittest.main()
