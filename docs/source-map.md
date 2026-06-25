@@ -85,14 +85,17 @@ Checked on 2026-06-25.
 - [Migrate to Claude Agent SDK](https://code.claude.com/docs/en/agent-sdk/migration-guide)
   - Used for the rename from Claude Code SDK to Claude Agent SDK.
 - [Claude Agent SDK Python reference](https://code.claude.com/docs/en/agent-sdk/python)
-  - Used for `query`, `ClaudeAgentOptions`, custom tools, and in-process MCP server coverage.
+  - Used for `query`, `ClaudeAgentOptions`, custom tools, in-process MCP server coverage, hooks,
+    permissions, skills, subagents, sessions, and thinking or budget surface inventory.
 - [OpenAI Agents SDK guide](https://developers.openai.com/api/docs/guides/agents)
   - Used for OpenAI's equivalent agent SDK coverage and its role as an orchestration layer over
     model calls and tools.
 - [OpenAI Agents SDK Python reference](https://openai.github.io/openai-agents-python/agents/)
-  - Used for `Agent`, `Runner`, and function-tool smoke coverage.
+  - Used for `Agent`, `Runner`, function-tool smoke coverage, handoffs, guardrails, MCP, sessions,
+    tracing, hosted tools, shell tools, and computer-tool surface inventory.
 - [Google Agent Development Kit](https://adk.dev/)
-  - Used for Google's equivalent SDK coverage and supported language scope.
+  - Used for Google's equivalent SDK coverage, supported language scope, tools, workflows, sessions,
+    memory, planners, code execution, telemetry, and evaluation surface inventory.
 - [Google ADK Cloud docs](https://docs.cloud.google.com/gemini-enterprise-agent-platform/build/adk)
   - Used for Google ADK positioning as an enterprise-scale agent development framework.
 

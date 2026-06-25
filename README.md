@@ -42,6 +42,7 @@ python -m claude_agent_harness_optimization model-matrix evals/model_matrix/codi
 python -m claude_agent_harness_optimization grind-harness evals/model_matrix/coding_tool_selection.json --env-file .env --live --concurrency 8 --heldout-cases "find python files,read known file" --markdown
 python -m claude_agent_harness_optimization live-harness evals/live_harnesses/headless_cli_smoke.json --env-file .env --out-dir /tmp/aho-live --markdown
 python -m claude_agent_harness_optimization live-harness evals/live_harnesses/sdk_agent_smoke.json --env-file .env --out-dir /tmp/aho-sdk-live --markdown
+uvx --with claude-agent-sdk --with openai-agents --with google-adk python scripts/sdk_surface_inventory.py
 python -m claude_agent_harness_optimization render-report /tmp/harness-matrix.json --out /tmp/harness-matrix.html
 python -m claude_agent_harness_optimization pr-comment /tmp/harness-matrix.json --out /tmp/harness-matrix.md
 python scripts/probe_service_keys.py --env-file .env --no-fail
@@ -87,6 +88,7 @@ Claude prompt engineering docs:
 - live headless CLI harness probes for Codex, Claude Code, Gemini CLI, Cursor Agent, and OpenCode,
   with redacted artifacts, version pins, normalized traces, and directed-thinking visibility status
 - live latest-package SDK probes for Claude Agent SDK, OpenAI Agents SDK, and Google ADK
+- latest-package SDK surface inventory for Claude Agent SDK, OpenAI Agents SDK, and Google ADK
 - autoresearch-style harness grinding that turns matrix failures into candidate variants, checks
   held-out cases, logs keep or reject decisions, and promotes only live improvements
 - value-bar enforcement for baseline comparison, minimum improvement, and adversarial confirmation

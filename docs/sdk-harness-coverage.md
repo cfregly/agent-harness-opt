@@ -53,6 +53,29 @@ Summary from `/tmp/aho-sdk-live-v2/result.json`:
 }
 ```
 
+## SDK Surface Inventory
+
+The live smoke proves the agent loop works. The inventory check pins the broader SDK surfaces that
+need deeper evals, using the same latest-package discipline:
+
+```bash
+uvx --with claude-agent-sdk --with openai-agents --with google-adk \
+  python scripts/sdk_surface_inventory.py \
+  > evals/results/sdk_surface_inventory_2026-06-25.json
+```
+
+Committed summary ledger:
+`evals/results/sdk_surface_inventory_2026-06-25.json`
+
+The inventory passed for:
+
+- `claude-agent-sdk` `0.2.110`: agent loop, MCP servers, permissions, hooks, skills/plugins,
+  subagents, sessions, thinking/budget controls, and Claude Code bridge options.
+- `openai-agents` `0.17.7`: agent loop, function tools, MCP servers, handoffs, guardrails,
+  sessions, tracing, hosted tools, shell tools, and computer tools.
+- `google-adk` `2.3.0`: agent loop, workflows, tools and tool callbacks, sessions, memory,
+  multi-agent transfer controls, planners, code execution, telemetry, and evaluation modules.
+
 ## What The Smoke Proves
 
 Each SDK executed a custom `pwd_tool` through the SDK agent loop. The normalized trace required:
@@ -72,9 +95,9 @@ guardrails, tracing, skills, and hosted or managed runtime features.
 
 | SDK | Next live cases |
 |---|---|
-| Claude Agent SDK | custom tools, MCP server, permissions, hooks, skills, subagents, session resume, checkpoints, cost and usage |
+| Claude Agent SDK | permissions, hooks, skills, subagents, session resume, checkpoints, cost and usage |
 | OpenAI Agents SDK | handoffs, guardrails, sessions, MCP servers, tracing export, hosted tools, local shell tool |
-| Google ADK | session service, callbacks, tool error recovery, multi-agent transfer, evaluation, deployment and tracing |
+| Google ADK | callbacks, tool error recovery, multi-agent transfer, evaluation, deployment and tracing |
 
 These should be added as separate live cases because each feature changes the harness surface. A
 single `pwd_tool` smoke should not be overclaimed as complete SDK parity.

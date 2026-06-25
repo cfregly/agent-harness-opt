@@ -1,0 +1,716 @@
+{
+  "name": "latest SDK surface inventory",
+  "packages": [
+    {
+      "checks": [
+        {
+          "details": [
+            {
+              "kind": "symbol",
+              "name": "query",
+              "present": true
+            },
+            {
+              "kind": "symbol",
+              "name": "ClaudeSDKClient",
+              "present": true
+            },
+            {
+              "kind": "symbol",
+              "name": "ClaudeAgentOptions",
+              "present": true
+            }
+          ],
+          "missing": [],
+          "name": "agent_loop",
+          "passed": true
+        },
+        {
+          "details": [
+            {
+              "kind": "symbol",
+              "name": "create_sdk_mcp_server",
+              "present": true
+            },
+            {
+              "kind": "symbol",
+              "name": "McpServerConfig",
+              "present": true
+            },
+            {
+              "kind": "symbol",
+              "name": "SdkMcpTool",
+              "present": true
+            }
+          ],
+          "missing": [],
+          "name": "mcp_servers",
+          "passed": true
+        },
+        {
+          "details": [
+            {
+              "kind": "symbol",
+              "name": "PermissionMode",
+              "present": true
+            },
+            {
+              "kind": "symbol",
+              "name": "PermissionResultAllow",
+              "present": true
+            },
+            {
+              "kind": "symbol",
+              "name": "PermissionResultDeny",
+              "present": true
+            },
+            {
+              "kind": "claude_option",
+              "name": "can_use_tool",
+              "present": true
+            },
+            {
+              "kind": "claude_option",
+              "name": "permission_mode",
+              "present": true
+            },
+            {
+              "kind": "claude_option",
+              "name": "permission_prompt_tool_name",
+              "present": true
+            }
+          ],
+          "missing": [],
+          "name": "permissions",
+          "passed": true
+        },
+        {
+          "details": [
+            {
+              "kind": "symbol",
+              "name": "HookCallback",
+              "present": true
+            },
+            {
+              "kind": "symbol",
+              "name": "PreToolUseHookInput",
+              "present": true
+            },
+            {
+              "kind": "symbol",
+              "name": "PostToolUseHookInput",
+              "present": true
+            },
+            {
+              "kind": "claude_option",
+              "name": "hooks",
+              "present": true
+            },
+            {
+              "kind": "claude_option",
+              "name": "include_hook_events",
+              "present": true
+            }
+          ],
+          "missing": [],
+          "name": "hooks",
+          "passed": true
+        },
+        {
+          "details": [
+            {
+              "kind": "symbol",
+              "name": "SdkPluginConfig",
+              "present": true
+            },
+            {
+              "kind": "claude_option",
+              "name": "plugins",
+              "present": true
+            },
+            {
+              "kind": "claude_option",
+              "name": "skills",
+              "present": true
+            }
+          ],
+          "missing": [],
+          "name": "skills",
+          "passed": true
+        },
+        {
+          "details": [
+            {
+              "kind": "symbol",
+              "name": "AgentDefinition",
+              "present": true
+            },
+            {
+              "kind": "symbol",
+              "name": "SubagentStartHookInput",
+              "present": true
+            },
+            {
+              "kind": "claude_option",
+              "name": "agents",
+              "present": true
+            }
+          ],
+          "missing": [],
+          "name": "subagents",
+          "passed": true
+        },
+        {
+          "details": [
+            {
+              "kind": "symbol",
+              "name": "InMemorySessionStore",
+              "present": true
+            },
+            {
+              "kind": "symbol",
+              "name": "SessionStore",
+              "present": true
+            },
+            {
+              "kind": "symbol",
+              "name": "fork_session",
+              "present": true
+            },
+            {
+              "kind": "claude_option",
+              "name": "continue_conversation",
+              "present": true
+            },
+            {
+              "kind": "claude_option",
+              "name": "resume",
+              "present": true
+            },
+            {
+              "kind": "claude_option",
+              "name": "session_id",
+              "present": true
+            },
+            {
+              "kind": "claude_option",
+              "name": "session_store",
+              "present": true
+            }
+          ],
+          "missing": [],
+          "name": "sessions",
+          "passed": true
+        },
+        {
+          "details": [
+            {
+              "kind": "symbol",
+              "name": "ThinkingConfigEnabled",
+              "present": true
+            },
+            {
+              "kind": "symbol",
+              "name": "EffortLevel",
+              "present": true
+            },
+            {
+              "kind": "symbol",
+              "name": "TaskBudget",
+              "present": true
+            },
+            {
+              "kind": "claude_option",
+              "name": "effort",
+              "present": true
+            },
+            {
+              "kind": "claude_option",
+              "name": "max_budget_usd",
+              "present": true
+            },
+            {
+              "kind": "claude_option",
+              "name": "max_thinking_tokens",
+              "present": true
+            },
+            {
+              "kind": "claude_option",
+              "name": "task_budget",
+              "present": true
+            },
+            {
+              "kind": "claude_option",
+              "name": "thinking",
+              "present": true
+            }
+          ],
+          "missing": [],
+          "name": "thinking_and_budget",
+          "passed": true
+        },
+        {
+          "details": [
+            {
+              "kind": "claude_option",
+              "name": "allowed_tools",
+              "present": true
+            },
+            {
+              "kind": "claude_option",
+              "name": "cli_path",
+              "present": true
+            },
+            {
+              "kind": "claude_option",
+              "name": "cwd",
+              "present": true
+            },
+            {
+              "kind": "claude_option",
+              "name": "mcp_servers",
+              "present": true
+            },
+            {
+              "kind": "claude_option",
+              "name": "tools",
+              "present": true
+            }
+          ],
+          "missing": [],
+          "name": "claude_code_product_bridge",
+          "passed": true
+        }
+      ],
+      "module": "claude_agent_sdk",
+      "package": "claude-agent-sdk",
+      "passed": true,
+      "source": "https://code.claude.com/docs/en/agent-sdk/overview",
+      "version": "0.2.110"
+    },
+    {
+      "checks": [
+        {
+          "details": [
+            {
+              "kind": "symbol",
+              "name": "Agent",
+              "present": true
+            },
+            {
+              "kind": "symbol",
+              "name": "Runner",
+              "present": true
+            },
+            {
+              "kind": "symbol",
+              "name": "RunConfig",
+              "present": true
+            }
+          ],
+          "missing": [],
+          "name": "agent_loop",
+          "passed": true
+        },
+        {
+          "details": [
+            {
+              "kind": "symbol",
+              "name": "function_tool",
+              "present": true
+            },
+            {
+              "kind": "symbol",
+              "name": "FunctionTool",
+              "present": true
+            },
+            {
+              "kind": "symbol",
+              "name": "ToolCallItem",
+              "present": true
+            },
+            {
+              "kind": "symbol",
+              "name": "ToolCallOutputItem",
+              "present": true
+            },
+            {
+              "kind": "agent_param",
+              "name": "tools",
+              "present": true
+            }
+          ],
+          "missing": [],
+          "name": "function_tools",
+          "passed": true
+        },
+        {
+          "details": [
+            {
+              "kind": "symbol",
+              "name": "HostedMCPTool",
+              "present": true
+            },
+            {
+              "kind": "symbol",
+              "name": "MCPListToolsItem",
+              "present": true
+            },
+            {
+              "kind": "symbol",
+              "name": "MCPApprovalRequestItem",
+              "present": true
+            },
+            {
+              "kind": "agent_param",
+              "name": "mcp_config",
+              "present": true
+            },
+            {
+              "kind": "agent_param",
+              "name": "mcp_servers",
+              "present": true
+            }
+          ],
+          "missing": [],
+          "name": "mcp_servers",
+          "passed": true
+        },
+        {
+          "details": [
+            {
+              "kind": "symbol",
+              "name": "Handoff",
+              "present": true
+            },
+            {
+              "kind": "symbol",
+              "name": "HandoffCallItem",
+              "present": true
+            },
+            {
+              "kind": "symbol",
+              "name": "HandoffOutputItem",
+              "present": true
+            },
+            {
+              "kind": "agent_param",
+              "name": "handoffs",
+              "present": true
+            }
+          ],
+          "missing": [],
+          "name": "handoffs",
+          "passed": true
+        },
+        {
+          "details": [
+            {
+              "kind": "symbol",
+              "name": "InputGuardrail",
+              "present": true
+            },
+            {
+              "kind": "symbol",
+              "name": "OutputGuardrail",
+              "present": true
+            },
+            {
+              "kind": "symbol",
+              "name": "GuardrailFunctionOutput",
+              "present": true
+            },
+            {
+              "kind": "agent_param",
+              "name": "input_guardrails",
+              "present": true
+            },
+            {
+              "kind": "agent_param",
+              "name": "output_guardrails",
+              "present": true
+            }
+          ],
+          "missing": [],
+          "name": "guardrails",
+          "passed": true
+        },
+        {
+          "details": [
+            {
+              "kind": "symbol",
+              "name": "Session",
+              "present": true
+            },
+            {
+              "kind": "symbol",
+              "name": "OpenAIConversationsSession",
+              "present": true
+            },
+            {
+              "kind": "symbol",
+              "name": "SessionSettings",
+              "present": true
+            }
+          ],
+          "missing": [],
+          "name": "sessions",
+          "passed": true
+        },
+        {
+          "details": [
+            {
+              "kind": "symbol",
+              "name": "Span",
+              "present": true
+            },
+            {
+              "kind": "symbol",
+              "name": "AgentSpanData",
+              "present": true
+            },
+            {
+              "kind": "symbol",
+              "name": "FunctionSpanData",
+              "present": true
+            },
+            {
+              "kind": "symbol",
+              "name": "HandoffSpanData",
+              "present": true
+            }
+          ],
+          "missing": [],
+          "name": "tracing",
+          "passed": true
+        },
+        {
+          "details": [
+            {
+              "kind": "symbol",
+              "name": "ShellTool",
+              "present": true
+            },
+            {
+              "kind": "symbol",
+              "name": "LocalShellTool",
+              "present": true
+            },
+            {
+              "kind": "symbol",
+              "name": "ComputerTool",
+              "present": true
+            },
+            {
+              "kind": "symbol",
+              "name": "FileSearchTool",
+              "present": true
+            }
+          ],
+          "missing": [],
+          "name": "hosted_and_local_tools",
+          "passed": true
+        }
+      ],
+      "module": "agents",
+      "package": "openai-agents",
+      "passed": true,
+      "source": "https://openai.github.io/openai-agents-python/agents/",
+      "version": "0.17.7"
+    },
+    {
+      "checks": [
+        {
+          "details": [
+            {
+              "kind": "symbol",
+              "name": "Agent",
+              "present": true
+            },
+            {
+              "kind": "symbol",
+              "name": "Runner",
+              "present": true
+            }
+          ],
+          "missing": [],
+          "name": "agent_loop",
+          "passed": true
+        },
+        {
+          "details": [
+            {
+              "kind": "symbol",
+              "name": "Workflow",
+              "present": true
+            }
+          ],
+          "missing": [],
+          "name": "workflows",
+          "passed": true
+        },
+        {
+          "details": [
+            {
+              "kind": "agent_param",
+              "name": "after_tool_callback",
+              "present": true
+            },
+            {
+              "kind": "agent_param",
+              "name": "before_tool_callback",
+              "present": true
+            },
+            {
+              "kind": "agent_param",
+              "name": "on_tool_error_callback",
+              "present": true
+            },
+            {
+              "kind": "agent_param",
+              "name": "tools",
+              "present": true
+            },
+            {
+              "kind": "submodule",
+              "name": "google.adk.tools",
+              "present": true
+            }
+          ],
+          "missing": [],
+          "name": "tools",
+          "passed": true
+        },
+        {
+          "details": [
+            {
+              "kind": "runner_param",
+              "name": "session_service",
+              "present": true
+            },
+            {
+              "kind": "submodule",
+              "name": "google.adk.sessions",
+              "present": true
+            }
+          ],
+          "missing": [],
+          "name": "sessions",
+          "passed": true
+        },
+        {
+          "details": [
+            {
+              "kind": "runner_param",
+              "name": "memory_service",
+              "present": true
+            },
+            {
+              "kind": "submodule",
+              "name": "google.adk.memory",
+              "present": true
+            }
+          ],
+          "missing": [],
+          "name": "memory",
+          "passed": true
+        },
+        {
+          "details": [
+            {
+              "kind": "agent_param",
+              "name": "disallow_transfer_to_parent",
+              "present": true
+            },
+            {
+              "kind": "agent_param",
+              "name": "disallow_transfer_to_peers",
+              "present": true
+            },
+            {
+              "kind": "agent_param",
+              "name": "sub_agents",
+              "present": true
+            }
+          ],
+          "missing": [],
+          "name": "multi_agent",
+          "passed": true
+        },
+        {
+          "details": [
+            {
+              "kind": "agent_param",
+              "name": "planner",
+              "present": true
+            },
+            {
+              "kind": "submodule",
+              "name": "google.adk.planners",
+              "present": true
+            }
+          ],
+          "missing": [],
+          "name": "planners",
+          "passed": true
+        },
+        {
+          "details": [
+            {
+              "kind": "agent_param",
+              "name": "code_executor",
+              "present": true
+            },
+            {
+              "kind": "submodule",
+              "name": "google.adk.code_executors",
+              "present": true
+            }
+          ],
+          "missing": [],
+          "name": "code_execution",
+          "passed": true
+        },
+        {
+          "details": [
+            {
+              "kind": "runner_param",
+              "name": "plugins",
+              "present": true
+            },
+            {
+              "kind": "submodule",
+              "name": "google.adk.telemetry",
+              "present": true
+            }
+          ],
+          "missing": [],
+          "name": "telemetry",
+          "passed": true
+        },
+        {
+          "details": [
+            {
+              "kind": "submodule",
+              "name": "google.adk.evaluation",
+              "present": true
+            }
+          ],
+          "missing": [],
+          "name": "evaluation",
+          "passed": true
+        }
+      ],
+      "module": "google.adk",
+      "package": "google-adk",
+      "passed": true,
+      "source": "https://adk.dev/",
+      "version": "2.3.0"
+    }
+  ],
+  "passed": true,
+  "value_bar": {
+    "adversarial_result": "This inventory fails when a required symbol, constructor parameter, or submodule is missing.",
+    "claim": "Latest SDK coverage is useful only if the packages expose the harness surfaces this repo intends to evaluate."
+  }
+}
