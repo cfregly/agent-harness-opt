@@ -43,6 +43,11 @@ def build_upstream_pr_packet(
     )
     cases = _case_definitions(result, matrix)
     repro = _reproduction_command(result, matrix_path, options)
+    title = render_upstream_pr_title(
+        result=result,
+        comparison=comparison,
+        options=options,
+    )
     body = render_upstream_pr_body(
         result=result,
         source=source,
@@ -68,6 +73,7 @@ def build_upstream_pr_packet(
             "source": source,
         },
         "files": {
+            "PR_TITLE.txt": title + "\n",
             "PR_BODY.md": body,
             "REPRODUCTION.md": reproduction,
             "evidence.json": json.dumps(
@@ -84,6 +90,7 @@ def build_upstream_pr_packet(
             + "\n",
         },
         "passed": bool(comparison.get("promote")),
+        "title": title,
         "target_name": options.target_name,
     }
 
@@ -102,6 +109,21 @@ def write_upstream_pr_packet(packet: dict[str, Any], out_dir: str | Path) -> dic
     return written
 
 
+def render_upstream_pr_title(
+    *,
+    result: dict[str, Any],
+    comparison: dict[str, Any],
+    options: PacketOptions,
+) -> str:
+    target = options.target_name or "tool catalog"
+    focus = _focus_phrase(_failure_case_names(result, str(comparison.get("baseline_variant") or options.baseline_variant)))
+    if focus:
+        return f"Tighten {target} {focus} routing with live evals"
+    if comparison.get("promote"):
+        return f"Improve {target} tool routing with live eval evidence"
+    return f"Add data-backed {target} tool-routing evidence"
+
+
 def render_upstream_pr_body(
     *,
     result: dict[str, Any],
@@ -115,6 +137,14 @@ def render_upstream_pr_body(
     change = options.change_summary or "Clarify the tool-selection boundary shown by the eval."
     promote = "yes" if comparison.get("promote") else "no"
     lines = [
+        f"Suggested title: {render_upstream_pr_title(result=result, comparison=comparison, options=options)}",
+        "",
+        "## Value Proposition",
+        "",
+    ]
+    lines.extend(f"- {item}" for item in _value_proposition_lines(result, comparison, options))
+    lines.extend([
+        "",
         f"## Proposed change for {target}",
         "",
         change,
@@ -125,7 +155,7 @@ def render_upstream_pr_body(
         "",
         "## Pinned surface",
         "",
-    ]
+    ])
     lines.extend(f"- {item}" for item in _source_lines(source))
     if options.target_repo:
         lines.append(f"- target repo: {options.target_repo}")
@@ -520,6 +550,67 @@ def _learning_lines(result: dict[str, Any], comparison: dict[str, Any], options:
     else:
         lines.append("The suggested change does not clear the value bar yet, so treat it as diagnostic evidence.")
     return lines
+
+
+def _value_proposition_lines(result: dict[str, Any], comparison: dict[str, Any], options: PacketOptions) -> list[str]:
+    target = options.target_name or "tool catalog"
+    baseline = str(comparison.get("baseline_variant") or options.baseline_variant or "baseline")
+    candidate = str(comparison.get("candidate_variant") or options.candidate_variant or "candidate")
+    total = _summary_total(result)
+    value = [
+        f"Helps agents choose the intended {target} workflow instead of adjacent tools that look plausible.",
+        f"`{candidate}` improved score from {_format_score(comparison.get('baseline_score'))} to {_format_score(comparison.get('candidate_score'))}, a {_format_score(comparison.get('delta'))} gain over `{baseline}`.",
+    ]
+    if total is not None:
+        value.append(f"The signal comes from {total} live matrix cells on a pinned source surface.")
+    cases = _failure_case_names(result, baseline)
+    if cases:
+        value.append(f"Baseline mistakes clustered on {', '.join(cases[:5])}.")
+    if comparison.get("promote"):
+        value.append("The change clears the adversarially-confirmed value bar for this pinned evaluation.")
+    return value
+
+
+def _failure_case_names(result: dict[str, Any], variant: str) -> list[str]:
+    cases = []
+    seen: set[str] = set()
+    for item in _failure_lines(result, variant):
+        case = item.split(" chose ", 1)[0]
+        if case and case not in seen:
+            seen.add(case)
+            cases.append(case)
+    return cases
+
+
+def _focus_phrase(cases: list[str]) -> str:
+    joined = " ".join(cases).lower()
+    labels = []
+    if "browser" in joined or "browse" in joined:
+        labels.append("browser")
+    if "careful" in joined or "freeze" in joined or "guard" in joined or "safety" in joined:
+        labels.append("safety")
+    if "qa" in joined:
+        labels.append("QA")
+    if "design" in joined:
+        labels.append("design")
+    if "deploy" in joined or "ship" in joined or "canary" in joined:
+        labels.append("deploy")
+    if "scrape" in joined or "extract" in joined or "search" in joined or "fetch" in joined:
+        labels.append("retrieval")
+    if "sql" in joined or "migration" in joined or "database" in joined:
+        labels.append("database")
+    if not labels:
+        return ""
+    if len(labels) == 1:
+        return labels[0]
+    return " and ".join(labels[:2])
+
+
+def _summary_total(result: dict[str, Any]) -> int | None:
+    summary = result.get("summary")
+    if isinstance(summary, dict) and isinstance(summary.get("total"), int):
+        return int(summary["total"])
+    return None
 
 
 def _score(value: Any) -> float | None:

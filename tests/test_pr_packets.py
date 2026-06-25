@@ -32,7 +32,12 @@ class PrPacketTests(unittest.TestCase):
                 ),
             )
             body = packet["files"]["PR_BODY.md"]
+            title = packet["files"]["PR_TITLE.txt"]
             self.assertTrue(packet["passed"])
+            self.assertEqual("Tighten Example MCP retrieval routing with live evals\n", title)
+            self.assertIn("Suggested title: Tighten Example MCP retrieval routing with live evals", body)
+            self.assertIn("## Value Proposition", body)
+            self.assertIn("Helps agents choose the intended Example MCP workflow", body)
             self.assertIn("commit: abc123", body)
             self.assertIn("baseline score: 0.000", body)
             self.assertIn("candidate score: 1.000", body)
@@ -48,6 +53,7 @@ class PrPacketTests(unittest.TestCase):
             self.assertNotIn("forbidden:", body)
 
             written = write_upstream_pr_packet(packet, Path(tmp) / "packet")
+            self.assertTrue(Path(written["PR_TITLE.txt"]).exists())
             self.assertTrue(Path(written["PR_BODY.md"]).exists())
             self.assertTrue(Path(written["REPRODUCTION.md"]).exists())
             self.assertTrue(Path(written["evidence.json"]).exists())
@@ -80,6 +86,7 @@ class PrPacketTests(unittest.TestCase):
             )
             self.assertEqual(0, result.returncode, result.stderr)
             self.assertIn('"passed": true', result.stdout)
+            self.assertTrue((out_dir / "PR_TITLE.txt").exists())
             self.assertTrue((out_dir / "PR_BODY.md").exists())
 
 

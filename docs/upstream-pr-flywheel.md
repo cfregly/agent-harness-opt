@@ -68,6 +68,8 @@ Keep the upstream patch narrow. Good patches usually touch one of these:
 
 The pull request body should include:
 
+- catchy title that names the specific workflow value
+- value proposition before implementation details
 - source package, version, repo, and commit
 - baseline and candidate variant names
 - provider, model, harness, instruction variant, and case names

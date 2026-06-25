@@ -1,3 +1,13 @@
+Suggested title: Tighten gstack browser and safety routing with live evals
+
+## Value Proposition
+
+- Helps agents choose the intended gstack workflow instead of adjacent tools that look plausible.
+- `gstack_boundary_tuned_skill_descriptions` improved score from 0.975 to 0.992, a 0.017 gain over `gstack_stock_skill_descriptions`.
+- The signal comes from 720 live matrix cells on a pinned source surface.
+- Baseline mistakes clustered on careful-mode and browser-headless.
+- The change clears the adversarially-confirmed value bar for this pinned evaluation.
+
 ## Proposed change for gstack
 
 Clarify browser alias and safety-mode skill routing boundaries.
