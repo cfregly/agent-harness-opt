@@ -28,6 +28,9 @@ python -m claude_agent_harness_optimization review-trace evals/examples/agent_tr
 python -m claude_agent_harness_optimization review-trace evals/examples/agent_trace_parallel_good.json
 python -m claude_agent_harness_optimization normalize-claude evals/examples/claude_messages.json
 python -m claude_agent_harness_optimization normalize-runtime evals/examples/cursor_trace_review_events.json
+python -m claude_agent_harness_optimization import-run evals/examples/import_run_cursor_export.json --adapter cursor --out-dir /tmp/imported-run
+python -m claude_agent_harness_optimization snapshot-surface --matrix evals/model_matrix/harness_trace_adapters.json --skill .claude/skills/agent-audit/SKILL.md --out /tmp/surface-snapshot.json
+python -m claude_agent_harness_optimization mcp-e2e evals/e2e/github_readonly.json --dry-run
 python -m claude_agent_harness_optimization trace-suite evals/suites/agent_trace_suite.json
 python -m claude_agent_harness_optimization audit-agent evals/examples/agent_audit_bundle.json --markdown
 python -m claude_agent_harness_optimization audit-agent evals/examples/agent_audit_bundle.json --claude-judge
@@ -37,6 +40,8 @@ python -m claude_agent_harness_optimization model-matrix evals/model_matrix/codi
 python -m claude_agent_harness_optimization model-matrix evals/model_matrix/harness_trace_adapters.json --live --require-live --providers trace_fixture --markdown
 python -m claude_agent_harness_optimization model-matrix evals/model_matrix/coding_tool_selection.json --env-file .env --live --concurrency 8 --markdown
 python -m claude_agent_harness_optimization grind-harness evals/model_matrix/coding_tool_selection.json --env-file .env --live --concurrency 8 --heldout-cases "find python files,read known file" --markdown
+python -m claude_agent_harness_optimization render-report /tmp/harness-matrix.json --out /tmp/harness-matrix.html
+python -m claude_agent_harness_optimization pr-comment /tmp/harness-matrix.json --out /tmp/harness-matrix.md
 python scripts/probe_service_keys.py --env-file .env --no-fail
 python -m claude_agent_harness_optimization judge-prompt evals/examples/search_answer.json
 ```
@@ -71,6 +76,10 @@ Claude prompt engineering docs:
 - tool-selection optimization from tool descriptions, schemas, calibration cases, and trace failures
 - model matrix sweeps across providers, model ids, harnesses, instruction variants, and tool-description variants
 - trace adapters that normalize exported Agent SDK and IDE-agent runs into the same matrix contract
+- run import that writes both a normalized trace and an audit bundle for external harness exports
+- surface snapshots for the exact matrix, tool catalog, skill, and prompt files under evaluation
+- read-oriented credentialed E2E specs for service-backed MCP and harness checks
+- static HTML and PR-comment reports from audit, matrix, grind, snapshot, and E2E JSON
 - autoresearch-style harness grinding that turns matrix failures into candidate variants, checks
   held-out cases, logs keep or reject decisions, and promotes only live improvements
 - value-bar enforcement for baseline comparison, minimum improvement, and adversarial confirmation
@@ -88,6 +97,10 @@ claude_agent_harness_optimization/
   claude_judge.py    # optional Claude Messages API judge for semantic trace review
   model_matrix.py    # live provider matrix for tool and instruction tuning
   harness_optimizer.py # hill-climb candidate tool descriptions from matrix failures
+  import_run.py       # convert external harness exports into audit bundles
+  snapshots.py        # pin tool, matrix, skill, and file versions under eval
+  e2e.py              # read-oriented credentialed service and harness checks
+  reports.py          # HTML and PR-comment rendering for JSON results
   tool_selection.py  # tool description and selection optimizer
   value_bar.py       # adversarially-confirmed value-bar checks
   adapters.py        # transcript normalizers for provider and runtime event exports
@@ -122,6 +135,8 @@ Use [docs/credentialed-service-probes.md](docs/credentialed-service-probes.md) t
 service credentials without printing secrets or mutating vendor state.
 Use [docs/autoresearch-hill-climbing.md](docs/autoresearch-hill-climbing.md) when the goal is to
 run an eval-driven optimization loop over harness, tool, `CLAUDE.md`, or skill changes.
+Use [docs/repeatable-harness-lab.md](docs/repeatable-harness-lab.md) to import a real harness run,
+pin the tested surfaces, run credentialed read checks, and produce review artifacts.
 
 ## Claude Code Skill
 
@@ -238,6 +253,10 @@ python -m claude_agent_harness_optimization eval evals/examples/search_answer.js
 python -m claude_agent_harness_optimization review-trace evals/examples/agent_trace_good.json
 python -m claude_agent_harness_optimization normalize-claude evals/examples/claude_messages.json
 python -m claude_agent_harness_optimization normalize-runtime evals/examples/cursor_trace_review_events.json
+python -m claude_agent_harness_optimization import-run evals/examples/import_run_cursor_export.json --adapter cursor --out-dir /tmp/imported-run
+python -m claude_agent_harness_optimization audit-agent /tmp/imported-run/agent_audit_bundle.json
+python -m claude_agent_harness_optimization snapshot-surface --matrix evals/model_matrix/harness_trace_adapters.json --bundle evals/examples/agent_audit_bundle.json --skill .claude/skills/agent-audit/SKILL.md --out /tmp/surface-snapshot.json
+python -m claude_agent_harness_optimization mcp-e2e evals/e2e/github_readonly.json --dry-run --out /tmp/github-e2e.json
 python -m claude_agent_harness_optimization trace-suite evals/suites/agent_trace_suite.json
 python -m claude_agent_harness_optimization audit-agent evals/examples/agent_audit_bundle.json
 python -m claude_agent_harness_optimization audit-agent evals/examples/agent_audit_bundle.json --claude-judge
@@ -250,6 +269,9 @@ python -m claude_agent_harness_optimization model-matrix evals/model_matrix/supa
 python -m claude_agent_harness_optimization model-matrix evals/model_matrix/clickhouse_mcp_tool_selection.json --providers anthropic --harnesses prompt_json --variants tuned_clickhouse_readonly_boundaries --instruction-variants clickhouse_host_rules --max-cases 2
 python -m claude_agent_harness_optimization model-matrix evals/model_matrix/zymtrace_mcp_tool_selection.json --providers anthropic --harnesses prompt_json --variants tuned_zymtrace_mcp_boundaries --instruction-variants zymtrace_host_and_skill_rules --max-cases 2
 python -m claude_agent_harness_optimization model-matrix evals/model_matrix/harness_trace_adapters.json --live --require-live --providers trace_fixture
+python -m claude_agent_harness_optimization model-matrix evals/model_matrix/harness_trace_adapters.json --providers trace_fixture --harnesses agent_sdk_trace --max-cases 1 --out /tmp/harness-matrix.json
+python -m claude_agent_harness_optimization render-report /tmp/harness-matrix.json --out /tmp/harness-matrix.html
+python -m claude_agent_harness_optimization pr-comment /tmp/harness-matrix.json --out /tmp/harness-matrix.md
 python -m claude_agent_harness_optimization grind-harness evals/model_matrix/coding_tool_selection.json
 python scripts/probe_service_keys.py --env-file .env --no-fail
 python scripts/check_value_bar.py

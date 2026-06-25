@@ -8,9 +8,53 @@ import re
 from typing import Any
 
 
+CLAUDE_MESSAGE_ADAPTERS = {
+    "anthropic",
+    "anthropic_messages",
+    "claude",
+    "claude_code",
+    "claude_messages",
+    "messages",
+}
+RUNTIME_EVENT_ADAPTERS = {
+    "agent_sdk",
+    "cursor",
+    "cursor_trace",
+    "generic_runtime",
+    "ide_agent",
+    "langgraph",
+    "langsmith",
+    "openai_agents",
+    "runtime",
+    "runtime_events",
+}
+
+
 def load_json(path: str | Path) -> Any:
     with Path(path).open("r", encoding="utf-8") as handle:
         return json.load(handle)
+
+
+def supported_adapters() -> list[str]:
+    """Return adapter names accepted by normalize_run_export."""
+
+    return sorted(CLAUDE_MESSAGE_ADAPTERS | RUNTIME_EVENT_ADAPTERS | {"auto"})
+
+
+def normalize_run_export(
+    payload: dict[str, Any] | list[dict[str, Any]],
+    adapter: str | None = None,
+) -> dict[str, Any]:
+    """Normalize a raw run export into the shared trace-review contract."""
+
+    adapter_name = (adapter or _infer_adapter(payload)).strip().lower()
+    if adapter_name == "auto":
+        adapter_name = _infer_adapter(payload)
+    if adapter_name in CLAUDE_MESSAGE_ADAPTERS:
+        return claude_messages_to_trace(payload)
+    if adapter_name in RUNTIME_EVENT_ADAPTERS:
+        return runtime_events_to_trace(payload)
+    raise ValueError(f"unsupported run adapter: {adapter_name}")
 
 
 def claude_messages_to_trace(payload: dict[str, Any] | list[dict[str, Any]]) -> dict[str, Any]:
@@ -122,6 +166,38 @@ def _content_blocks(content: Any) -> list[dict[str, Any]]:
     if isinstance(content, list):
         return [block for block in content if isinstance(block, dict)]
     return []
+
+
+def _infer_adapter(payload: Any) -> str:
+    if isinstance(payload, list):
+        if any(_looks_like_claude_message(item) for item in payload if isinstance(item, dict)):
+            return "claude_messages"
+        return "runtime_events"
+    if not isinstance(payload, dict):
+        return "runtime_events"
+    declared = payload.get("adapter") or payload.get("source_adapter") or payload.get("format")
+    if declared:
+        return str(declared)
+    messages = payload.get("messages")
+    if isinstance(messages, list) and any(
+        _looks_like_claude_message(item) for item in messages if isinstance(item, dict)
+    ):
+        return "claude_messages"
+    return "runtime_events"
+
+
+def _looks_like_claude_message(item: dict[str, Any]) -> bool:
+    role = item.get("role")
+    content = item.get("content")
+    if role not in {"assistant", "user"}:
+        return False
+    if isinstance(content, list):
+        return any(
+            isinstance(block, dict)
+            and block.get("type") in {"text", "thinking", "redacted_thinking", "tool_use", "tool_result"}
+            for block in content
+        )
+    return isinstance(content, str)
 
 
 def _runtime_events(payload: dict[str, Any]) -> list[dict[str, Any]]:

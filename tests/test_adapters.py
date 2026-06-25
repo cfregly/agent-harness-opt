@@ -3,7 +3,13 @@ import subprocess
 import sys
 import unittest
 
-from claude_agent_harness_optimization.adapters import claude_messages_to_trace, load_json, runtime_events_to_trace
+from claude_agent_harness_optimization.adapters import (
+    claude_messages_to_trace,
+    load_json,
+    normalize_run_export,
+    runtime_events_to_trace,
+    supported_adapters,
+)
 from claude_agent_harness_optimization.trace_review import review_trace
 
 
@@ -98,6 +104,13 @@ class AdapterTests(unittest.TestCase):
         self.assertEqual(0, result.returncode, result.stderr)
         self.assertIn('"source_harness": "cursor_trace"', result.stdout)
         self.assertIn('"type": "tool_call"', result.stdout)
+
+    def test_adapter_aliases_normalize_same_trace_contract(self):
+        payload = load_json(ROOT / "evals" / "examples" / "cursor_trace_review_events.json")
+        trace = normalize_run_export(payload, "cursor")
+        self.assertEqual("cursor_trace_review_events", trace["name"])
+        self.assertEqual("Task", trace["steps"][1]["name"])
+        self.assertIn("openai_agents", supported_adapters())
 
 
 if __name__ == "__main__":

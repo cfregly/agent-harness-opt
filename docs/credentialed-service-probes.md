@@ -8,6 +8,16 @@ python scripts/probe_service_keys.py --env-file .env
 python scripts/probe_service_keys.py --env-file .env --no-fail
 ```
 
+For repeatable CI-shaped service checks, use the JSON E2E specs:
+
+```bash
+python -m claude_agent_harness_optimization mcp-e2e evals/e2e/github_readonly.json --env-file .env
+python -m claude_agent_harness_optimization mcp-e2e evals/e2e/github_readonly.json --dry-run
+```
+
+The probe script is a broad local credential check. `mcp-e2e` is the auditable harness check that
+can be committed as a spec and rendered into reports.
+
 The probes are intentionally read-only:
 
 - Firecrawl: reads recent team activity.

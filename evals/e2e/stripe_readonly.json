@@ -1,0 +1,20 @@
+{
+  "name": "stripe account read-only probe",
+  "env": {
+    "required": ["STRIPE_SECRET_KEY"]
+  },
+  "checks": [
+    {
+      "expect_json_path": "id",
+      "expect_status": 200,
+      "headers": {
+        "Authorization": "Bearer ${STRIPE_SECRET_KEY}"
+      },
+      "method": "GET",
+      "name": "account readable",
+      "read_only": true,
+      "type": "http_json",
+      "url": "https://api.stripe.com/v1/account"
+    }
+  ]
+}

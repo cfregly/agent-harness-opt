@@ -99,14 +99,16 @@ about the harness. Normalize the event export first:
 
 ```bash
 python -m claude_agent_harness_optimization normalize-runtime path/to/events.json > path/to/trace.json
+python -m claude_agent_harness_optimization import-run path/to/events.json --adapter cursor --out-dir /tmp/imported-run
 ```
 
 Once a real trace exists, run:
 
 ```bash
 python -m claude_agent_harness_optimization review-trace path/to/trace.json --claude-judge
+python -m claude_agent_harness_optimization audit-agent /tmp/imported-run/agent_audit_bundle.json --claude-judge
 python -m claude_agent_harness_optimization trace-suite path/to/suite.json --markdown
-python -m claude_agent_harness_optimization audit-agent path/to/bundle.json --claude-judge --markdown
+python -m claude_agent_harness_optimization snapshot-surface --bundle /tmp/imported-run/agent_audit_bundle.json --out /tmp/surface.json
 ```
 
 Then add the exported run as a named harness in a model matrix. The fixture provider is useful for

@@ -1,0 +1,178 @@
+{
+  "adapter": "cursor",
+  "harness": "cursor_trace",
+  "name": "cursor import audit example",
+  "task": "Investigate how trace review scoring works across this repository and summarize the key files and control flow.",
+  "tools": [
+    {
+      "avoid_when": "Avoid for a single known file read, exact text search, or filename glob.",
+      "error_guidance": "If the delegated task is too broad, narrow it to the expected repository subsystem.",
+      "input_schema": {
+        "properties": {
+          "description": {
+            "description": "Delegated investigation task.",
+            "type": "string"
+          }
+        },
+        "required": ["description"],
+        "type": "object"
+      },
+      "name": "Task",
+      "output_schema": {
+        "summary": "Files inspected, control flow, and evidence-backed conclusion."
+      },
+      "purpose": "Delegate broad multi-step repository investigation.",
+      "quality_checks": ["Check that the result names the files and control flow needed by the task."],
+      "use_when": "Use for broad investigation, mapping, summarization, or synthesis across unknown files."
+    },
+    {
+      "avoid_when": "Avoid when content search or a direct file read is more specific.",
+      "error_guidance": "If the pattern is too broad, ask for a narrower file glob.",
+      "input_schema": {
+        "properties": {
+          "pattern": {
+            "description": "Glob pattern for file discovery.",
+            "type": "string"
+          }
+        },
+        "required": ["pattern"],
+        "type": "object"
+      },
+      "name": "Glob",
+      "output_schema": {
+        "paths": "Matching file paths."
+      },
+      "purpose": "Find file paths by filename pattern.",
+      "quality_checks": ["Check that returned paths match the requested filename pattern."],
+      "use_when": "Use when the task names a filename pattern and content inspection is not yet needed."
+    },
+    {
+      "avoid_when": "Avoid for broad repository mapping that needs synthesis across unknown files.",
+      "context_controls": ["path", "pattern specificity"],
+      "error_guidance": "If the query returns too many matches, add a path filter or narrower term.",
+      "input_schema": {
+        "properties": {
+          "pattern": {
+            "description": "Search text or regex.",
+            "type": "string"
+          },
+          "path": {
+            "description": "Optional path filter.",
+            "type": "string"
+          }
+        },
+        "required": ["pattern"],
+        "type": "object"
+      },
+      "name": "Grep",
+      "output_schema": {
+        "matches": "Matching lines with file paths."
+      },
+      "purpose": "Search file contents for an exact term or regex.",
+      "quality_checks": ["Check that matches directly contain the requested term."],
+      "use_when": "Use when the task names exact text to find in known or bounded files."
+    },
+    {
+      "avoid_when": "Avoid when the path is unknown or broad synthesis is needed first.",
+      "context_controls": ["path"],
+      "error_guidance": "If the path is missing, use file discovery before reading.",
+      "input_schema": {
+        "properties": {
+          "path": {
+            "description": "Exact file path to read.",
+            "type": "string"
+          }
+        },
+        "required": ["path"],
+        "type": "object"
+      },
+      "name": "Read",
+      "output_schema": {
+        "content": "Requested file content or excerpt."
+      },
+      "purpose": "Read a known file path.",
+      "quality_checks": ["Check that the returned content is from the requested path."],
+      "use_when": "Use when the exact file path is already known and content is needed."
+    }
+  ],
+  "tool_selection_cases": [
+    {
+      "expected_args_contains": {
+        "description": "trace review"
+      },
+      "expected_tools": ["Task"],
+      "forbidden_tools": ["Read", "Grep", "Glob"],
+      "name": "investigate trace review flow",
+      "rationale": "The request asks for multi-file control-flow synthesis, not one exact search or file read.",
+      "task": "Investigate how trace review scoring works across this repository and summarize the key files and control flow.",
+      "verifier": {
+        "must_include_any": [["trace_review.py"], ["trace suite", "agent audits"]],
+        "type": "flexible_text"
+      }
+    }
+  ],
+  "heldout_tool_selection_cases": [
+    {
+      "expected_tools": ["Task"],
+      "forbidden_tools": ["Read", "Grep", "Glob"],
+      "name": "map another subsystem",
+      "rationale": "The request asks for subsystem mapping and extension points across unknown files.",
+      "task": "Map how the model matrix runner is implemented across the repository and summarize extension points.",
+      "verifier": {
+        "must_include_any": [["model_matrix.py"], ["provider", "harness"]],
+        "type": "flexible_text"
+      }
+    }
+  ],
+  "tool_metrics": {
+    "avg_runtime_ms": 1200,
+    "avg_tool_calls": 1,
+    "token_count": 900,
+    "tool_error_rate": 0
+  },
+  "value_bar": {
+    "adversarial_review": {
+      "challenge": "The imported run must pass trace review and preserve the selected Task call through adapter normalization.",
+      "failed_to_disprove": true,
+      "open_objections": []
+    },
+    "baseline": {
+      "score": 0,
+      "source": "raw Cursor export before importer"
+    },
+    "candidate": {
+      "score": 1,
+      "source": "normalized trace plus audit bundle"
+    },
+    "claim": "The importer adds value by making an external harness run auditable under the same trace contract.",
+    "metric": "trace_review.score",
+    "minimum_delta": 0.5
+  },
+  "events": [
+    {
+      "event": "assistant_thinking",
+      "text": "This is a complex repository investigation. The tool budget is one delegated Task call because evidence must cover multiple files, and stop criteria are enough evidence to explain trace review scoring."
+    },
+    {
+      "event": "tool_call",
+      "id": "call_1",
+      "name": "Task",
+      "args": {
+        "description": "Inspect trace_review.py, trace_suite.py, and agent_audit.py. Summarize how trace review scoring is computed and where the result is consumed."
+      }
+    },
+    {
+      "event": "observation",
+      "tool_call_id": "call_1",
+      "content": "Inspected trace_review.py, trace_suite.py, and agent_audit.py. trace_review.review_trace builds findings from structure, tool use, reasoning, and final-answer checks, then averages those category scores into the trace score. trace_suite.run_trace_suite loads each trace file, calls review_trace, and records pass or fail for regression suites. agent_audit.review_agent_bundle calls review_trace for each representative trace and includes the trace scores in the overall audit score."
+    },
+    {
+      "event": "decision",
+      "message": "The observation is high-quality because it names the inspected files, functions, scoring categories, and consumers. Verification is enough for this imported run, so I should stop and produce the final answer."
+    },
+    {
+      "event": "final",
+      "message": "Trace review scoring is implemented by review_trace in trace_review.py. It builds structure, tool-use, reasoning, and final-answer findings, then averages category scores. trace_suite.run_trace_suite consumes that result for regression suites, and agent_audit.review_agent_bundle consumes it for representative trace scoring inside an agent audit."
+    }
+  ]
+}

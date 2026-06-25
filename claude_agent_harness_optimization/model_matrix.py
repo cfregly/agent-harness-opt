@@ -11,7 +11,7 @@ import time
 from typing import Any
 from urllib import error, parse, request
 
-from .adapters import claude_messages_to_trace, load_json, runtime_events_to_trace
+from .adapters import load_json, normalize_run_export
 
 
 DEFAULT_TIMEOUT = 90
@@ -348,12 +348,10 @@ def _call_trace_fixture(
     path = _trace_fixture_path(profile, harness, case)
     payload = load_json(path)
     adapter = str(profile.get("adapter", payload.get("adapter", "runtime_events")))
-    if adapter == "claude_messages":
-        trace = claude_messages_to_trace(payload)
-    elif adapter == "runtime_events":
-        trace = runtime_events_to_trace(payload)
-    else:
-        raise ModelMatrixError(f"unsupported trace fixture adapter: {adapter}")
+    try:
+        trace = normalize_run_export(payload, adapter)
+    except ValueError as exc:
+        raise ModelMatrixError(str(exc)) from exc
     for step in trace.get("steps", []):
         if step.get("type") == "tool_call":
             return {

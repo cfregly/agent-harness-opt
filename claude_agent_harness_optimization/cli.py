@@ -7,7 +7,7 @@ import json
 from pathlib import Path
 import sys
 
-from .adapters import claude_messages_to_trace, load_json, runtime_events_to_trace
+from .adapters import claude_messages_to_trace, load_json, runtime_events_to_trace, supported_adapters
 from .agent_audit import (
     render_agent_audit_markdown,
     review_agent_bundle,
@@ -18,6 +18,8 @@ from .claude_judge import (
     judge_trace_with_claude,
 )
 from .evals import build_judge_prompt, evaluate_case, load_eval_case
+from .e2e import E2EError, run_e2e_spec
+from .import_run import import_run_export
 from .model_matrix import (
     MatrixFilters,
     render_model_matrix_markdown,
@@ -29,6 +31,8 @@ from .harness_optimizer import (
     run_harness_grind,
 )
 from .prompt_builder import lint_tools, load_recipe, render_prompt
+from .reports import load_report_input, render_html_report, render_pr_comment, write_report
+from .snapshots import build_surface_snapshot, write_surface_snapshot
 from .suitability import score_use_case
 from .tool_selection import render_tool_selection_markdown, review_tool_selection_bundle
 from .trace_suite import render_suite_markdown, run_trace_suite
@@ -83,6 +87,48 @@ def main(argv: list[str] | None = None) -> int:
         help="normalize generic Agent SDK or IDE-agent events into an agent trace",
     )
     normalize_runtime_parser.add_argument("events", type=Path)
+
+    import_parser = subparsers.add_parser(
+        "import-run",
+        help="import a harness export into the shared trace and audit-bundle contract",
+    )
+    import_parser.add_argument("run", type=Path)
+    import_parser.add_argument("--adapter", choices=supported_adapters(), default="auto")
+    import_parser.add_argument("--name", help="override imported run name")
+    import_parser.add_argument("--out-dir", type=Path, help="directory for generated files")
+    import_parser.add_argument("--task", help="override trace task")
+    import_parser.add_argument("--tools", type=Path, help="JSON tool inventory to include")
+    import_parser.add_argument("--value-bar", type=Path, help="JSON value_bar proof to include")
+
+    snapshot_parser = subparsers.add_parser(
+        "snapshot-surface",
+        help="snapshot matrices, bundles, skills, and files under eval",
+    )
+    snapshot_parser.add_argument("--matrix", action="append", type=Path, default=[])
+    snapshot_parser.add_argument("--bundle", action="append", type=Path, default=[])
+    snapshot_parser.add_argument("--skill", action="append", type=Path, default=[])
+    snapshot_parser.add_argument("--file", action="append", type=Path, default=[])
+    snapshot_parser.add_argument("--out", type=Path, help="write snapshot JSON to a file")
+
+    e2e_parser = subparsers.add_parser(
+        "mcp-e2e",
+        help="run read-oriented credentialed harness checks from a JSON spec",
+    )
+    e2e_parser.add_argument("spec", type=Path)
+    e2e_parser.add_argument("--env-file", type=Path, help="dotenv file with service keys")
+    e2e_parser.add_argument("--allow-mutation", action="store_true", help="allow mutation checks")
+    e2e_parser.add_argument("--dry-run", action="store_true", help="validate without live calls")
+    e2e_parser.add_argument("--out", type=Path, help="write JSON result to a file")
+
+    report_parser = subparsers.add_parser("render-report", help="render JSON result as static HTML")
+    report_parser.add_argument("result", type=Path)
+    report_parser.add_argument("--title", default="Harness Report")
+    report_parser.add_argument("--out", type=Path, help="write HTML report to a file")
+
+    pr_parser = subparsers.add_parser("pr-comment", help="render JSON result as a PR comment")
+    pr_parser.add_argument("result", type=Path)
+    pr_parser.add_argument("--title", default="Harness Report")
+    pr_parser.add_argument("--out", type=Path, help="write Markdown comment to a file")
 
     suite_parser = subparsers.add_parser("trace-suite", help="run a trace regression suite")
     suite_parser.add_argument("suite", type=Path)
@@ -242,6 +288,67 @@ def main(argv: list[str] | None = None) -> int:
     if args.command == "normalize-runtime":
         trace = runtime_events_to_trace(load_json(args.events))
         print(json.dumps(trace, indent=2, sort_keys=True))
+        return 0
+
+    if args.command == "import-run":
+        result = import_run_export(
+            args.run,
+            adapter=args.adapter,
+            name=args.name,
+            out_dir=args.out_dir,
+            task=args.task,
+            tool_inventory=args.tools,
+            value_bar=args.value_bar,
+        )
+        print(json.dumps(result, indent=2, sort_keys=True))
+        return 0
+
+    if args.command == "snapshot-surface":
+        snapshot = build_surface_snapshot(
+            matrices=args.matrix,
+            bundles=args.bundle,
+            skills=args.skill,
+            files=args.file,
+        )
+        output = json.dumps(snapshot, indent=2, sort_keys=True)
+        if args.out:
+            write_surface_snapshot(snapshot, args.out)
+        else:
+            print(output)
+        return 0 if snapshot["items"] else 1
+
+    if args.command == "mcp-e2e":
+        try:
+            result = run_e2e_spec(
+                args.spec,
+                env_file=args.env_file,
+                allow_mutation=args.allow_mutation,
+                dry_run=args.dry_run,
+            )
+        except E2EError as exc:
+            print(json.dumps({"error": str(exc), "passed": False}, indent=2, sort_keys=True))
+            return 1
+        output = json.dumps(result, indent=2, sort_keys=True)
+        if args.out:
+            args.out.write_text(output + "\n", encoding="utf-8")
+        else:
+            print(output)
+        return 0 if result["passed"] else 1
+
+    if args.command == "render-report":
+        output = render_html_report(load_report_input(args.result), title=args.title)
+        if args.out:
+            write_report(output, args.out)
+        else:
+            sys.stdout.write(output)
+        return 0
+
+    if args.command == "pr-comment":
+        output = render_pr_comment(load_report_input(args.result), title=args.title)
+        if args.out:
+            write_report(output, args.out)
+        else:
+            sys.stdout.write(output)
         return 0
 
     if args.command == "trace-suite":

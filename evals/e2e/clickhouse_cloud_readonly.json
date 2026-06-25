@@ -1,0 +1,21 @@
+{
+  "name": "clickhouse cloud read-only probe",
+  "env": {
+    "required": ["CLICKHOUSE_CLOUD_KEY_ID", "CLICKHOUSE_CLOUD_KEY_SECRET"]
+  },
+  "checks": [
+    {
+      "basic_auth": {
+        "password_env": "CLICKHOUSE_CLOUD_KEY_SECRET",
+        "username_env": "CLICKHOUSE_CLOUD_KEY_ID"
+      },
+      "expect_json_path": "result",
+      "expect_status": 200,
+      "method": "GET",
+      "name": "organizations readable",
+      "read_only": true,
+      "type": "http_json",
+      "url": "https://api.clickhouse.cloud/v1/organizations"
+    }
+  ]
+}

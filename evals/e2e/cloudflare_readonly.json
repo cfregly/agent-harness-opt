@@ -1,0 +1,22 @@
+{
+  "name": "cloudflare account read-only probe",
+  "env": {
+    "required": ["CLOUDFLARE_ACCOUNT_ID", "CLOUDFLARE_API_TOKEN"]
+  },
+  "checks": [
+    {
+      "expect_json_path": "success",
+      "expect_json_value": true,
+      "expect_status": 200,
+      "headers": {
+        "Authorization": "Bearer ${CLOUDFLARE_API_TOKEN}",
+        "Content-Type": "application/json"
+      },
+      "method": "GET",
+      "name": "account readable",
+      "read_only": true,
+      "type": "http_json",
+      "url": "https://api.cloudflare.com/client/v4/accounts/${CLOUDFLARE_ACCOUNT_ID}"
+    }
+  ]
+}

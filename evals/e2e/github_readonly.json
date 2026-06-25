@@ -1,0 +1,22 @@
+{
+  "name": "github credential read-only probe",
+  "env": {
+    "required": ["GITHUB_TOKEN"]
+  },
+  "checks": [
+    {
+      "expect_json_path": "login",
+      "expect_status": 200,
+      "headers": {
+        "Accept": "application/vnd.github+json",
+        "Authorization": "Bearer ${GITHUB_TOKEN}",
+        "X-GitHub-Api-Version": "2022-11-28"
+      },
+      "method": "GET",
+      "name": "authenticated user readable",
+      "read_only": true,
+      "type": "http_json",
+      "url": "https://api.github.com/user"
+    }
+  ]
+}
