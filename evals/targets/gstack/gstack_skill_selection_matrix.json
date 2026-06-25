@@ -1,0 +1,2904 @@
+{
+  "cases": [
+    {
+      "expected_outcome": "The selected tool is gstack_browse.",
+      "expected_tools": [
+        "gstack_browse"
+      ],
+      "forbidden_tools": [
+        "gstack_gstack",
+        "gstack_connect_chrome",
+        "gstack_qa"
+      ],
+      "name": "browser-headless",
+      "rationale": "The request should route to gstack_browse.",
+      "task": "Open http://localhost:3000, click through the signup flow, and capture screenshots of any bug evidence.",
+      "verifier": {
+        "must_include_any": [
+          [
+            "gstack_browse"
+          ]
+        ],
+        "type": "flexible_text"
+      }
+    },
+    {
+      "expected_outcome": "The selected tool is gstack_qa.",
+      "expected_tools": [
+        "gstack_qa"
+      ],
+      "forbidden_tools": [
+        "gstack_qa_only",
+        "gstack_browse"
+      ],
+      "name": "qa-fix",
+      "rationale": "The request should route to gstack_qa.",
+      "task": "QA this staging site, fix the bugs you find, add regression tests, and commit each fix atomically.",
+      "verifier": {
+        "must_include_any": [
+          [
+            "gstack_qa"
+          ]
+        ],
+        "type": "flexible_text"
+      }
+    },
+    {
+      "expected_outcome": "The selected tool is gstack_qa_only.",
+      "expected_tools": [
+        "gstack_qa_only"
+      ],
+      "forbidden_tools": [
+        "gstack_qa",
+        "gstack_browse"
+      ],
+      "name": "qa-report-only",
+      "rationale": "The request should route to gstack_qa_only.",
+      "task": "Test this app and give me a bug report with repro steps, but do not edit any files.",
+      "verifier": {
+        "must_include_any": [
+          [
+            "gstack_qa_only"
+          ]
+        ],
+        "type": "flexible_text"
+      }
+    },
+    {
+      "expected_outcome": "The selected tool is gstack_design_review.",
+      "expected_tools": [
+        "gstack_design_review"
+      ],
+      "forbidden_tools": [
+        "gstack_plan_design_review",
+        "gstack_design_consultation"
+      ],
+      "name": "implemented-design-polish",
+      "rationale": "The request should route to gstack_design_review.",
+      "task": "Audit the implemented dashboard UI for spacing, hierarchy, and visual slop, then fix the issues.",
+      "verifier": {
+        "must_include_any": [
+          [
+            "gstack_design_review"
+          ]
+        ],
+        "type": "flexible_text"
+      }
+    },
+    {
+      "expected_outcome": "The selected tool is gstack_plan_design_review.",
+      "expected_tools": [
+        "gstack_plan_design_review"
+      ],
+      "forbidden_tools": [
+        "gstack_design_review",
+        "gstack_plan_eng_review"
+      ],
+      "name": "design-plan-review",
+      "rationale": "The request should route to gstack_plan_design_review.",
+      "task": "Review this UI plan before implementation and score the design dimensions with recommendations.",
+      "verifier": {
+        "must_include_any": [
+          [
+            "gstack_plan_design_review"
+          ]
+        ],
+        "type": "flexible_text"
+      }
+    },
+    {
+      "expected_outcome": "The selected tool is gstack_design_consultation.",
+      "expected_tools": [
+        "gstack_design_consultation"
+      ],
+      "forbidden_tools": [
+        "gstack_design_shotgun",
+        "gstack_plan_design_review"
+      ],
+      "name": "design-system",
+      "rationale": "The request should route to gstack_design_consultation.",
+      "task": "Create a design system and DESIGN.md for a new B2B workflow product.",
+      "verifier": {
+        "must_include_any": [
+          [
+            "gstack_design_consultation"
+          ]
+        ],
+        "type": "flexible_text"
+      }
+    },
+    {
+      "expected_outcome": "The selected tool is gstack_design_shotgun.",
+      "expected_tools": [
+        "gstack_design_shotgun"
+      ],
+      "forbidden_tools": [
+        "gstack_design_consultation",
+        "gstack_design_review"
+      ],
+      "name": "design-variants",
+      "rationale": "The request should route to gstack_design_shotgun.",
+      "task": "Show me several visual directions for this feature and let me compare options before choosing.",
+      "verifier": {
+        "must_include_any": [
+          [
+            "gstack_design_shotgun"
+          ]
+        ],
+        "type": "flexible_text"
+      }
+    },
+    {
+      "expected_outcome": "The selected tool is gstack_office_hours.",
+      "expected_tools": [
+        "gstack_office_hours"
+      ],
+      "forbidden_tools": [
+        "gstack_spec_qa",
+        "gstack_plan_ceo_review"
+      ],
+      "name": "product-brainstorm",
+      "rationale": "The request should route to gstack_office_hours.",
+      "task": "I have an idea for a restaurant waitlist tool. Help me pressure-test whether it is worth building.",
+      "verifier": {
+        "must_include_any": [
+          [
+            "gstack_office_hours"
+          ]
+        ],
+        "type": "flexible_text"
+      }
+    },
+    {
+      "expected_outcome": "The selected tool is gstack_spec_qa.",
+      "expected_tools": [
+        "gstack_spec_qa"
+      ],
+      "forbidden_tools": [
+        "gstack_office_hours",
+        "gstack_qa"
+      ],
+      "name": "spec-plus-browser-validation",
+      "rationale": "The request should route to gstack_spec_qa.",
+      "task": "Turn this rough feature request into a spec, pressure-test it, then validate the critical path in the browser.",
+      "verifier": {
+        "must_include_any": [
+          [
+            "gstack_spec_qa"
+          ]
+        ],
+        "type": "flexible_text"
+      }
+    },
+    {
+      "expected_outcome": "The selected tool is gstack_plan_ceo_review.",
+      "expected_tools": [
+        "gstack_plan_ceo_review"
+      ],
+      "forbidden_tools": [
+        "gstack_plan_eng_review",
+        "gstack_autoplan"
+      ],
+      "name": "ceo-scope-review",
+      "rationale": "The request should route to gstack_plan_ceo_review.",
+      "task": "Rethink this plan from a founder perspective and tell me whether the scope is ambitious enough.",
+      "verifier": {
+        "must_include_any": [
+          [
+            "gstack_plan_ceo_review"
+          ]
+        ],
+        "type": "flexible_text"
+      }
+    },
+    {
+      "expected_outcome": "The selected tool is gstack_plan_eng_review.",
+      "expected_tools": [
+        "gstack_plan_eng_review"
+      ],
+      "forbidden_tools": [
+        "gstack_plan_ceo_review",
+        "gstack_review"
+      ],
+      "name": "engineering-plan-review",
+      "rationale": "The request should route to gstack_plan_eng_review.",
+      "task": "Review the architecture, data flow, edge cases, and test plan before implementation.",
+      "verifier": {
+        "must_include_any": [
+          [
+            "gstack_plan_eng_review"
+          ]
+        ],
+        "type": "flexible_text"
+      }
+    },
+    {
+      "expected_outcome": "The selected tool is gstack_autoplan.",
+      "expected_tools": [
+        "gstack_autoplan"
+      ],
+      "forbidden_tools": [
+        "gstack_plan_ceo_review",
+        "gstack_plan_eng_review"
+      ],
+      "name": "auto-plan-review",
+      "rationale": "The request should route to gstack_autoplan.",
+      "task": "Run CEO, design, and engineering plan reviews automatically and surface only the key decisions.",
+      "verifier": {
+        "must_include_any": [
+          [
+            "gstack_autoplan"
+          ]
+        ],
+        "type": "flexible_text"
+      }
+    },
+    {
+      "expected_outcome": "The selected tool is gstack_review.",
+      "expected_tools": [
+        "gstack_review"
+      ],
+      "forbidden_tools": [
+        "gstack_cso",
+        "gstack_investigate"
+      ],
+      "name": "pre-landing-review",
+      "rationale": "The request should route to gstack_review.",
+      "task": "Review this PR before merge for SQL safety, trust boundaries, and production bugs.",
+      "verifier": {
+        "must_include_any": [
+          [
+            "gstack_review"
+          ]
+        ],
+        "type": "flexible_text"
+      }
+    },
+    {
+      "expected_outcome": "The selected tool is gstack_investigate.",
+      "expected_tools": [
+        "gstack_investigate"
+      ],
+      "forbidden_tools": [
+        "gstack_review",
+        "gstack_cso"
+      ],
+      "name": "root-cause-debug",
+      "rationale": "The request should route to gstack_investigate.",
+      "task": "Debug why this job started failing and do not patch anything until you find the root cause.",
+      "verifier": {
+        "must_include_any": [
+          [
+            "gstack_investigate"
+          ]
+        ],
+        "type": "flexible_text"
+      }
+    },
+    {
+      "expected_outcome": "The selected tool is gstack_cso.",
+      "expected_tools": [
+        "gstack_cso"
+      ],
+      "forbidden_tools": [
+        "gstack_review",
+        "gstack_careful"
+      ],
+      "name": "security-audit",
+      "rationale": "The request should route to gstack_cso.",
+      "task": "Run an infrastructure-first security audit with secrets, dependency supply chain, OWASP, and STRIDE coverage.",
+      "verifier": {
+        "must_include_any": [
+          [
+            "gstack_cso"
+          ]
+        ],
+        "type": "flexible_text"
+      }
+    },
+    {
+      "expected_outcome": "The selected tool is gstack_ship.",
+      "expected_tools": [
+        "gstack_ship"
+      ],
+      "forbidden_tools": [
+        "gstack_land_and_deploy",
+        "gstack_setup_deploy"
+      ],
+      "name": "ship-pr",
+      "rationale": "The request should route to gstack_ship.",
+      "task": "Sync main, run tests, update changelog, push this branch, and create a PR.",
+      "verifier": {
+        "must_include_any": [
+          [
+            "gstack_ship"
+          ]
+        ],
+        "type": "flexible_text"
+      }
+    },
+    {
+      "expected_outcome": "The selected tool is gstack_land_and_deploy.",
+      "expected_tools": [
+        "gstack_land_and_deploy"
+      ],
+      "forbidden_tools": [
+        "gstack_ship",
+        "gstack_canary"
+      ],
+      "name": "land-and-deploy",
+      "rationale": "The request should route to gstack_land_and_deploy.",
+      "task": "Merge the approved PR, wait for CI and deploy, then verify production health.",
+      "verifier": {
+        "must_include_any": [
+          [
+            "gstack_land_and_deploy"
+          ]
+        ],
+        "type": "flexible_text"
+      }
+    },
+    {
+      "expected_outcome": "The selected tool is gstack_setup_deploy.",
+      "expected_tools": [
+        "gstack_setup_deploy"
+      ],
+      "forbidden_tools": [
+        "gstack_land_and_deploy",
+        "gstack_ship"
+      ],
+      "name": "configure-deploy",
+      "rationale": "The request should route to gstack_setup_deploy.",
+      "task": "Detect our deploy platform and write the production URL, health checks, and deploy commands into project docs.",
+      "verifier": {
+        "must_include_any": [
+          [
+            "gstack_setup_deploy"
+          ]
+        ],
+        "type": "flexible_text"
+      }
+    },
+    {
+      "expected_outcome": "The selected tool is gstack_canary.",
+      "expected_tools": [
+        "gstack_canary"
+      ],
+      "forbidden_tools": [
+        "gstack_benchmark",
+        "gstack_qa"
+      ],
+      "name": "post-deploy-monitor",
+      "rationale": "The request should route to gstack_canary.",
+      "task": "Watch the live app after deploy for console errors, page failures, and regressions.",
+      "verifier": {
+        "must_include_any": [
+          [
+            "gstack_canary"
+          ]
+        ],
+        "type": "flexible_text"
+      }
+    },
+    {
+      "expected_outcome": "The selected tool is gstack_benchmark.",
+      "expected_tools": [
+        "gstack_benchmark"
+      ],
+      "forbidden_tools": [
+        "gstack_canary",
+        "gstack_qa"
+      ],
+      "name": "performance-regression",
+      "rationale": "The request should route to gstack_benchmark.",
+      "task": "Establish a page-load and Core Web Vitals baseline and compare this PR against it.",
+      "verifier": {
+        "must_include_any": [
+          [
+            "gstack_benchmark"
+          ]
+        ],
+        "type": "flexible_text"
+      }
+    },
+    {
+      "expected_outcome": "The selected tool is gstack_document_release.",
+      "expected_tools": [
+        "gstack_document_release"
+      ],
+      "forbidden_tools": [
+        "gstack_retro",
+        "gstack_ship"
+      ],
+      "name": "docs-after-release",
+      "rationale": "The request should route to gstack_document_release.",
+      "task": "Update README, architecture docs, and changelog to match what just shipped.",
+      "verifier": {
+        "must_include_any": [
+          [
+            "gstack_document_release"
+          ]
+        ],
+        "type": "flexible_text"
+      }
+    },
+    {
+      "expected_outcome": "The selected tool is gstack_retro.",
+      "expected_tools": [
+        "gstack_retro"
+      ],
+      "forbidden_tools": [
+        "gstack_document_release",
+        "gstack_review"
+      ],
+      "name": "weekly-retro",
+      "rationale": "The request should route to gstack_retro.",
+      "task": "Summarize what shipped this week across commits, tests, and team work patterns.",
+      "verifier": {
+        "must_include_any": [
+          [
+            "gstack_retro"
+          ]
+        ],
+        "type": "flexible_text"
+      }
+    },
+    {
+      "expected_outcome": "The selected tool is gstack_connect_chrome.",
+      "expected_tools": [
+        "gstack_connect_chrome"
+      ],
+      "forbidden_tools": [
+        "gstack_browse",
+        "gstack_setup_browser_cookies"
+      ],
+      "name": "real-chrome",
+      "rationale": "The request should route to gstack_connect_chrome.",
+      "task": "Launch my real Chrome with the side panel so I can watch the agent operate in the browser.",
+      "verifier": {
+        "must_include_any": [
+          [
+            "gstack_connect_chrome"
+          ]
+        ],
+        "type": "flexible_text"
+      }
+    },
+    {
+      "expected_outcome": "The selected tool is gstack_setup_browser_cookies.",
+      "expected_tools": [
+        "gstack_setup_browser_cookies"
+      ],
+      "forbidden_tools": [
+        "gstack_connect_chrome",
+        "gstack_browse"
+      ],
+      "name": "auth-cookies",
+      "rationale": "The request should route to gstack_setup_browser_cookies.",
+      "task": "Import cookies from my real browser so the headless browser can test authenticated pages.",
+      "verifier": {
+        "must_include_any": [
+          [
+            "gstack_setup_browser_cookies"
+          ]
+        ],
+        "type": "flexible_text"
+      }
+    },
+    {
+      "expected_outcome": "The selected tool is gstack_careful.",
+      "expected_tools": [
+        "gstack_careful"
+      ],
+      "forbidden_tools": [
+        "gstack_freeze",
+        "gstack_guard"
+      ],
+      "name": "careful-mode",
+      "rationale": "The request should route to gstack_careful.",
+      "task": "Be careful while touching production and warn me before destructive shell commands.",
+      "verifier": {
+        "must_include_any": [
+          [
+            "gstack_careful"
+          ]
+        ],
+        "type": "flexible_text"
+      }
+    },
+    {
+      "expected_outcome": "The selected tool is gstack_freeze.",
+      "expected_tools": [
+        "gstack_freeze"
+      ],
+      "forbidden_tools": [
+        "gstack_careful",
+        "gstack_guard"
+      ],
+      "name": "freeze-edits",
+      "rationale": "The request should route to gstack_freeze.",
+      "task": "Only edit files under packages/api while debugging this issue.",
+      "verifier": {
+        "must_include_any": [
+          [
+            "gstack_freeze"
+          ]
+        ],
+        "type": "flexible_text"
+      }
+    },
+    {
+      "expected_outcome": "The selected tool is gstack_guard.",
+      "expected_tools": [
+        "gstack_guard"
+      ],
+      "forbidden_tools": [
+        "gstack_careful",
+        "gstack_freeze"
+      ],
+      "name": "full-guard-mode",
+      "rationale": "The request should route to gstack_guard.",
+      "task": "Lock edits to this directory and warn before destructive commands.",
+      "verifier": {
+        "must_include_any": [
+          [
+            "gstack_guard"
+          ]
+        ],
+        "type": "flexible_text"
+      }
+    },
+    {
+      "expected_outcome": "The selected tool is gstack_unfreeze.",
+      "expected_tools": [
+        "gstack_unfreeze"
+      ],
+      "forbidden_tools": [
+        "gstack_freeze",
+        "gstack_guard"
+      ],
+      "name": "unfreeze-edits",
+      "rationale": "The request should route to gstack_unfreeze.",
+      "task": "Remove the edit restriction so changes can touch the whole repo again.",
+      "verifier": {
+        "must_include_any": [
+          [
+            "gstack_unfreeze"
+          ]
+        ],
+        "type": "flexible_text"
+      }
+    },
+    {
+      "expected_outcome": "The selected tool is gstack_upgrade.",
+      "expected_tools": [
+        "gstack_upgrade"
+      ],
+      "forbidden_tools": [
+        "gstack_ship",
+        "gstack_setup_deploy"
+      ],
+      "name": "upgrade-gstack",
+      "rationale": "The request should route to gstack_upgrade.",
+      "task": "Upgrade gstack to the latest version and show me what changed.",
+      "verifier": {
+        "must_include_any": [
+          [
+            "gstack_upgrade"
+          ]
+        ],
+        "type": "flexible_text"
+      }
+    },
+    {
+      "expected_outcome": "The selected tool is NO_TOOL.",
+      "expected_tools": [
+        "NO_TOOL"
+      ],
+      "forbidden_tools": [
+        "gstack_gstack",
+        "gstack_autoplan",
+        "gstack_benchmark",
+        "gstack_browse",
+        "gstack_canary",
+        "gstack_careful",
+        "gstack_connect_chrome",
+        "gstack_cso",
+        "gstack_design_consultation",
+        "gstack_design_review",
+        "gstack_design_shotgun",
+        "gstack_document_release",
+        "gstack_freeze",
+        "gstack_guard",
+        "gstack_investigate",
+        "gstack_land_and_deploy",
+        "gstack_office_hours",
+        "gstack_plan_ceo_review",
+        "gstack_plan_design_review",
+        "gstack_plan_eng_review",
+        "gstack_qa",
+        "gstack_qa_only",
+        "gstack_retro",
+        "gstack_review",
+        "gstack_setup_browser_cookies",
+        "gstack_setup_deploy",
+        "gstack_ship",
+        "gstack_spec_qa",
+        "gstack_unfreeze",
+        "gstack_upgrade"
+      ],
+      "name": "no-tool-general-answer",
+      "rationale": "The request should route to NO_TOOL.",
+      "task": "Explain what a monorepo is in two paragraphs. Do not run a workflow.",
+      "verifier": {
+        "must_include_any": [
+          [
+            "NO_TOOL"
+          ]
+        ],
+        "type": "flexible_text"
+      }
+    }
+  ],
+  "description": "Cross-provider skill-routing matrix for the pinned gstack Codex-compatible skill catalog.",
+  "instruction_variants": [
+    {
+      "instructions": "Choose the gstack skill that best matches the user request. Treat each skill as a workflow tool. Do not answer the task directly.",
+      "name": "baseline_skill_routing"
+    },
+    {
+      "instructions": "Choose exactly one gstack skill. First separate phase of work: ideation, plan review, code review, debugging, browser testing, QA with fixes, report-only QA, ship, deploy, post-deploy monitoring, documentation, retrospective, safety mode, or setup. Respect no-edit requests. Prefer narrow skills over broad aliases. If no gstack workflow should run, choose NO_TOOL.",
+      "name": "boundary_routing_rules"
+    }
+  ],
+  "name": "gstack skill-routing matrix",
+  "profiles": [
+    {
+      "api_key_env": "ANTHROPIC_API_KEY",
+      "harnesses": [
+        "native_tools",
+        "prompt_json"
+      ],
+      "model": "claude-sonnet-4-5",
+      "model_env": "ANTHROPIC_MATRIX_MODEL",
+      "name": "anthropic-sonnet",
+      "provider": "anthropic"
+    },
+    {
+      "api_key_env": "OPENAI_API_KEY",
+      "harnesses": [
+        "native_tools",
+        "prompt_json"
+      ],
+      "model": "gpt-4.1",
+      "model_env": "OPENAI_MATRIX_MODEL",
+      "name": "openai-gpt",
+      "provider": "openai"
+    },
+    {
+      "api_key_env": "GEMINI_API_KEY",
+      "harnesses": [
+        "native_tools",
+        "prompt_json"
+      ],
+      "max_tokens": 4096,
+      "model": "gemini-2.5-pro",
+      "model_env": "GEMINI_MATRIX_MODEL",
+      "name": "gemini-pro",
+      "provider": "gemini"
+    }
+  ],
+  "source": {
+    "commit": "cd66fc2f890982351e3178925be563681d0ab2c5",
+    "generated_surface_hash": "68d60eeefdde254818b03ee310bf1c4c9aaf0efee8d6db35141fe9cb7da8ae12",
+    "package_name": "gstack",
+    "package_version": "0.13.3.0",
+    "remote": "git@github.com:garrytan/gstack.git",
+    "source_path": "/Users/admin/dev/gstack",
+    "target_surface": ".agents/skills/*/SKILL.md generated skill files",
+    "target_surface_dirty": false,
+    "worktree_dirty": true
+  },
+  "tool_variants": [
+    {
+      "name": "gstack_stock_skill_descriptions",
+      "tools": [
+        {
+          "avoid_when": "Avoid when another gstack skill clearly matches the request better.",
+          "context_controls": [
+            "target path or URL",
+            "mutation intent",
+            "review mode",
+            "stop criteria"
+          ],
+          "error_guidance": "If required context is missing, ask for the missing URL, path, PR, deployment target, or allowed mutation scope before running the workflow.",
+          "input_schema": {
+            "properties": {
+              "request": {
+                "description": "The user's workflow request, including target URL, file, PR, or scope when available.",
+                "type": "string"
+              }
+            },
+            "required": [
+              "request"
+            ],
+            "type": "object"
+          },
+          "name": "gstack_gstack",
+          "output_schema": {
+            "result": "The selected gstack skill should execute its documented workflow and report evidence, changes, or next steps."
+          },
+          "path": "/Users/admin/dev/gstack/.agents/skills/gstack/SKILL.md",
+          "purpose": "Run the gstack gstack workflow: Fast headless browser for QA testing and site dogfooding. Navigate pages, interact with elements, verify state, diff before/after, take annotated screenshots, test responsive layouts, forms, uploads, dialogs, and capture bug evidence. Use when asked to open or test a site, verify a deployment, dogfood a user flow, or file a bug with screenshots.",
+          "quality_checks": [
+            "Confirm the request matches this skill's documented trigger."
+          ],
+          "source_hash": "df07a0ae0a281868efeb89aaa9cb58c0e45f6a3f0128f7332f54dbaa4ed9499d",
+          "source_skill_name": "gstack",
+          "use_when": "Fast headless browser for QA testing and site dogfooding. Navigate pages, interact with elements, verify state, diff before/after, take annotated screenshots, test responsive layouts, forms, uploads, dialogs, and capture bug evidence. Use when asked to open or test a site, verify a deployment, dogfood a user flow, or file a bug with screenshots."
+        },
+        {
+          "avoid_when": "Avoid when another gstack skill clearly matches the request better.",
+          "context_controls": [
+            "target path or URL",
+            "mutation intent",
+            "review mode",
+            "stop criteria"
+          ],
+          "error_guidance": "If required context is missing, ask for the missing URL, path, PR, deployment target, or allowed mutation scope before running the workflow.",
+          "input_schema": {
+            "properties": {
+              "request": {
+                "description": "The user's workflow request, including target URL, file, PR, or scope when available.",
+                "type": "string"
+              }
+            },
+            "required": [
+              "request"
+            ],
+            "type": "object"
+          },
+          "name": "gstack_autoplan",
+          "output_schema": {
+            "result": "The selected gstack skill should execute its documented workflow and report evidence, changes, or next steps."
+          },
+          "path": "/Users/admin/dev/gstack/.agents/skills/gstack-autoplan/SKILL.md",
+          "purpose": "Run the autoplan gstack workflow: Auto-review pipeline \u2014 reads the full CEO, design, and eng review skills from disk and runs them sequentially with auto-decisions using 6 decision principles. Surfaces taste decisions (close approaches, borderline scope, codex disagreements) at a final approval gate. One command, fully reviewed plan out. Use when asked to \"auto review\", \"autoplan\", \"run all reviews\", \"review this plan automatically\", or \"make the decisions for me\". Proactively suggest when the user has a plan file and wants to run the full review gauntlet without answering 15-30 intermediate questions.",
+          "quality_checks": [
+            "Confirm the request matches this skill's documented trigger."
+          ],
+          "source_hash": "3084f398eb4270e2ab6e0e9ee1d4dd88d3a74f07c6ad8843f1351c4ebb4da7a7",
+          "source_skill_name": "autoplan",
+          "use_when": "Auto-review pipeline \u2014 reads the full CEO, design, and eng review skills from disk and runs them sequentially with auto-decisions using 6 decision principles. Surfaces taste decisions (close approaches, borderline scope, codex disagreements) at a final approval gate. One command, fully reviewed plan out. Use when asked to \"auto review\", \"autoplan\", \"run all reviews\", \"review this plan automatically\", or \"make the decisions for me\". Proactively suggest when the user has a plan file and wants to run the full review gauntlet without answering 15-30 intermediate questions."
+        },
+        {
+          "avoid_when": "Avoid when another gstack skill clearly matches the request better.",
+          "context_controls": [
+            "target path or URL",
+            "mutation intent",
+            "review mode",
+            "stop criteria"
+          ],
+          "error_guidance": "If required context is missing, ask for the missing URL, path, PR, deployment target, or allowed mutation scope before running the workflow.",
+          "input_schema": {
+            "properties": {
+              "request": {
+                "description": "The user's workflow request, including target URL, file, PR, or scope when available.",
+                "type": "string"
+              }
+            },
+            "required": [
+              "request"
+            ],
+            "type": "object"
+          },
+          "name": "gstack_benchmark",
+          "output_schema": {
+            "result": "The selected gstack skill should execute its documented workflow and report evidence, changes, or next steps."
+          },
+          "path": "/Users/admin/dev/gstack/.agents/skills/gstack-benchmark/SKILL.md",
+          "purpose": "Run the benchmark gstack workflow: Performance regression detection using the browse daemon. Establishes baselines for page load times, Core Web Vitals, and resource sizes. Compares before/after on every PR. Tracks performance trends over time. Use when: \"performance\", \"benchmark\", \"page speed\", \"lighthouse\", \"web vitals\", \"bundle size\", \"load time\".",
+          "quality_checks": [
+            "Confirm the request matches this skill's documented trigger."
+          ],
+          "source_hash": "8ea42c8a2675b07118dd585287b570e05b6db1df0411f036674a81e9874f928f",
+          "source_skill_name": "benchmark",
+          "use_when": "Performance regression detection using the browse daemon. Establishes baselines for page load times, Core Web Vitals, and resource sizes. Compares before/after on every PR. Tracks performance trends over time. Use when: \"performance\", \"benchmark\", \"page speed\", \"lighthouse\", \"web vitals\", \"bundle size\", \"load time\"."
+        },
+        {
+          "avoid_when": "Avoid when another gstack skill clearly matches the request better.",
+          "context_controls": [
+            "target path or URL",
+            "mutation intent",
+            "review mode",
+            "stop criteria"
+          ],
+          "error_guidance": "If required context is missing, ask for the missing URL, path, PR, deployment target, or allowed mutation scope before running the workflow.",
+          "input_schema": {
+            "properties": {
+              "request": {
+                "description": "The user's workflow request, including target URL, file, PR, or scope when available.",
+                "type": "string"
+              }
+            },
+            "required": [
+              "request"
+            ],
+            "type": "object"
+          },
+          "name": "gstack_browse",
+          "output_schema": {
+            "result": "The selected gstack skill should execute its documented workflow and report evidence, changes, or next steps."
+          },
+          "path": "/Users/admin/dev/gstack/.agents/skills/gstack-browse/SKILL.md",
+          "purpose": "Run the browse gstack workflow: Fast headless browser for QA testing and site dogfooding. Navigate any URL, interact with elements, verify page state, diff before/after actions, take annotated screenshots, check responsive layouts, test forms and uploads, handle dialogs, and assert element states. ~100ms per command. Use when you need to test a feature, verify a deployment, dogfood a user flow, or file a bug with evidence. Use when asked to \"open in browser\", \"test the site\", \"take a screenshot\", or \"dogfood this\".",
+          "quality_checks": [
+            "Confirm the request matches this skill's documented trigger."
+          ],
+          "source_hash": "598827f933d955ba6075bf460d80be290bb010203f31d2d3aaac8b5a312b425e",
+          "source_skill_name": "browse",
+          "use_when": "Fast headless browser for QA testing and site dogfooding. Navigate any URL, interact with elements, verify page state, diff before/after actions, take annotated screenshots, check responsive layouts, test forms and uploads, handle dialogs, and assert element states. ~100ms per command. Use when you need to test a feature, verify a deployment, dogfood a user flow, or file a bug with evidence. Use when asked to \"open in browser\", \"test the site\", \"take a screenshot\", or \"dogfood this\"."
+        },
+        {
+          "avoid_when": "Avoid when another gstack skill clearly matches the request better.",
+          "context_controls": [
+            "target path or URL",
+            "mutation intent",
+            "review mode",
+            "stop criteria"
+          ],
+          "error_guidance": "If required context is missing, ask for the missing URL, path, PR, deployment target, or allowed mutation scope before running the workflow.",
+          "input_schema": {
+            "properties": {
+              "request": {
+                "description": "The user's workflow request, including target URL, file, PR, or scope when available.",
+                "type": "string"
+              }
+            },
+            "required": [
+              "request"
+            ],
+            "type": "object"
+          },
+          "name": "gstack_canary",
+          "output_schema": {
+            "result": "The selected gstack skill should execute its documented workflow and report evidence, changes, or next steps."
+          },
+          "path": "/Users/admin/dev/gstack/.agents/skills/gstack-canary/SKILL.md",
+          "purpose": "Run the canary gstack workflow: Post-deploy canary monitoring. Watches the live app for console errors, performance regressions, and page failures using the browse daemon. Takes periodic screenshots, compares against pre-deploy baselines, and alerts on anomalies. Use when: \"monitor deploy\", \"canary\", \"post-deploy check\", \"watch production\", \"verify deploy\".",
+          "quality_checks": [
+            "Confirm the request matches this skill's documented trigger."
+          ],
+          "source_hash": "a412e3d8994c5df7e7c4233bf62df41f5a3b30366d819489c05f213367c96995",
+          "source_skill_name": "canary",
+          "use_when": "Post-deploy canary monitoring. Watches the live app for console errors, performance regressions, and page failures using the browse daemon. Takes periodic screenshots, compares against pre-deploy baselines, and alerts on anomalies. Use when: \"monitor deploy\", \"canary\", \"post-deploy check\", \"watch production\", \"verify deploy\"."
+        },
+        {
+          "avoid_when": "Avoid when another gstack skill clearly matches the request better.",
+          "context_controls": [
+            "target path or URL",
+            "mutation intent",
+            "review mode",
+            "stop criteria"
+          ],
+          "error_guidance": "If required context is missing, ask for the missing URL, path, PR, deployment target, or allowed mutation scope before running the workflow.",
+          "input_schema": {
+            "properties": {
+              "request": {
+                "description": "The user's workflow request, including target URL, file, PR, or scope when available.",
+                "type": "string"
+              }
+            },
+            "required": [
+              "request"
+            ],
+            "type": "object"
+          },
+          "name": "gstack_careful",
+          "output_schema": {
+            "result": "The selected gstack skill should execute its documented workflow and report evidence, changes, or next steps."
+          },
+          "path": "/Users/admin/dev/gstack/.agents/skills/gstack-careful/SKILL.md",
+          "purpose": "Run the careful gstack workflow: Safety guardrails for destructive commands. Warns before rm -rf, DROP TABLE, force-push, git reset --hard, kubectl delete, and similar destructive operations. User can override each warning. Use when touching prod, debugging live systems, or working in a shared environment. Use when asked to \"be careful\", \"safety mode\", \"prod mode\", or \"careful mode\".",
+          "quality_checks": [
+            "Confirm the request matches this skill's documented trigger."
+          ],
+          "source_hash": "c3ee58166c1425cbabbe8d1c1e0d357cde583dd7c86bca6e2b7852a221e1e986",
+          "source_skill_name": "careful",
+          "use_when": "Safety guardrails for destructive commands. Warns before rm -rf, DROP TABLE, force-push, git reset --hard, kubectl delete, and similar destructive operations. User can override each warning. Use when touching prod, debugging live systems, or working in a shared environment. Use when asked to \"be careful\", \"safety mode\", \"prod mode\", or \"careful mode\"."
+        },
+        {
+          "avoid_when": "Avoid when another gstack skill clearly matches the request better.",
+          "context_controls": [
+            "target path or URL",
+            "mutation intent",
+            "review mode",
+            "stop criteria"
+          ],
+          "error_guidance": "If required context is missing, ask for the missing URL, path, PR, deployment target, or allowed mutation scope before running the workflow.",
+          "input_schema": {
+            "properties": {
+              "request": {
+                "description": "The user's workflow request, including target URL, file, PR, or scope when available.",
+                "type": "string"
+              }
+            },
+            "required": [
+              "request"
+            ],
+            "type": "object"
+          },
+          "name": "gstack_connect_chrome",
+          "output_schema": {
+            "result": "The selected gstack skill should execute its documented workflow and report evidence, changes, or next steps."
+          },
+          "path": "/Users/admin/dev/gstack/.agents/skills/gstack-connect-chrome/SKILL.md",
+          "purpose": "Run the connect-chrome gstack workflow: Launch real Chrome controlled by gstack with the Side Panel extension auto-loaded. One command: connects Claude to a visible Chrome window where you can watch every action in real time. The extension shows a live activity feed in the Side Panel. Use when asked to \"connect chrome\", \"open chrome\", \"real browser\", \"launch chrome\", \"side panel\", or \"control my browser\".",
+          "quality_checks": [
+            "Confirm the request matches this skill's documented trigger."
+          ],
+          "source_hash": "84d80c26e960b4a7f300a132eca53540f8973fbd1f76ced51bdabb2cd4555d12",
+          "source_skill_name": "connect-chrome",
+          "use_when": "Launch real Chrome controlled by gstack with the Side Panel extension auto-loaded. One command: connects Claude to a visible Chrome window where you can watch every action in real time. The extension shows a live activity feed in the Side Panel. Use when asked to \"connect chrome\", \"open chrome\", \"real browser\", \"launch chrome\", \"side panel\", or \"control my browser\"."
+        },
+        {
+          "avoid_when": "Avoid when another gstack skill clearly matches the request better.",
+          "context_controls": [
+            "target path or URL",
+            "mutation intent",
+            "review mode",
+            "stop criteria"
+          ],
+          "error_guidance": "If required context is missing, ask for the missing URL, path, PR, deployment target, or allowed mutation scope before running the workflow.",
+          "input_schema": {
+            "properties": {
+              "request": {
+                "description": "The user's workflow request, including target URL, file, PR, or scope when available.",
+                "type": "string"
+              }
+            },
+            "required": [
+              "request"
+            ],
+            "type": "object"
+          },
+          "name": "gstack_cso",
+          "output_schema": {
+            "result": "The selected gstack skill should execute its documented workflow and report evidence, changes, or next steps."
+          },
+          "path": "/Users/admin/dev/gstack/.agents/skills/gstack-cso/SKILL.md",
+          "purpose": "Run the cso gstack workflow: Chief Security Officer mode. Infrastructure-first security audit: secrets archaeology, dependency supply chain, CI/CD pipeline security, LLM/AI security, skill supply chain scanning, plus OWASP Top 10, STRIDE threat modeling, and active verification. Two modes: daily (zero-noise, 8/10 confidence gate) and comprehensive (monthly deep scan, 2/10 bar). Trend tracking across audit runs. Use when: \"security audit\", \"threat model\", \"pentest review\", \"OWASP\", \"CSO review\".",
+          "quality_checks": [
+            "Confirm the request matches this skill's documented trigger."
+          ],
+          "source_hash": "3703e18b15fdaa0802798f147d7a6743a49c46f6763924c898052092b6f92c99",
+          "source_skill_name": "cso",
+          "use_when": "Chief Security Officer mode. Infrastructure-first security audit: secrets archaeology, dependency supply chain, CI/CD pipeline security, LLM/AI security, skill supply chain scanning, plus OWASP Top 10, STRIDE threat modeling, and active verification. Two modes: daily (zero-noise, 8/10 confidence gate) and comprehensive (monthly deep scan, 2/10 bar). Trend tracking across audit runs. Use when: \"security audit\", \"threat model\", \"pentest review\", \"OWASP\", \"CSO review\"."
+        },
+        {
+          "avoid_when": "Avoid when another gstack skill clearly matches the request better.",
+          "context_controls": [
+            "target path or URL",
+            "mutation intent",
+            "review mode",
+            "stop criteria"
+          ],
+          "error_guidance": "If required context is missing, ask for the missing URL, path, PR, deployment target, or allowed mutation scope before running the workflow.",
+          "input_schema": {
+            "properties": {
+              "request": {
+                "description": "The user's workflow request, including target URL, file, PR, or scope when available.",
+                "type": "string"
+              }
+            },
+            "required": [
+              "request"
+            ],
+            "type": "object"
+          },
+          "name": "gstack_design_consultation",
+          "output_schema": {
+            "result": "The selected gstack skill should execute its documented workflow and report evidence, changes, or next steps."
+          },
+          "path": "/Users/admin/dev/gstack/.agents/skills/gstack-design-consultation/SKILL.md",
+          "purpose": "Run the design-consultation gstack workflow: Design consultation: understands your product, researches the landscape, proposes a complete design system (aesthetic, typography, color, layout, spacing, motion), and generates font+color preview pages. Creates DESIGN.md as your project's design source of truth. For existing sites, use /plan-design-review to infer the system instead. Use when asked to \"design system\", \"brand guidelines\", or \"create DESIGN.md\". Proactively suggest when starting a new project's UI with no existing design system or DESIGN.md.",
+          "quality_checks": [
+            "Confirm the request matches this skill's documented trigger."
+          ],
+          "source_hash": "cee13788f34e2fdf169357e181196c41f9c6e04b40efc1085840b1313bd36840",
+          "source_skill_name": "design-consultation",
+          "use_when": "Design consultation: understands your product, researches the landscape, proposes a complete design system (aesthetic, typography, color, layout, spacing, motion), and generates font+color preview pages. Creates DESIGN.md as your project's design source of truth. For existing sites, use /plan-design-review to infer the system instead. Use when asked to \"design system\", \"brand guidelines\", or \"create DESIGN.md\". Proactively suggest when starting a new project's UI with no existing design system or DESIGN.md."
+        },
+        {
+          "avoid_when": "Avoid when another gstack skill clearly matches the request better.",
+          "context_controls": [
+            "target path or URL",
+            "mutation intent",
+            "review mode",
+            "stop criteria"
+          ],
+          "error_guidance": "If required context is missing, ask for the missing URL, path, PR, deployment target, or allowed mutation scope before running the workflow.",
+          "input_schema": {
+            "properties": {
+              "request": {
+                "description": "The user's workflow request, including target URL, file, PR, or scope when available.",
+                "type": "string"
+              }
+            },
+            "required": [
+              "request"
+            ],
+            "type": "object"
+          },
+          "name": "gstack_design_review",
+          "output_schema": {
+            "result": "The selected gstack skill should execute its documented workflow and report evidence, changes, or next steps."
+          },
+          "path": "/Users/admin/dev/gstack/.agents/skills/gstack-design-review/SKILL.md",
+          "purpose": "Run the design-review gstack workflow: Designer's eye QA: finds visual inconsistency, spacing issues, hierarchy problems, AI slop patterns, and slow interactions \u2014 then fixes them. Iteratively fixes issues in source code, committing each fix atomically and re-verifying with before/after screenshots. For plan-mode design review (before implementation), use /plan-design-review. Use when asked to \"audit the design\", \"visual QA\", \"check if it looks good\", or \"design polish\". Proactively suggest when the user mentions visual inconsistencies or wants to polish the look of a live site.",
+          "quality_checks": [
+            "Confirm the request matches this skill's documented trigger."
+          ],
+          "source_hash": "2bc975a76d64911393a6eee88375702dbd78f860957414b1876b5e45d3f978ab",
+          "source_skill_name": "design-review",
+          "use_when": "Designer's eye QA: finds visual inconsistency, spacing issues, hierarchy problems, AI slop patterns, and slow interactions \u2014 then fixes them. Iteratively fixes issues in source code, committing each fix atomically and re-verifying with before/after screenshots. For plan-mode design review (before implementation), use /plan-design-review. Use when asked to \"audit the design\", \"visual QA\", \"check if it looks good\", or \"design polish\". Proactively suggest when the user mentions visual inconsistencies or wants to polish the look of a live site."
+        },
+        {
+          "avoid_when": "Avoid when another gstack skill clearly matches the request better.",
+          "context_controls": [
+            "target path or URL",
+            "mutation intent",
+            "review mode",
+            "stop criteria"
+          ],
+          "error_guidance": "If required context is missing, ask for the missing URL, path, PR, deployment target, or allowed mutation scope before running the workflow.",
+          "input_schema": {
+            "properties": {
+              "request": {
+                "description": "The user's workflow request, including target URL, file, PR, or scope when available.",
+                "type": "string"
+              }
+            },
+            "required": [
+              "request"
+            ],
+            "type": "object"
+          },
+          "name": "gstack_design_shotgun",
+          "output_schema": {
+            "result": "The selected gstack skill should execute its documented workflow and report evidence, changes, or next steps."
+          },
+          "path": "/Users/admin/dev/gstack/.agents/skills/gstack-design-shotgun/SKILL.md",
+          "purpose": "Run the design-shotgun gstack workflow: Design shotgun: generate multiple AI design variants, open a comparison board, collect structured feedback, and iterate. Standalone design exploration you can run anytime. Use when: \"explore designs\", \"show me options\", \"design variants\", \"visual brainstorm\", or \"I don't like how this looks\". Proactively suggest when the user describes a UI feature but hasn't seen what it could look like.",
+          "quality_checks": [
+            "Confirm the request matches this skill's documented trigger."
+          ],
+          "source_hash": "b5867a3ba777fc27824f4a4c523a2724da23c0e627c8e6eed8e61ad3666d664f",
+          "source_skill_name": "design-shotgun",
+          "use_when": "Design shotgun: generate multiple AI design variants, open a comparison board, collect structured feedback, and iterate. Standalone design exploration you can run anytime. Use when: \"explore designs\", \"show me options\", \"design variants\", \"visual brainstorm\", or \"I don't like how this looks\". Proactively suggest when the user describes a UI feature but hasn't seen what it could look like."
+        },
+        {
+          "avoid_when": "Avoid when another gstack skill clearly matches the request better.",
+          "context_controls": [
+            "target path or URL",
+            "mutation intent",
+            "review mode",
+            "stop criteria"
+          ],
+          "error_guidance": "If required context is missing, ask for the missing URL, path, PR, deployment target, or allowed mutation scope before running the workflow.",
+          "input_schema": {
+            "properties": {
+              "request": {
+                "description": "The user's workflow request, including target URL, file, PR, or scope when available.",
+                "type": "string"
+              }
+            },
+            "required": [
+              "request"
+            ],
+            "type": "object"
+          },
+          "name": "gstack_document_release",
+          "output_schema": {
+            "result": "The selected gstack skill should execute its documented workflow and report evidence, changes, or next steps."
+          },
+          "path": "/Users/admin/dev/gstack/.agents/skills/gstack-document-release/SKILL.md",
+          "purpose": "Run the document-release gstack workflow: Post-ship documentation update. Reads all project docs, cross-references the diff, updates README/ARCHITECTURE/CONTRIBUTING/CLAUDE.md to match what shipped, polishes CHANGELOG voice, cleans up TODOS, and optionally bumps VERSION. Use when asked to \"update the docs\", \"sync documentation\", or \"post-ship docs\". Proactively suggest after a PR is merged or code is shipped.",
+          "quality_checks": [
+            "Confirm the request matches this skill's documented trigger."
+          ],
+          "source_hash": "a1fcceca925c72c99c2b173f320f90c2b403089915177055c463d8a839d228cf",
+          "source_skill_name": "document-release",
+          "use_when": "Post-ship documentation update. Reads all project docs, cross-references the diff, updates README/ARCHITECTURE/CONTRIBUTING/CLAUDE.md to match what shipped, polishes CHANGELOG voice, cleans up TODOS, and optionally bumps VERSION. Use when asked to \"update the docs\", \"sync documentation\", or \"post-ship docs\". Proactively suggest after a PR is merged or code is shipped."
+        },
+        {
+          "avoid_when": "Avoid when another gstack skill clearly matches the request better.",
+          "context_controls": [
+            "target path or URL",
+            "mutation intent",
+            "review mode",
+            "stop criteria"
+          ],
+          "error_guidance": "If required context is missing, ask for the missing URL, path, PR, deployment target, or allowed mutation scope before running the workflow.",
+          "input_schema": {
+            "properties": {
+              "request": {
+                "description": "The user's workflow request, including target URL, file, PR, or scope when available.",
+                "type": "string"
+              }
+            },
+            "required": [
+              "request"
+            ],
+            "type": "object"
+          },
+          "name": "gstack_freeze",
+          "output_schema": {
+            "result": "The selected gstack skill should execute its documented workflow and report evidence, changes, or next steps."
+          },
+          "path": "/Users/admin/dev/gstack/.agents/skills/gstack-freeze/SKILL.md",
+          "purpose": "Run the freeze gstack workflow: Restrict file edits to a specific directory for the session. Blocks Edit and Write outside the allowed path. Use when debugging to prevent accidentally \"fixing\" unrelated code, or when you want to scope changes to one module. Use when asked to \"freeze\", \"restrict edits\", \"only edit this folder\", or \"lock down edits\".",
+          "quality_checks": [
+            "Confirm the request matches this skill's documented trigger."
+          ],
+          "source_hash": "c2450475fd7e8681aa22342d70dadc305f2675dc40a66b23f44454d22bd35b60",
+          "source_skill_name": "freeze",
+          "use_when": "Restrict file edits to a specific directory for the session. Blocks Edit and Write outside the allowed path. Use when debugging to prevent accidentally \"fixing\" unrelated code, or when you want to scope changes to one module. Use when asked to \"freeze\", \"restrict edits\", \"only edit this folder\", or \"lock down edits\"."
+        },
+        {
+          "avoid_when": "Avoid when another gstack skill clearly matches the request better.",
+          "context_controls": [
+            "target path or URL",
+            "mutation intent",
+            "review mode",
+            "stop criteria"
+          ],
+          "error_guidance": "If required context is missing, ask for the missing URL, path, PR, deployment target, or allowed mutation scope before running the workflow.",
+          "input_schema": {
+            "properties": {
+              "request": {
+                "description": "The user's workflow request, including target URL, file, PR, or scope when available.",
+                "type": "string"
+              }
+            },
+            "required": [
+              "request"
+            ],
+            "type": "object"
+          },
+          "name": "gstack_guard",
+          "output_schema": {
+            "result": "The selected gstack skill should execute its documented workflow and report evidence, changes, or next steps."
+          },
+          "path": "/Users/admin/dev/gstack/.agents/skills/gstack-guard/SKILL.md",
+          "purpose": "Run the guard gstack workflow: Full safety mode: destructive command warnings + directory-scoped edits. Combines /careful (warns before rm -rf, DROP TABLE, force-push, etc.) with /freeze (blocks edits outside a specified directory). Use for maximum safety when touching prod or debugging live systems. Use when asked to \"guard mode\", \"full safety\", \"lock it down\", or \"maximum safety\".",
+          "quality_checks": [
+            "Confirm the request matches this skill's documented trigger."
+          ],
+          "source_hash": "05cd13b4f5bddf1724b6ffdbd2ef546b7f24944b12510b6b1a6af8d9f4c0edd8",
+          "source_skill_name": "guard",
+          "use_when": "Full safety mode: destructive command warnings + directory-scoped edits. Combines /careful (warns before rm -rf, DROP TABLE, force-push, etc.) with /freeze (blocks edits outside a specified directory). Use for maximum safety when touching prod or debugging live systems. Use when asked to \"guard mode\", \"full safety\", \"lock it down\", or \"maximum safety\"."
+        },
+        {
+          "avoid_when": "Avoid when another gstack skill clearly matches the request better.",
+          "context_controls": [
+            "target path or URL",
+            "mutation intent",
+            "review mode",
+            "stop criteria"
+          ],
+          "error_guidance": "If required context is missing, ask for the missing URL, path, PR, deployment target, or allowed mutation scope before running the workflow.",
+          "input_schema": {
+            "properties": {
+              "request": {
+                "description": "The user's workflow request, including target URL, file, PR, or scope when available.",
+                "type": "string"
+              }
+            },
+            "required": [
+              "request"
+            ],
+            "type": "object"
+          },
+          "name": "gstack_investigate",
+          "output_schema": {
+            "result": "The selected gstack skill should execute its documented workflow and report evidence, changes, or next steps."
+          },
+          "path": "/Users/admin/dev/gstack/.agents/skills/gstack-investigate/SKILL.md",
+          "purpose": "Run the investigate gstack workflow: Systematic debugging with root cause investigation. Four phases: investigate, analyze, hypothesize, implement. Iron Law: no fixes without root cause. Use when asked to \"debug this\", \"fix this bug\", \"why is this broken\", \"investigate this error\", or \"root cause analysis\". Proactively suggest when the user reports errors, unexpected behavior, or is troubleshooting why something stopped working.",
+          "quality_checks": [
+            "Confirm the request matches this skill's documented trigger."
+          ],
+          "source_hash": "36df92af3b77195ee051671585450e52d8fda5d3bddbdbaaae5c68d920f389c7",
+          "source_skill_name": "investigate",
+          "use_when": "Systematic debugging with root cause investigation. Four phases: investigate, analyze, hypothesize, implement. Iron Law: no fixes without root cause. Use when asked to \"debug this\", \"fix this bug\", \"why is this broken\", \"investigate this error\", or \"root cause analysis\". Proactively suggest when the user reports errors, unexpected behavior, or is troubleshooting why something stopped working."
+        },
+        {
+          "avoid_when": "Avoid when another gstack skill clearly matches the request better.",
+          "context_controls": [
+            "target path or URL",
+            "mutation intent",
+            "review mode",
+            "stop criteria"
+          ],
+          "error_guidance": "If required context is missing, ask for the missing URL, path, PR, deployment target, or allowed mutation scope before running the workflow.",
+          "input_schema": {
+            "properties": {
+              "request": {
+                "description": "The user's workflow request, including target URL, file, PR, or scope when available.",
+                "type": "string"
+              }
+            },
+            "required": [
+              "request"
+            ],
+            "type": "object"
+          },
+          "name": "gstack_land_and_deploy",
+          "output_schema": {
+            "result": "The selected gstack skill should execute its documented workflow and report evidence, changes, or next steps."
+          },
+          "path": "/Users/admin/dev/gstack/.agents/skills/gstack-land-and-deploy/SKILL.md",
+          "purpose": "Run the land-and-deploy gstack workflow: Land and deploy workflow. Merges the PR, waits for CI and deploy, verifies production health via canary checks. Takes over after /ship creates the PR. Use when: \"merge\", \"land\", \"deploy\", \"merge and verify\", \"land it\", \"ship it to production\".",
+          "quality_checks": [
+            "Confirm the request matches this skill's documented trigger."
+          ],
+          "source_hash": "d00c3bf297285a84720a99fbcee7dfe7a7d9ac9c35bd3a076d99165470780ddf",
+          "source_skill_name": "land-and-deploy",
+          "use_when": "Land and deploy workflow. Merges the PR, waits for CI and deploy, verifies production health via canary checks. Takes over after /ship creates the PR. Use when: \"merge\", \"land\", \"deploy\", \"merge and verify\", \"land it\", \"ship it to production\"."
+        },
+        {
+          "avoid_when": "Avoid when another gstack skill clearly matches the request better.",
+          "context_controls": [
+            "target path or URL",
+            "mutation intent",
+            "review mode",
+            "stop criteria"
+          ],
+          "error_guidance": "If required context is missing, ask for the missing URL, path, PR, deployment target, or allowed mutation scope before running the workflow.",
+          "input_schema": {
+            "properties": {
+              "request": {
+                "description": "The user's workflow request, including target URL, file, PR, or scope when available.",
+                "type": "string"
+              }
+            },
+            "required": [
+              "request"
+            ],
+            "type": "object"
+          },
+          "name": "gstack_office_hours",
+          "output_schema": {
+            "result": "The selected gstack skill should execute its documented workflow and report evidence, changes, or next steps."
+          },
+          "path": "/Users/admin/dev/gstack/.agents/skills/gstack-office-hours/SKILL.md",
+          "purpose": "Run the office-hours gstack workflow: YC Office Hours \u2014 two modes. Startup mode: six forcing questions that expose demand reality, status quo, desperate specificity, narrowest wedge, observation, and future-fit. Builder mode: design thinking brainstorming for side projects, hackathons, learning, and open source. Saves a design doc. Use when asked to \"brainstorm this\", \"I have an idea\", \"help me think through this\", \"office hours\", or \"is this worth building\". Proactively suggest when the user describes a new product idea or is exploring whether something is worth building \u2014 before any code is written. Use before /plan-ceo-review or /plan-eng-review.",
+          "quality_checks": [
+            "Confirm the request matches this skill's documented trigger."
+          ],
+          "source_hash": "4851af58562a8c230c1239521460621b6da931ae0033936e0b2a491140944b47",
+          "source_skill_name": "office-hours",
+          "use_when": "YC Office Hours \u2014 two modes. Startup mode: six forcing questions that expose demand reality, status quo, desperate specificity, narrowest wedge, observation, and future-fit. Builder mode: design thinking brainstorming for side projects, hackathons, learning, and open source. Saves a design doc. Use when asked to \"brainstorm this\", \"I have an idea\", \"help me think through this\", \"office hours\", or \"is this worth building\". Proactively suggest when the user describes a new product idea or is exploring whether something is worth building \u2014 before any code is written. Use before /plan-ceo-review or /plan-eng-review."
+        },
+        {
+          "avoid_when": "Avoid when another gstack skill clearly matches the request better.",
+          "context_controls": [
+            "target path or URL",
+            "mutation intent",
+            "review mode",
+            "stop criteria"
+          ],
+          "error_guidance": "If required context is missing, ask for the missing URL, path, PR, deployment target, or allowed mutation scope before running the workflow.",
+          "input_schema": {
+            "properties": {
+              "request": {
+                "description": "The user's workflow request, including target URL, file, PR, or scope when available.",
+                "type": "string"
+              }
+            },
+            "required": [
+              "request"
+            ],
+            "type": "object"
+          },
+          "name": "gstack_plan_ceo_review",
+          "output_schema": {
+            "result": "The selected gstack skill should execute its documented workflow and report evidence, changes, or next steps."
+          },
+          "path": "/Users/admin/dev/gstack/.agents/skills/gstack-plan-ceo-review/SKILL.md",
+          "purpose": "Run the plan-ceo-review gstack workflow: CEO/founder-mode plan review. Rethink the problem, find the 10-star product, challenge premises, expand scope when it creates a better product. Four modes: SCOPE EXPANSION (dream big), SELECTIVE EXPANSION (hold scope + cherry-pick expansions), HOLD SCOPE (maximum rigor), SCOPE REDUCTION (strip to essentials). Use when asked to \"think bigger\", \"expand scope\", \"strategy review\", \"rethink this\", or \"is this ambitious enough\". Proactively suggest when the user is questioning scope or ambition of a plan, or when the plan feels like it could be thinking bigger.",
+          "quality_checks": [
+            "Confirm the request matches this skill's documented trigger."
+          ],
+          "source_hash": "b6090192fefd1129096f061198d77c54015751128c301c95b0a1c4e735e3cca2",
+          "source_skill_name": "plan-ceo-review",
+          "use_when": "CEO/founder-mode plan review. Rethink the problem, find the 10-star product, challenge premises, expand scope when it creates a better product. Four modes: SCOPE EXPANSION (dream big), SELECTIVE EXPANSION (hold scope + cherry-pick expansions), HOLD SCOPE (maximum rigor), SCOPE REDUCTION (strip to essentials). Use when asked to \"think bigger\", \"expand scope\", \"strategy review\", \"rethink this\", or \"is this ambitious enough\". Proactively suggest when the user is questioning scope or ambition of a plan, or when the plan feels like it could be thinking bigger."
+        },
+        {
+          "avoid_when": "Avoid when another gstack skill clearly matches the request better.",
+          "context_controls": [
+            "target path or URL",
+            "mutation intent",
+            "review mode",
+            "stop criteria"
+          ],
+          "error_guidance": "If required context is missing, ask for the missing URL, path, PR, deployment target, or allowed mutation scope before running the workflow.",
+          "input_schema": {
+            "properties": {
+              "request": {
+                "description": "The user's workflow request, including target URL, file, PR, or scope when available.",
+                "type": "string"
+              }
+            },
+            "required": [
+              "request"
+            ],
+            "type": "object"
+          },
+          "name": "gstack_plan_design_review",
+          "output_schema": {
+            "result": "The selected gstack skill should execute its documented workflow and report evidence, changes, or next steps."
+          },
+          "path": "/Users/admin/dev/gstack/.agents/skills/gstack-plan-design-review/SKILL.md",
+          "purpose": "Run the plan-design-review gstack workflow: Designer's eye plan review \u2014 interactive, like CEO and Eng review. Rates each design dimension 0-10, explains what would make it a 10, then fixes the plan to get there. Works in plan mode. For live site visual audits, use /design-review. Use when asked to \"review the design plan\" or \"design critique\". Proactively suggest when the user has a plan with UI/UX components that should be reviewed before implementation.",
+          "quality_checks": [
+            "Confirm the request matches this skill's documented trigger."
+          ],
+          "source_hash": "1ed682aaa834148867c74719b5328811387002ac1f7faaff347786856d8d4c09",
+          "source_skill_name": "plan-design-review",
+          "use_when": "Designer's eye plan review \u2014 interactive, like CEO and Eng review. Rates each design dimension 0-10, explains what would make it a 10, then fixes the plan to get there. Works in plan mode. For live site visual audits, use /design-review. Use when asked to \"review the design plan\" or \"design critique\". Proactively suggest when the user has a plan with UI/UX components that should be reviewed before implementation."
+        },
+        {
+          "avoid_when": "Avoid when another gstack skill clearly matches the request better.",
+          "context_controls": [
+            "target path or URL",
+            "mutation intent",
+            "review mode",
+            "stop criteria"
+          ],
+          "error_guidance": "If required context is missing, ask for the missing URL, path, PR, deployment target, or allowed mutation scope before running the workflow.",
+          "input_schema": {
+            "properties": {
+              "request": {
+                "description": "The user's workflow request, including target URL, file, PR, or scope when available.",
+                "type": "string"
+              }
+            },
+            "required": [
+              "request"
+            ],
+            "type": "object"
+          },
+          "name": "gstack_plan_eng_review",
+          "output_schema": {
+            "result": "The selected gstack skill should execute its documented workflow and report evidence, changes, or next steps."
+          },
+          "path": "/Users/admin/dev/gstack/.agents/skills/gstack-plan-eng-review/SKILL.md",
+          "purpose": "Run the plan-eng-review gstack workflow: Eng manager-mode plan review. Lock in the execution plan \u2014 architecture, data flow, diagrams, edge cases, test coverage, performance. Walks through issues interactively with opinionated recommendations. Use when asked to \"review the architecture\", \"engineering review\", or \"lock in the plan\". Proactively suggest when the user has a plan or design doc and is about to start coding \u2014 to catch architecture issues before implementation.",
+          "quality_checks": [
+            "Confirm the request matches this skill's documented trigger."
+          ],
+          "source_hash": "fa2507955a4252488d443ed68baf9f3a699244979afadd9d3a56eea4e71267a5",
+          "source_skill_name": "plan-eng-review",
+          "use_when": "Eng manager-mode plan review. Lock in the execution plan \u2014 architecture, data flow, diagrams, edge cases, test coverage, performance. Walks through issues interactively with opinionated recommendations. Use when asked to \"review the architecture\", \"engineering review\", or \"lock in the plan\". Proactively suggest when the user has a plan or design doc and is about to start coding \u2014 to catch architecture issues before implementation."
+        },
+        {
+          "avoid_when": "Avoid when another gstack skill clearly matches the request better.",
+          "context_controls": [
+            "target path or URL",
+            "mutation intent",
+            "review mode",
+            "stop criteria"
+          ],
+          "error_guidance": "If required context is missing, ask for the missing URL, path, PR, deployment target, or allowed mutation scope before running the workflow.",
+          "input_schema": {
+            "properties": {
+              "request": {
+                "description": "The user's workflow request, including target URL, file, PR, or scope when available.",
+                "type": "string"
+              }
+            },
+            "required": [
+              "request"
+            ],
+            "type": "object"
+          },
+          "name": "gstack_qa",
+          "output_schema": {
+            "result": "The selected gstack skill should execute its documented workflow and report evidence, changes, or next steps."
+          },
+          "path": "/Users/admin/dev/gstack/.agents/skills/gstack-qa/SKILL.md",
+          "purpose": "Run the qa gstack workflow: Systematically QA test a web application and fix bugs found. Runs QA testing, then iteratively fixes bugs in source code, committing each fix atomically and re-verifying. Use when asked to \"qa\", \"QA\", \"test this site\", \"find bugs\", \"test and fix\", or \"fix what's broken\". Proactively suggest when the user says a feature is ready for testing or asks \"does this work?\". Three tiers: Quick (critical/high only), Standard (+ medium), Exhaustive (+ cosmetic). Produces before/after health scores, fix evidence, and a ship-readiness summary. For report-only mode, use /qa-only.",
+          "quality_checks": [
+            "Confirm the request matches this skill's documented trigger."
+          ],
+          "source_hash": "e9e7f5abc709ab490ca2150d82bcd2153740e70c95a0c2a52da44a673e3a32d8",
+          "source_skill_name": "qa",
+          "use_when": "Systematically QA test a web application and fix bugs found. Runs QA testing, then iteratively fixes bugs in source code, committing each fix atomically and re-verifying. Use when asked to \"qa\", \"QA\", \"test this site\", \"find bugs\", \"test and fix\", or \"fix what's broken\". Proactively suggest when the user says a feature is ready for testing or asks \"does this work?\". Three tiers: Quick (critical/high only), Standard (+ medium), Exhaustive (+ cosmetic). Produces before/after health scores, fix evidence, and a ship-readiness summary. For report-only mode, use /qa-only."
+        },
+        {
+          "avoid_when": "Avoid when another gstack skill clearly matches the request better.",
+          "context_controls": [
+            "target path or URL",
+            "mutation intent",
+            "review mode",
+            "stop criteria"
+          ],
+          "error_guidance": "If required context is missing, ask for the missing URL, path, PR, deployment target, or allowed mutation scope before running the workflow.",
+          "input_schema": {
+            "properties": {
+              "request": {
+                "description": "The user's workflow request, including target URL, file, PR, or scope when available.",
+                "type": "string"
+              }
+            },
+            "required": [
+              "request"
+            ],
+            "type": "object"
+          },
+          "name": "gstack_qa_only",
+          "output_schema": {
+            "result": "The selected gstack skill should execute its documented workflow and report evidence, changes, or next steps."
+          },
+          "path": "/Users/admin/dev/gstack/.agents/skills/gstack-qa-only/SKILL.md",
+          "purpose": "Run the qa-only gstack workflow: Report-only QA testing. Systematically tests a web application and produces a structured report with health score, screenshots, and repro steps \u2014 but never fixes anything. Use when asked to \"just report bugs\", \"qa report only\", or \"test but don't fix\". For the full test-fix-verify loop, use /qa instead. Proactively suggest when the user wants a bug report without any code changes.",
+          "quality_checks": [
+            "Confirm the request matches this skill's documented trigger."
+          ],
+          "source_hash": "fab974b3a1452741e2ccc50a61cb3b7a2b4adef2a673ce42510f840bbc17c018",
+          "source_skill_name": "qa-only",
+          "use_when": "Report-only QA testing. Systematically tests a web application and produces a structured report with health score, screenshots, and repro steps \u2014 but never fixes anything. Use when asked to \"just report bugs\", \"qa report only\", or \"test but don't fix\". For the full test-fix-verify loop, use /qa instead. Proactively suggest when the user wants a bug report without any code changes."
+        },
+        {
+          "avoid_when": "Avoid when another gstack skill clearly matches the request better.",
+          "context_controls": [
+            "target path or URL",
+            "mutation intent",
+            "review mode",
+            "stop criteria"
+          ],
+          "error_guidance": "If required context is missing, ask for the missing URL, path, PR, deployment target, or allowed mutation scope before running the workflow.",
+          "input_schema": {
+            "properties": {
+              "request": {
+                "description": "The user's workflow request, including target URL, file, PR, or scope when available.",
+                "type": "string"
+              }
+            },
+            "required": [
+              "request"
+            ],
+            "type": "object"
+          },
+          "name": "gstack_retro",
+          "output_schema": {
+            "result": "The selected gstack skill should execute its documented workflow and report evidence, changes, or next steps."
+          },
+          "path": "/Users/admin/dev/gstack/.agents/skills/gstack-retro/SKILL.md",
+          "purpose": "Run the retro gstack workflow: Weekly engineering retrospective. Analyzes commit history, work patterns, and code quality metrics with persistent history and trend tracking. Team-aware: breaks down per-person contributions with praise and growth areas. Use when asked to \"weekly retro\", \"what did we ship\", or \"engineering retrospective\". Proactively suggest at the end of a work week or sprint.",
+          "quality_checks": [
+            "Confirm the request matches this skill's documented trigger."
+          ],
+          "source_hash": "d11e7a2321796785504804776e8173dc4473c1b1992d8cdfc7dffc915dcefb3a",
+          "source_skill_name": "retro",
+          "use_when": "Weekly engineering retrospective. Analyzes commit history, work patterns, and code quality metrics with persistent history and trend tracking. Team-aware: breaks down per-person contributions with praise and growth areas. Use when asked to \"weekly retro\", \"what did we ship\", or \"engineering retrospective\". Proactively suggest at the end of a work week or sprint."
+        },
+        {
+          "avoid_when": "Avoid when another gstack skill clearly matches the request better.",
+          "context_controls": [
+            "target path or URL",
+            "mutation intent",
+            "review mode",
+            "stop criteria"
+          ],
+          "error_guidance": "If required context is missing, ask for the missing URL, path, PR, deployment target, or allowed mutation scope before running the workflow.",
+          "input_schema": {
+            "properties": {
+              "request": {
+                "description": "The user's workflow request, including target URL, file, PR, or scope when available.",
+                "type": "string"
+              }
+            },
+            "required": [
+              "request"
+            ],
+            "type": "object"
+          },
+          "name": "gstack_review",
+          "output_schema": {
+            "result": "The selected gstack skill should execute its documented workflow and report evidence, changes, or next steps."
+          },
+          "path": "/Users/admin/dev/gstack/.agents/skills/gstack-review/SKILL.md",
+          "purpose": "Run the review gstack workflow: Pre-landing PR review. Analyzes diff against the base branch for SQL safety, LLM trust boundary violations, conditional side effects, and other structural issues. Use when asked to \"review this PR\", \"code review\", \"pre-landing review\", or \"check my diff\". Proactively suggest when the user is about to merge or land code changes.",
+          "quality_checks": [
+            "Confirm the request matches this skill's documented trigger."
+          ],
+          "source_hash": "c2a0114ad90908394a598adfe80d7d6821c139cb5164c925ddf636f28bf47693",
+          "source_skill_name": "review",
+          "use_when": "Pre-landing PR review. Analyzes diff against the base branch for SQL safety, LLM trust boundary violations, conditional side effects, and other structural issues. Use when asked to \"review this PR\", \"code review\", \"pre-landing review\", or \"check my diff\". Proactively suggest when the user is about to merge or land code changes."
+        },
+        {
+          "avoid_when": "Avoid when another gstack skill clearly matches the request better.",
+          "context_controls": [
+            "target path or URL",
+            "mutation intent",
+            "review mode",
+            "stop criteria"
+          ],
+          "error_guidance": "If required context is missing, ask for the missing URL, path, PR, deployment target, or allowed mutation scope before running the workflow.",
+          "input_schema": {
+            "properties": {
+              "request": {
+                "description": "The user's workflow request, including target URL, file, PR, or scope when available.",
+                "type": "string"
+              }
+            },
+            "required": [
+              "request"
+            ],
+            "type": "object"
+          },
+          "name": "gstack_setup_browser_cookies",
+          "output_schema": {
+            "result": "The selected gstack skill should execute its documented workflow and report evidence, changes, or next steps."
+          },
+          "path": "/Users/admin/dev/gstack/.agents/skills/gstack-setup-browser-cookies/SKILL.md",
+          "purpose": "Run the setup-browser-cookies gstack workflow: Import cookies from your real Chromium browser into the headless browse session. Opens an interactive picker UI where you select which cookie domains to import. Use before QA testing authenticated pages. Use when asked to \"import cookies\", \"login to the site\", or \"authenticate the browser\".",
+          "quality_checks": [
+            "Confirm the request matches this skill's documented trigger."
+          ],
+          "source_hash": "63b6ca4c2149bb271498cc608fc17a877ff021a140e62c7aa9d005d3cd7b77ec",
+          "source_skill_name": "setup-browser-cookies",
+          "use_when": "Import cookies from your real Chromium browser into the headless browse session. Opens an interactive picker UI where you select which cookie domains to import. Use before QA testing authenticated pages. Use when asked to \"import cookies\", \"login to the site\", or \"authenticate the browser\"."
+        },
+        {
+          "avoid_when": "Avoid when another gstack skill clearly matches the request better.",
+          "context_controls": [
+            "target path or URL",
+            "mutation intent",
+            "review mode",
+            "stop criteria"
+          ],
+          "error_guidance": "If required context is missing, ask for the missing URL, path, PR, deployment target, or allowed mutation scope before running the workflow.",
+          "input_schema": {
+            "properties": {
+              "request": {
+                "description": "The user's workflow request, including target URL, file, PR, or scope when available.",
+                "type": "string"
+              }
+            },
+            "required": [
+              "request"
+            ],
+            "type": "object"
+          },
+          "name": "gstack_setup_deploy",
+          "output_schema": {
+            "result": "The selected gstack skill should execute its documented workflow and report evidence, changes, or next steps."
+          },
+          "path": "/Users/admin/dev/gstack/.agents/skills/gstack-setup-deploy/SKILL.md",
+          "purpose": "Run the setup-deploy gstack workflow: Configure deployment settings for /land-and-deploy. Detects your deploy platform (Fly.io, Render, Vercel, Netlify, Heroku, GitHub Actions, custom), production URL, health check endpoints, and deploy status commands. Writes the configuration to CLAUDE.md so all future deploys are automatic. Use when: \"setup deploy\", \"configure deployment\", \"set up land-and-deploy\", \"how do I deploy with gstack\", \"add deploy config\".",
+          "quality_checks": [
+            "Confirm the request matches this skill's documented trigger."
+          ],
+          "source_hash": "30158565c6ef5492c4203a04404d6b6bfaadbce96b13fa8fb47b0ecdb2f1feec",
+          "source_skill_name": "setup-deploy",
+          "use_when": "Configure deployment settings for /land-and-deploy. Detects your deploy platform (Fly.io, Render, Vercel, Netlify, Heroku, GitHub Actions, custom), production URL, health check endpoints, and deploy status commands. Writes the configuration to CLAUDE.md so all future deploys are automatic. Use when: \"setup deploy\", \"configure deployment\", \"set up land-and-deploy\", \"how do I deploy with gstack\", \"add deploy config\"."
+        },
+        {
+          "avoid_when": "Avoid when another gstack skill clearly matches the request better.",
+          "context_controls": [
+            "target path or URL",
+            "mutation intent",
+            "review mode",
+            "stop criteria"
+          ],
+          "error_guidance": "If required context is missing, ask for the missing URL, path, PR, deployment target, or allowed mutation scope before running the workflow.",
+          "input_schema": {
+            "properties": {
+              "request": {
+                "description": "The user's workflow request, including target URL, file, PR, or scope when available.",
+                "type": "string"
+              }
+            },
+            "required": [
+              "request"
+            ],
+            "type": "object"
+          },
+          "name": "gstack_ship",
+          "output_schema": {
+            "result": "The selected gstack skill should execute its documented workflow and report evidence, changes, or next steps."
+          },
+          "path": "/Users/admin/dev/gstack/.agents/skills/gstack-ship/SKILL.md",
+          "purpose": "Run the ship gstack workflow: Ship workflow: detect + merge base branch, run tests, review diff, bump VERSION, update CHANGELOG, commit, push, create PR. Use when asked to \"ship\", \"deploy\", \"push to main\", \"create a PR\", or \"merge and push\". Proactively suggest when the user says code is ready or asks about deploying.",
+          "quality_checks": [
+            "Confirm the request matches this skill's documented trigger."
+          ],
+          "source_hash": "8c385620bcfa8f675458096003051bbd9a4527f5661a274b7bdc1c7d71ccc4da",
+          "source_skill_name": "ship",
+          "use_when": "Ship workflow: detect + merge base branch, run tests, review diff, bump VERSION, update CHANGELOG, commit, push, create PR. Use when asked to \"ship\", \"deploy\", \"push to main\", \"create a PR\", or \"merge and push\". Proactively suggest when the user says code is ready or asks about deploying."
+        },
+        {
+          "avoid_when": "Avoid when another gstack skill clearly matches the request better.",
+          "context_controls": [
+            "target path or URL",
+            "mutation intent",
+            "review mode",
+            "stop criteria"
+          ],
+          "error_guidance": "If required context is missing, ask for the missing URL, path, PR, deployment target, or allowed mutation scope before running the workflow.",
+          "input_schema": {
+            "properties": {
+              "request": {
+                "description": "The user's workflow request, including target URL, file, PR, or scope when available.",
+                "type": "string"
+              }
+            },
+            "required": [
+              "request"
+            ],
+            "type": "object"
+          },
+          "name": "gstack_spec_qa",
+          "output_schema": {
+            "result": "The selected gstack skill should execute its documented workflow and report evidence, changes, or next steps."
+          },
+          "path": "/Users/admin/dev/gstack/.agents/skills/gstack-spec-qa/SKILL.md",
+          "purpose": "Run the spec-qa gstack workflow: Founder/operator workflow for product shaping and browser validation. Turns a rough feature request into a concrete spec, pressure-tests the spec, and validates the critical path in a real browser when a URL is available. Use when asked to \"shape this feature\", \"turn this into a spec\", \"review the plan then test it\", \"spec and QA this\", or \"go from idea to browser verification\". Proactively suggest when the user is bouncing between product-definition work and browser QA and wants one artifact-driven workflow.",
+          "quality_checks": [
+            "Confirm the request matches this skill's documented trigger."
+          ],
+          "source_hash": "40847978a8119240848729d64895d1f48e4bd7d70744cae52d924ea0f863f7a2",
+          "source_skill_name": "spec-qa",
+          "use_when": "Founder/operator workflow for product shaping and browser validation. Turns a rough feature request into a concrete spec, pressure-tests the spec, and validates the critical path in a real browser when a URL is available. Use when asked to \"shape this feature\", \"turn this into a spec\", \"review the plan then test it\", \"spec and QA this\", or \"go from idea to browser verification\". Proactively suggest when the user is bouncing between product-definition work and browser QA and wants one artifact-driven workflow."
+        },
+        {
+          "avoid_when": "Avoid when another gstack skill clearly matches the request better.",
+          "context_controls": [
+            "target path or URL",
+            "mutation intent",
+            "review mode",
+            "stop criteria"
+          ],
+          "error_guidance": "If required context is missing, ask for the missing URL, path, PR, deployment target, or allowed mutation scope before running the workflow.",
+          "input_schema": {
+            "properties": {
+              "request": {
+                "description": "The user's workflow request, including target URL, file, PR, or scope when available.",
+                "type": "string"
+              }
+            },
+            "required": [
+              "request"
+            ],
+            "type": "object"
+          },
+          "name": "gstack_unfreeze",
+          "output_schema": {
+            "result": "The selected gstack skill should execute its documented workflow and report evidence, changes, or next steps."
+          },
+          "path": "/Users/admin/dev/gstack/.agents/skills/gstack-unfreeze/SKILL.md",
+          "purpose": "Run the unfreeze gstack workflow: Clear the freeze boundary set by /freeze, allowing edits to all directories again. Use when you want to widen edit scope without ending the session. Use when asked to \"unfreeze\", \"unlock edits\", \"remove freeze\", or \"allow all edits\".",
+          "quality_checks": [
+            "Confirm the request matches this skill's documented trigger."
+          ],
+          "source_hash": "b13e8d1f235f1c22fb736eaed1dfaab453cb03262301084638dad2d00f6693bd",
+          "source_skill_name": "unfreeze",
+          "use_when": "Clear the freeze boundary set by /freeze, allowing edits to all directories again. Use when you want to widen edit scope without ending the session. Use when asked to \"unfreeze\", \"unlock edits\", \"remove freeze\", or \"allow all edits\"."
+        },
+        {
+          "avoid_when": "Avoid when another gstack skill clearly matches the request better.",
+          "context_controls": [
+            "target path or URL",
+            "mutation intent",
+            "review mode",
+            "stop criteria"
+          ],
+          "error_guidance": "If required context is missing, ask for the missing URL, path, PR, deployment target, or allowed mutation scope before running the workflow.",
+          "input_schema": {
+            "properties": {
+              "request": {
+                "description": "The user's workflow request, including target URL, file, PR, or scope when available.",
+                "type": "string"
+              }
+            },
+            "required": [
+              "request"
+            ],
+            "type": "object"
+          },
+          "name": "gstack_upgrade",
+          "output_schema": {
+            "result": "The selected gstack skill should execute its documented workflow and report evidence, changes, or next steps."
+          },
+          "path": "/Users/admin/dev/gstack/.agents/skills/gstack-upgrade/SKILL.md",
+          "purpose": "Run the gstack-upgrade gstack workflow: Upgrade gstack to the latest version. Detects global vs vendored install, runs the upgrade, and shows what's new. Use when asked to \"upgrade gstack\", \"update gstack\", or \"get latest version\".",
+          "quality_checks": [
+            "Confirm the request matches this skill's documented trigger."
+          ],
+          "source_hash": "6b41874db9ab592b1e45257f6bf368620fc40460f6b0946a56fec309a8c7e8bf",
+          "source_skill_name": "gstack-upgrade",
+          "use_when": "Upgrade gstack to the latest version. Detects global vs vendored install, runs the upgrade, and shows what's new. Use when asked to \"upgrade gstack\", \"update gstack\", or \"get latest version\"."
+        },
+        {
+          "avoid_when": "Avoid when another gstack skill clearly matches the request better.",
+          "context_controls": [
+            "workflow necessity",
+            "user intent"
+          ],
+          "error_guidance": "If the user asks a general question or explicitly says not to run a workflow, choose this pseudo-skill.",
+          "input_schema": {
+            "properties": {
+              "rationale": {
+                "description": "Why no gstack workflow should be selected.",
+                "type": "string"
+              }
+            },
+            "required": [
+              "rationale"
+            ],
+            "type": "object"
+          },
+          "name": "NO_TOOL",
+          "output_schema": {
+            "result": "A short explanation that no gstack workflow should run."
+          },
+          "path": "",
+          "purpose": "Represent the safe decision to run no gstack workflow.",
+          "quality_checks": [
+            "Confirm the request matches this skill's documented trigger."
+          ],
+          "source_hash": "",
+          "source_skill_name": "NO_TOOL",
+          "use_when": "Use when no gstack workflow skill should be selected for the user request."
+        }
+      ]
+    },
+    {
+      "name": "gstack_boundary_tuned_skill_descriptions",
+      "tools": [
+        {
+          "avoid_when": "Compatibility browser alias. Prefer gstack_browse for explicit browser testing and QA navigation requests.",
+          "context_controls": [
+            "target path or URL",
+            "mutation intent",
+            "review mode",
+            "stop criteria"
+          ],
+          "error_guidance": "If required context is missing, ask for the missing URL, path, PR, deployment target, or allowed mutation scope before running the workflow.",
+          "input_schema": {
+            "properties": {
+              "request": {
+                "description": "The user's workflow request, including target URL, file, PR, or scope when available.",
+                "type": "string"
+              }
+            },
+            "required": [
+              "request"
+            ],
+            "type": "object"
+          },
+          "name": "gstack_gstack",
+          "output_schema": {
+            "result": "The selected gstack skill should execute its documented workflow and report evidence, changes, or next steps."
+          },
+          "path": "/Users/admin/dev/gstack/.agents/skills/gstack/SKILL.md",
+          "purpose": "Run the gstack gstack workflow: Fast headless browser for QA testing and site dogfooding. Navigate pages, interact with elements, verify state, diff before/after, take annotated screenshots, test responsive layouts, forms, uploads, dialogs, and capture bug evidence. Use when asked to open or test a site, verify a deployment, dogfood a user flow, or file a bug with screenshots.",
+          "quality_checks": [
+            "Confirm the request matches this skill's phase of work.",
+            "Check adjacent gstack skills before selecting this one.",
+            "Preserve no-edit and safety boundaries from the user request."
+          ],
+          "source_hash": "df07a0ae0a281868efeb89aaa9cb58c0e45f6a3f0128f7332f54dbaa4ed9499d",
+          "source_skill_name": "gstack",
+          "use_when": "Fast headless browser for QA testing and site dogfooding. Navigate pages, interact with elements, verify state, diff before/after, take annotated screenshots, test responsive layouts, forms, uploads, dialogs, and capture bug evidence. Use when asked to open or test a site, verify a deployment, dogfood a user flow, or file a bug with screenshots."
+        },
+        {
+          "avoid_when": "Use when the user wants CEO, design, and engineering plan reviews run automatically.",
+          "context_controls": [
+            "target path or URL",
+            "mutation intent",
+            "review mode",
+            "stop criteria"
+          ],
+          "error_guidance": "If required context is missing, ask for the missing URL, path, PR, deployment target, or allowed mutation scope before running the workflow.",
+          "input_schema": {
+            "properties": {
+              "request": {
+                "description": "The user's workflow request, including target URL, file, PR, or scope when available.",
+                "type": "string"
+              }
+            },
+            "required": [
+              "request"
+            ],
+            "type": "object"
+          },
+          "name": "gstack_autoplan",
+          "output_schema": {
+            "result": "The selected gstack skill should execute its documented workflow and report evidence, changes, or next steps."
+          },
+          "path": "/Users/admin/dev/gstack/.agents/skills/gstack-autoplan/SKILL.md",
+          "purpose": "Run the autoplan gstack workflow: Auto-review pipeline \u2014 reads the full CEO, design, and eng review skills from disk and runs them sequentially with auto-decisions using 6 decision principles. Surfaces taste decisions (close approaches, borderline scope, codex disagreements) at a final approval gate. One command, fully reviewed plan out. Use when asked to \"auto review\", \"autoplan\", \"run all reviews\", \"review this plan automatically\", or \"make the decisions for me\". Proactively suggest when the user has a plan file and wants to run the full review gauntlet without answering 15-30 intermediate questions.",
+          "quality_checks": [
+            "Confirm the request matches this skill's phase of work.",
+            "Check adjacent gstack skills before selecting this one.",
+            "Preserve no-edit and safety boundaries from the user request."
+          ],
+          "source_hash": "3084f398eb4270e2ab6e0e9ee1d4dd88d3a74f07c6ad8843f1351c4ebb4da7a7",
+          "source_skill_name": "autoplan",
+          "use_when": "Auto-review pipeline \u2014 reads the full CEO, design, and eng review skills from disk and runs them sequentially with auto-decisions using 6 decision principles. Surfaces taste decisions (close approaches, borderline scope, codex disagreements) at a final approval gate. One command, fully reviewed plan out. Use when asked to \"auto review\", \"autoplan\", \"run all reviews\", \"review this plan automatically\", or \"make the decisions for me\". Proactively suggest when the user has a plan file and wants to run the full review gauntlet without answering 15-30 intermediate questions."
+        },
+        {
+          "avoid_when": "Use for performance and Core Web Vitals baselines or regressions. Do not choose for general QA.",
+          "context_controls": [
+            "target path or URL",
+            "mutation intent",
+            "review mode",
+            "stop criteria"
+          ],
+          "error_guidance": "If required context is missing, ask for the missing URL, path, PR, deployment target, or allowed mutation scope before running the workflow.",
+          "input_schema": {
+            "properties": {
+              "request": {
+                "description": "The user's workflow request, including target URL, file, PR, or scope when available.",
+                "type": "string"
+              }
+            },
+            "required": [
+              "request"
+            ],
+            "type": "object"
+          },
+          "name": "gstack_benchmark",
+          "output_schema": {
+            "result": "The selected gstack skill should execute its documented workflow and report evidence, changes, or next steps."
+          },
+          "path": "/Users/admin/dev/gstack/.agents/skills/gstack-benchmark/SKILL.md",
+          "purpose": "Run the benchmark gstack workflow: Performance regression detection using the browse daemon. Establishes baselines for page load times, Core Web Vitals, and resource sizes. Compares before/after on every PR. Tracks performance trends over time. Use when: \"performance\", \"benchmark\", \"page speed\", \"lighthouse\", \"web vitals\", \"bundle size\", \"load time\".",
+          "quality_checks": [
+            "Confirm the request matches this skill's phase of work.",
+            "Check adjacent gstack skills before selecting this one.",
+            "Preserve no-edit and safety boundaries from the user request."
+          ],
+          "source_hash": "8ea42c8a2675b07118dd585287b570e05b6db1df0411f036674a81e9874f928f",
+          "source_skill_name": "benchmark",
+          "use_when": "Performance regression detection using the browse daemon. Establishes baselines for page load times, Core Web Vitals, and resource sizes. Compares before/after on every PR. Tracks performance trends over time. Use when: \"performance\", \"benchmark\", \"page speed\", \"lighthouse\", \"web vitals\", \"bundle size\", \"load time\"."
+        },
+        {
+          "avoid_when": "Browser operation only. Do not choose for full QA with code fixes, report-only QA, or real Chrome side-panel setup.",
+          "context_controls": [
+            "target path or URL",
+            "mutation intent",
+            "review mode",
+            "stop criteria"
+          ],
+          "error_guidance": "If required context is missing, ask for the missing URL, path, PR, deployment target, or allowed mutation scope before running the workflow.",
+          "input_schema": {
+            "properties": {
+              "request": {
+                "description": "The user's workflow request, including target URL, file, PR, or scope when available.",
+                "type": "string"
+              }
+            },
+            "required": [
+              "request"
+            ],
+            "type": "object"
+          },
+          "name": "gstack_browse",
+          "output_schema": {
+            "result": "The selected gstack skill should execute its documented workflow and report evidence, changes, or next steps."
+          },
+          "path": "/Users/admin/dev/gstack/.agents/skills/gstack-browse/SKILL.md",
+          "purpose": "Run the browse gstack workflow: Fast headless browser for QA testing and site dogfooding. Navigate any URL, interact with elements, verify page state, diff before/after actions, take annotated screenshots, check responsive layouts, test forms and uploads, handle dialogs, and assert element states. ~100ms per command. Use when you need to test a feature, verify a deployment, dogfood a user flow, or file a bug with evidence. Use when asked to \"open in browser\", \"test the site\", \"take a screenshot\", or \"dogfood this\".",
+          "quality_checks": [
+            "Confirm the request matches this skill's phase of work.",
+            "Check adjacent gstack skills before selecting this one.",
+            "Preserve no-edit and safety boundaries from the user request."
+          ],
+          "source_hash": "598827f933d955ba6075bf460d80be290bb010203f31d2d3aaac8b5a312b425e",
+          "source_skill_name": "browse",
+          "use_when": "Fast headless browser for QA testing and site dogfooding. Navigate any URL, interact with elements, verify page state, diff before/after actions, take annotated screenshots, check responsive layouts, test forms and uploads, handle dialogs, and assert element states. ~100ms per command. Use when you need to test a feature, verify a deployment, dogfood a user flow, or file a bug with evidence. Use when asked to \"open in browser\", \"test the site\", \"take a screenshot\", or \"dogfood this\"."
+        },
+        {
+          "avoid_when": "Use after deployment to monitor production health. For performance baselines, choose gstack_benchmark.",
+          "context_controls": [
+            "target path or URL",
+            "mutation intent",
+            "review mode",
+            "stop criteria"
+          ],
+          "error_guidance": "If required context is missing, ask for the missing URL, path, PR, deployment target, or allowed mutation scope before running the workflow.",
+          "input_schema": {
+            "properties": {
+              "request": {
+                "description": "The user's workflow request, including target URL, file, PR, or scope when available.",
+                "type": "string"
+              }
+            },
+            "required": [
+              "request"
+            ],
+            "type": "object"
+          },
+          "name": "gstack_canary",
+          "output_schema": {
+            "result": "The selected gstack skill should execute its documented workflow and report evidence, changes, or next steps."
+          },
+          "path": "/Users/admin/dev/gstack/.agents/skills/gstack-canary/SKILL.md",
+          "purpose": "Run the canary gstack workflow: Post-deploy canary monitoring. Watches the live app for console errors, performance regressions, and page failures using the browse daemon. Takes periodic screenshots, compares against pre-deploy baselines, and alerts on anomalies. Use when: \"monitor deploy\", \"canary\", \"post-deploy check\", \"watch production\", \"verify deploy\".",
+          "quality_checks": [
+            "Confirm the request matches this skill's phase of work.",
+            "Check adjacent gstack skills before selecting this one.",
+            "Preserve no-edit and safety boundaries from the user request."
+          ],
+          "source_hash": "a412e3d8994c5df7e7c4233bf62df41f5a3b30366d819489c05f213367c96995",
+          "source_skill_name": "canary",
+          "use_when": "Post-deploy canary monitoring. Watches the live app for console errors, performance regressions, and page failures using the browse daemon. Takes periodic screenshots, compares against pre-deploy baselines, and alerts on anomalies. Use when: \"monitor deploy\", \"canary\", \"post-deploy check\", \"watch production\", \"verify deploy\"."
+        },
+        {
+          "avoid_when": "Use for destructive-command warnings. For edit directory locking, choose gstack_freeze; for both, choose gstack_guard.",
+          "context_controls": [
+            "target path or URL",
+            "mutation intent",
+            "review mode",
+            "stop criteria"
+          ],
+          "error_guidance": "If required context is missing, ask for the missing URL, path, PR, deployment target, or allowed mutation scope before running the workflow.",
+          "input_schema": {
+            "properties": {
+              "request": {
+                "description": "The user's workflow request, including target URL, file, PR, or scope when available.",
+                "type": "string"
+              }
+            },
+            "required": [
+              "request"
+            ],
+            "type": "object"
+          },
+          "name": "gstack_careful",
+          "output_schema": {
+            "result": "The selected gstack skill should execute its documented workflow and report evidence, changes, or next steps."
+          },
+          "path": "/Users/admin/dev/gstack/.agents/skills/gstack-careful/SKILL.md",
+          "purpose": "Run the careful gstack workflow: Safety guardrails for destructive commands. Warns before rm -rf, DROP TABLE, force-push, git reset --hard, kubectl delete, and similar destructive operations. User can override each warning. Use when touching prod, debugging live systems, or working in a shared environment. Use when asked to \"be careful\", \"safety mode\", \"prod mode\", or \"careful mode\".",
+          "quality_checks": [
+            "Confirm the request matches this skill's phase of work.",
+            "Check adjacent gstack skills before selecting this one.",
+            "Preserve no-edit and safety boundaries from the user request."
+          ],
+          "source_hash": "c3ee58166c1425cbabbe8d1c1e0d357cde583dd7c86bca6e2b7852a221e1e986",
+          "source_skill_name": "careful",
+          "use_when": "Safety guardrails for destructive commands. Warns before rm -rf, DROP TABLE, force-push, git reset --hard, kubectl delete, and similar destructive operations. User can override each warning. Use when touching prod, debugging live systems, or working in a shared environment. Use when asked to \"be careful\", \"safety mode\", \"prod mode\", or \"careful mode\"."
+        },
+        {
+          "avoid_when": "Use to launch a visible Chrome with side panel control. For headless browser testing, choose gstack_browse.",
+          "context_controls": [
+            "target path or URL",
+            "mutation intent",
+            "review mode",
+            "stop criteria"
+          ],
+          "error_guidance": "If required context is missing, ask for the missing URL, path, PR, deployment target, or allowed mutation scope before running the workflow.",
+          "input_schema": {
+            "properties": {
+              "request": {
+                "description": "The user's workflow request, including target URL, file, PR, or scope when available.",
+                "type": "string"
+              }
+            },
+            "required": [
+              "request"
+            ],
+            "type": "object"
+          },
+          "name": "gstack_connect_chrome",
+          "output_schema": {
+            "result": "The selected gstack skill should execute its documented workflow and report evidence, changes, or next steps."
+          },
+          "path": "/Users/admin/dev/gstack/.agents/skills/gstack-connect-chrome/SKILL.md",
+          "purpose": "Run the connect-chrome gstack workflow: Launch real Chrome controlled by gstack with the Side Panel extension auto-loaded. One command: connects Claude to a visible Chrome window where you can watch every action in real time. The extension shows a live activity feed in the Side Panel. Use when asked to \"connect chrome\", \"open chrome\", \"real browser\", \"launch chrome\", \"side panel\", or \"control my browser\".",
+          "quality_checks": [
+            "Confirm the request matches this skill's phase of work.",
+            "Check adjacent gstack skills before selecting this one.",
+            "Preserve no-edit and safety boundaries from the user request."
+          ],
+          "source_hash": "84d80c26e960b4a7f300a132eca53540f8973fbd1f76ced51bdabb2cd4555d12",
+          "source_skill_name": "connect-chrome",
+          "use_when": "Launch real Chrome controlled by gstack with the Side Panel extension auto-loaded. One command: connects Claude to a visible Chrome window where you can watch every action in real time. The extension shows a live activity feed in the Side Panel. Use when asked to \"connect chrome\", \"open chrome\", \"real browser\", \"launch chrome\", \"side panel\", or \"control my browser\"."
+        },
+        {
+          "avoid_when": "Use for security audits, threat models, OWASP, STRIDE, dependency and secrets checks. Do not choose for ordinary code review.",
+          "context_controls": [
+            "target path or URL",
+            "mutation intent",
+            "review mode",
+            "stop criteria"
+          ],
+          "error_guidance": "If required context is missing, ask for the missing URL, path, PR, deployment target, or allowed mutation scope before running the workflow.",
+          "input_schema": {
+            "properties": {
+              "request": {
+                "description": "The user's workflow request, including target URL, file, PR, or scope when available.",
+                "type": "string"
+              }
+            },
+            "required": [
+              "request"
+            ],
+            "type": "object"
+          },
+          "name": "gstack_cso",
+          "output_schema": {
+            "result": "The selected gstack skill should execute its documented workflow and report evidence, changes, or next steps."
+          },
+          "path": "/Users/admin/dev/gstack/.agents/skills/gstack-cso/SKILL.md",
+          "purpose": "Run the cso gstack workflow: Chief Security Officer mode. Infrastructure-first security audit: secrets archaeology, dependency supply chain, CI/CD pipeline security, LLM/AI security, skill supply chain scanning, plus OWASP Top 10, STRIDE threat modeling, and active verification. Two modes: daily (zero-noise, 8/10 confidence gate) and comprehensive (monthly deep scan, 2/10 bar). Trend tracking across audit runs. Use when: \"security audit\", \"threat model\", \"pentest review\", \"OWASP\", \"CSO review\".",
+          "quality_checks": [
+            "Confirm the request matches this skill's phase of work.",
+            "Check adjacent gstack skills before selecting this one.",
+            "Preserve no-edit and safety boundaries from the user request."
+          ],
+          "source_hash": "3703e18b15fdaa0802798f147d7a6743a49c46f6763924c898052092b6f92c99",
+          "source_skill_name": "cso",
+          "use_when": "Chief Security Officer mode. Infrastructure-first security audit: secrets archaeology, dependency supply chain, CI/CD pipeline security, LLM/AI security, skill supply chain scanning, plus OWASP Top 10, STRIDE threat modeling, and active verification. Two modes: daily (zero-noise, 8/10 confidence gate) and comprehensive (monthly deep scan, 2/10 bar). Trend tracking across audit runs. Use when: \"security audit\", \"threat model\", \"pentest review\", \"OWASP\", \"CSO review\"."
+        },
+        {
+          "avoid_when": "Use for creating a design system or DESIGN.md. For choosing among multiple concrete variants, choose gstack_design_shotgun.",
+          "context_controls": [
+            "target path or URL",
+            "mutation intent",
+            "review mode",
+            "stop criteria"
+          ],
+          "error_guidance": "If required context is missing, ask for the missing URL, path, PR, deployment target, or allowed mutation scope before running the workflow.",
+          "input_schema": {
+            "properties": {
+              "request": {
+                "description": "The user's workflow request, including target URL, file, PR, or scope when available.",
+                "type": "string"
+              }
+            },
+            "required": [
+              "request"
+            ],
+            "type": "object"
+          },
+          "name": "gstack_design_consultation",
+          "output_schema": {
+            "result": "The selected gstack skill should execute its documented workflow and report evidence, changes, or next steps."
+          },
+          "path": "/Users/admin/dev/gstack/.agents/skills/gstack-design-consultation/SKILL.md",
+          "purpose": "Run the design-consultation gstack workflow: Design consultation: understands your product, researches the landscape, proposes a complete design system (aesthetic, typography, color, layout, spacing, motion), and generates font+color preview pages. Creates DESIGN.md as your project's design source of truth. For existing sites, use /plan-design-review to infer the system instead. Use when asked to \"design system\", \"brand guidelines\", or \"create DESIGN.md\". Proactively suggest when starting a new project's UI with no existing design system or DESIGN.md.",
+          "quality_checks": [
+            "Confirm the request matches this skill's phase of work.",
+            "Check adjacent gstack skills before selecting this one.",
+            "Preserve no-edit and safety boundaries from the user request."
+          ],
+          "source_hash": "cee13788f34e2fdf169357e181196c41f9c6e04b40efc1085840b1313bd36840",
+          "source_skill_name": "design-consultation",
+          "use_when": "Design consultation: understands your product, researches the landscape, proposes a complete design system (aesthetic, typography, color, layout, spacing, motion), and generates font+color preview pages. Creates DESIGN.md as your project's design source of truth. For existing sites, use /plan-design-review to infer the system instead. Use when asked to \"design system\", \"brand guidelines\", or \"create DESIGN.md\". Proactively suggest when starting a new project's UI with no existing design system or DESIGN.md."
+        },
+        {
+          "avoid_when": "Use for live or implemented UI visual audit and fixes. For pre-implementation design-plan review, choose gstack_plan_design_review.",
+          "context_controls": [
+            "target path or URL",
+            "mutation intent",
+            "review mode",
+            "stop criteria"
+          ],
+          "error_guidance": "If required context is missing, ask for the missing URL, path, PR, deployment target, or allowed mutation scope before running the workflow.",
+          "input_schema": {
+            "properties": {
+              "request": {
+                "description": "The user's workflow request, including target URL, file, PR, or scope when available.",
+                "type": "string"
+              }
+            },
+            "required": [
+              "request"
+            ],
+            "type": "object"
+          },
+          "name": "gstack_design_review",
+          "output_schema": {
+            "result": "The selected gstack skill should execute its documented workflow and report evidence, changes, or next steps."
+          },
+          "path": "/Users/admin/dev/gstack/.agents/skills/gstack-design-review/SKILL.md",
+          "purpose": "Run the design-review gstack workflow: Designer's eye QA: finds visual inconsistency, spacing issues, hierarchy problems, AI slop patterns, and slow interactions \u2014 then fixes them. Iteratively fixes issues in source code, committing each fix atomically and re-verifying with before/after screenshots. For plan-mode design review (before implementation), use /plan-design-review. Use when asked to \"audit the design\", \"visual QA\", \"check if it looks good\", or \"design polish\". Proactively suggest when the user mentions visual inconsistencies or wants to polish the look of a live site.",
+          "quality_checks": [
+            "Confirm the request matches this skill's phase of work.",
+            "Check adjacent gstack skills before selecting this one.",
+            "Preserve no-edit and safety boundaries from the user request."
+          ],
+          "source_hash": "2bc975a76d64911393a6eee88375702dbd78f860957414b1876b5e45d3f978ab",
+          "source_skill_name": "design-review",
+          "use_when": "Designer's eye QA: finds visual inconsistency, spacing issues, hierarchy problems, AI slop patterns, and slow interactions \u2014 then fixes them. Iteratively fixes issues in source code, committing each fix atomically and re-verifying with before/after screenshots. For plan-mode design review (before implementation), use /plan-design-review. Use when asked to \"audit the design\", \"visual QA\", \"check if it looks good\", or \"design polish\". Proactively suggest when the user mentions visual inconsistencies or wants to polish the look of a live site."
+        },
+        {
+          "avoid_when": "Use for generating and comparing multiple design variants. For a durable design system, choose gstack_design_consultation.",
+          "context_controls": [
+            "target path or URL",
+            "mutation intent",
+            "review mode",
+            "stop criteria"
+          ],
+          "error_guidance": "If required context is missing, ask for the missing URL, path, PR, deployment target, or allowed mutation scope before running the workflow.",
+          "input_schema": {
+            "properties": {
+              "request": {
+                "description": "The user's workflow request, including target URL, file, PR, or scope when available.",
+                "type": "string"
+              }
+            },
+            "required": [
+              "request"
+            ],
+            "type": "object"
+          },
+          "name": "gstack_design_shotgun",
+          "output_schema": {
+            "result": "The selected gstack skill should execute its documented workflow and report evidence, changes, or next steps."
+          },
+          "path": "/Users/admin/dev/gstack/.agents/skills/gstack-design-shotgun/SKILL.md",
+          "purpose": "Run the design-shotgun gstack workflow: Design shotgun: generate multiple AI design variants, open a comparison board, collect structured feedback, and iterate. Standalone design exploration you can run anytime. Use when: \"explore designs\", \"show me options\", \"design variants\", \"visual brainstorm\", or \"I don't like how this looks\". Proactively suggest when the user describes a UI feature but hasn't seen what it could look like.",
+          "quality_checks": [
+            "Confirm the request matches this skill's phase of work.",
+            "Check adjacent gstack skills before selecting this one.",
+            "Preserve no-edit and safety boundaries from the user request."
+          ],
+          "source_hash": "b5867a3ba777fc27824f4a4c523a2724da23c0e627c8e6eed8e61ad3666d664f",
+          "source_skill_name": "design-shotgun",
+          "use_when": "Design shotgun: generate multiple AI design variants, open a comparison board, collect structured feedback, and iterate. Standalone design exploration you can run anytime. Use when: \"explore designs\", \"show me options\", \"design variants\", \"visual brainstorm\", or \"I don't like how this looks\". Proactively suggest when the user describes a UI feature but hasn't seen what it could look like."
+        },
+        {
+          "avoid_when": "Use after shipping to update docs to match the change. For weekly team retrospectives, choose gstack_retro.",
+          "context_controls": [
+            "target path or URL",
+            "mutation intent",
+            "review mode",
+            "stop criteria"
+          ],
+          "error_guidance": "If required context is missing, ask for the missing URL, path, PR, deployment target, or allowed mutation scope before running the workflow.",
+          "input_schema": {
+            "properties": {
+              "request": {
+                "description": "The user's workflow request, including target URL, file, PR, or scope when available.",
+                "type": "string"
+              }
+            },
+            "required": [
+              "request"
+            ],
+            "type": "object"
+          },
+          "name": "gstack_document_release",
+          "output_schema": {
+            "result": "The selected gstack skill should execute its documented workflow and report evidence, changes, or next steps."
+          },
+          "path": "/Users/admin/dev/gstack/.agents/skills/gstack-document-release/SKILL.md",
+          "purpose": "Run the document-release gstack workflow: Post-ship documentation update. Reads all project docs, cross-references the diff, updates README/ARCHITECTURE/CONTRIBUTING/CLAUDE.md to match what shipped, polishes CHANGELOG voice, cleans up TODOS, and optionally bumps VERSION. Use when asked to \"update the docs\", \"sync documentation\", or \"post-ship docs\". Proactively suggest after a PR is merged or code is shipped.",
+          "quality_checks": [
+            "Confirm the request matches this skill's phase of work.",
+            "Check adjacent gstack skills before selecting this one.",
+            "Preserve no-edit and safety boundaries from the user request."
+          ],
+          "source_hash": "a1fcceca925c72c99c2b173f320f90c2b403089915177055c463d8a839d228cf",
+          "source_skill_name": "document-release",
+          "use_when": "Post-ship documentation update. Reads all project docs, cross-references the diff, updates README/ARCHITECTURE/CONTRIBUTING/CLAUDE.md to match what shipped, polishes CHANGELOG voice, cleans up TODOS, and optionally bumps VERSION. Use when asked to \"update the docs\", \"sync documentation\", or \"post-ship docs\". Proactively suggest after a PR is merged or code is shipped."
+        },
+        {
+          "avoid_when": "Use to restrict edits to a directory. For destructive-command warnings, choose gstack_careful; for both, choose gstack_guard.",
+          "context_controls": [
+            "target path or URL",
+            "mutation intent",
+            "review mode",
+            "stop criteria"
+          ],
+          "error_guidance": "If required context is missing, ask for the missing URL, path, PR, deployment target, or allowed mutation scope before running the workflow.",
+          "input_schema": {
+            "properties": {
+              "request": {
+                "description": "The user's workflow request, including target URL, file, PR, or scope when available.",
+                "type": "string"
+              }
+            },
+            "required": [
+              "request"
+            ],
+            "type": "object"
+          },
+          "name": "gstack_freeze",
+          "output_schema": {
+            "result": "The selected gstack skill should execute its documented workflow and report evidence, changes, or next steps."
+          },
+          "path": "/Users/admin/dev/gstack/.agents/skills/gstack-freeze/SKILL.md",
+          "purpose": "Run the freeze gstack workflow: Restrict file edits to a specific directory for the session. Blocks Edit and Write outside the allowed path. Use when debugging to prevent accidentally \"fixing\" unrelated code, or when you want to scope changes to one module. Use when asked to \"freeze\", \"restrict edits\", \"only edit this folder\", or \"lock down edits\".",
+          "quality_checks": [
+            "Confirm the request matches this skill's phase of work.",
+            "Check adjacent gstack skills before selecting this one.",
+            "Preserve no-edit and safety boundaries from the user request."
+          ],
+          "source_hash": "c2450475fd7e8681aa22342d70dadc305f2675dc40a66b23f44454d22bd35b60",
+          "source_skill_name": "freeze",
+          "use_when": "Restrict file edits to a specific directory for the session. Blocks Edit and Write outside the allowed path. Use when debugging to prevent accidentally \"fixing\" unrelated code, or when you want to scope changes to one module. Use when asked to \"freeze\", \"restrict edits\", \"only edit this folder\", or \"lock down edits\"."
+        },
+        {
+          "avoid_when": "Use when the user explicitly wants both destructive-command warnings and directory-scoped edits.",
+          "context_controls": [
+            "target path or URL",
+            "mutation intent",
+            "review mode",
+            "stop criteria"
+          ],
+          "error_guidance": "If required context is missing, ask for the missing URL, path, PR, deployment target, or allowed mutation scope before running the workflow.",
+          "input_schema": {
+            "properties": {
+              "request": {
+                "description": "The user's workflow request, including target URL, file, PR, or scope when available.",
+                "type": "string"
+              }
+            },
+            "required": [
+              "request"
+            ],
+            "type": "object"
+          },
+          "name": "gstack_guard",
+          "output_schema": {
+            "result": "The selected gstack skill should execute its documented workflow and report evidence, changes, or next steps."
+          },
+          "path": "/Users/admin/dev/gstack/.agents/skills/gstack-guard/SKILL.md",
+          "purpose": "Run the guard gstack workflow: Full safety mode: destructive command warnings + directory-scoped edits. Combines /careful (warns before rm -rf, DROP TABLE, force-push, etc.) with /freeze (blocks edits outside a specified directory). Use for maximum safety when touching prod or debugging live systems. Use when asked to \"guard mode\", \"full safety\", \"lock it down\", or \"maximum safety\".",
+          "quality_checks": [
+            "Confirm the request matches this skill's phase of work.",
+            "Check adjacent gstack skills before selecting this one.",
+            "Preserve no-edit and safety boundaries from the user request."
+          ],
+          "source_hash": "05cd13b4f5bddf1724b6ffdbd2ef546b7f24944b12510b6b1a6af8d9f4c0edd8",
+          "source_skill_name": "guard",
+          "use_when": "Full safety mode: destructive command warnings + directory-scoped edits. Combines /careful (warns before rm -rf, DROP TABLE, force-push, etc.) with /freeze (blocks edits outside a specified directory). Use for maximum safety when touching prod or debugging live systems. Use when asked to \"guard mode\", \"full safety\", \"lock it down\", or \"maximum safety\"."
+        },
+        {
+          "avoid_when": "Use for debugging and root-cause analysis. Do not choose for general PR review or security audit.",
+          "context_controls": [
+            "target path or URL",
+            "mutation intent",
+            "review mode",
+            "stop criteria"
+          ],
+          "error_guidance": "If required context is missing, ask for the missing URL, path, PR, deployment target, or allowed mutation scope before running the workflow.",
+          "input_schema": {
+            "properties": {
+              "request": {
+                "description": "The user's workflow request, including target URL, file, PR, or scope when available.",
+                "type": "string"
+              }
+            },
+            "required": [
+              "request"
+            ],
+            "type": "object"
+          },
+          "name": "gstack_investigate",
+          "output_schema": {
+            "result": "The selected gstack skill should execute its documented workflow and report evidence, changes, or next steps."
+          },
+          "path": "/Users/admin/dev/gstack/.agents/skills/gstack-investigate/SKILL.md",
+          "purpose": "Run the investigate gstack workflow: Systematic debugging with root cause investigation. Four phases: investigate, analyze, hypothesize, implement. Iron Law: no fixes without root cause. Use when asked to \"debug this\", \"fix this bug\", \"why is this broken\", \"investigate this error\", or \"root cause analysis\". Proactively suggest when the user reports errors, unexpected behavior, or is troubleshooting why something stopped working.",
+          "quality_checks": [
+            "Confirm the request matches this skill's phase of work.",
+            "Check adjacent gstack skills before selecting this one.",
+            "Preserve no-edit and safety boundaries from the user request."
+          ],
+          "source_hash": "36df92af3b77195ee051671585450e52d8fda5d3bddbdbaaae5c68d920f389c7",
+          "source_skill_name": "investigate",
+          "use_when": "Systematic debugging with root cause investigation. Four phases: investigate, analyze, hypothesize, implement. Iron Law: no fixes without root cause. Use when asked to \"debug this\", \"fix this bug\", \"why is this broken\", \"investigate this error\", or \"root cause analysis\". Proactively suggest when the user reports errors, unexpected behavior, or is troubleshooting why something stopped working."
+        },
+        {
+          "avoid_when": "Use after a PR is ready to merge and deploy. For one-time deploy config, choose gstack_setup_deploy.",
+          "context_controls": [
+            "target path or URL",
+            "mutation intent",
+            "review mode",
+            "stop criteria"
+          ],
+          "error_guidance": "If required context is missing, ask for the missing URL, path, PR, deployment target, or allowed mutation scope before running the workflow.",
+          "input_schema": {
+            "properties": {
+              "request": {
+                "description": "The user's workflow request, including target URL, file, PR, or scope when available.",
+                "type": "string"
+              }
+            },
+            "required": [
+              "request"
+            ],
+            "type": "object"
+          },
+          "name": "gstack_land_and_deploy",
+          "output_schema": {
+            "result": "The selected gstack skill should execute its documented workflow and report evidence, changes, or next steps."
+          },
+          "path": "/Users/admin/dev/gstack/.agents/skills/gstack-land-and-deploy/SKILL.md",
+          "purpose": "Run the land-and-deploy gstack workflow: Land and deploy workflow. Merges the PR, waits for CI and deploy, verifies production health via canary checks. Takes over after /ship creates the PR. Use when: \"merge\", \"land\", \"deploy\", \"merge and verify\", \"land it\", \"ship it to production\".",
+          "quality_checks": [
+            "Confirm the request matches this skill's phase of work.",
+            "Check adjacent gstack skills before selecting this one.",
+            "Preserve no-edit and safety boundaries from the user request."
+          ],
+          "source_hash": "d00c3bf297285a84720a99fbcee7dfe7a7d9ac9c35bd3a076d99165470780ddf",
+          "source_skill_name": "land-and-deploy",
+          "use_when": "Land and deploy workflow. Merges the PR, waits for CI and deploy, verifies production health via canary checks. Takes over after /ship creates the PR. Use when: \"merge\", \"land\", \"deploy\", \"merge and verify\", \"land it\", \"ship it to production\"."
+        },
+        {
+          "avoid_when": "Use for early product/startup brainstorming. For turning an idea into a concrete spec plus browser validation, choose gstack_spec_qa.",
+          "context_controls": [
+            "target path or URL",
+            "mutation intent",
+            "review mode",
+            "stop criteria"
+          ],
+          "error_guidance": "If required context is missing, ask for the missing URL, path, PR, deployment target, or allowed mutation scope before running the workflow.",
+          "input_schema": {
+            "properties": {
+              "request": {
+                "description": "The user's workflow request, including target URL, file, PR, or scope when available.",
+                "type": "string"
+              }
+            },
+            "required": [
+              "request"
+            ],
+            "type": "object"
+          },
+          "name": "gstack_office_hours",
+          "output_schema": {
+            "result": "The selected gstack skill should execute its documented workflow and report evidence, changes, or next steps."
+          },
+          "path": "/Users/admin/dev/gstack/.agents/skills/gstack-office-hours/SKILL.md",
+          "purpose": "Run the office-hours gstack workflow: YC Office Hours \u2014 two modes. Startup mode: six forcing questions that expose demand reality, status quo, desperate specificity, narrowest wedge, observation, and future-fit. Builder mode: design thinking brainstorming for side projects, hackathons, learning, and open source. Saves a design doc. Use when asked to \"brainstorm this\", \"I have an idea\", \"help me think through this\", \"office hours\", or \"is this worth building\". Proactively suggest when the user describes a new product idea or is exploring whether something is worth building \u2014 before any code is written. Use before /plan-ceo-review or /plan-eng-review.",
+          "quality_checks": [
+            "Confirm the request matches this skill's phase of work.",
+            "Check adjacent gstack skills before selecting this one.",
+            "Preserve no-edit and safety boundaries from the user request."
+          ],
+          "source_hash": "4851af58562a8c230c1239521460621b6da931ae0033936e0b2a491140944b47",
+          "source_skill_name": "office-hours",
+          "use_when": "YC Office Hours \u2014 two modes. Startup mode: six forcing questions that expose demand reality, status quo, desperate specificity, narrowest wedge, observation, and future-fit. Builder mode: design thinking brainstorming for side projects, hackathons, learning, and open source. Saves a design doc. Use when asked to \"brainstorm this\", \"I have an idea\", \"help me think through this\", \"office hours\", or \"is this worth building\". Proactively suggest when the user describes a new product idea or is exploring whether something is worth building \u2014 before any code is written. Use before /plan-ceo-review or /plan-eng-review."
+        },
+        {
+          "avoid_when": "Use for ambition, scope, and product strategy review.",
+          "context_controls": [
+            "target path or URL",
+            "mutation intent",
+            "review mode",
+            "stop criteria"
+          ],
+          "error_guidance": "If required context is missing, ask for the missing URL, path, PR, deployment target, or allowed mutation scope before running the workflow.",
+          "input_schema": {
+            "properties": {
+              "request": {
+                "description": "The user's workflow request, including target URL, file, PR, or scope when available.",
+                "type": "string"
+              }
+            },
+            "required": [
+              "request"
+            ],
+            "type": "object"
+          },
+          "name": "gstack_plan_ceo_review",
+          "output_schema": {
+            "result": "The selected gstack skill should execute its documented workflow and report evidence, changes, or next steps."
+          },
+          "path": "/Users/admin/dev/gstack/.agents/skills/gstack-plan-ceo-review/SKILL.md",
+          "purpose": "Run the plan-ceo-review gstack workflow: CEO/founder-mode plan review. Rethink the problem, find the 10-star product, challenge premises, expand scope when it creates a better product. Four modes: SCOPE EXPANSION (dream big), SELECTIVE EXPANSION (hold scope + cherry-pick expansions), HOLD SCOPE (maximum rigor), SCOPE REDUCTION (strip to essentials). Use when asked to \"think bigger\", \"expand scope\", \"strategy review\", \"rethink this\", or \"is this ambitious enough\". Proactively suggest when the user is questioning scope or ambition of a plan, or when the plan feels like it could be thinking bigger.",
+          "quality_checks": [
+            "Confirm the request matches this skill's phase of work.",
+            "Check adjacent gstack skills before selecting this one.",
+            "Preserve no-edit and safety boundaries from the user request."
+          ],
+          "source_hash": "b6090192fefd1129096f061198d77c54015751128c301c95b0a1c4e735e3cca2",
+          "source_skill_name": "plan-ceo-review",
+          "use_when": "CEO/founder-mode plan review. Rethink the problem, find the 10-star product, challenge premises, expand scope when it creates a better product. Four modes: SCOPE EXPANSION (dream big), SELECTIVE EXPANSION (hold scope + cherry-pick expansions), HOLD SCOPE (maximum rigor), SCOPE REDUCTION (strip to essentials). Use when asked to \"think bigger\", \"expand scope\", \"strategy review\", \"rethink this\", or \"is this ambitious enough\". Proactively suggest when the user is questioning scope or ambition of a plan, or when the plan feels like it could be thinking bigger."
+        },
+        {
+          "avoid_when": "Use for plan-mode UI or UX critique before implementation. For implemented UI fixes, choose gstack_design_review.",
+          "context_controls": [
+            "target path or URL",
+            "mutation intent",
+            "review mode",
+            "stop criteria"
+          ],
+          "error_guidance": "If required context is missing, ask for the missing URL, path, PR, deployment target, or allowed mutation scope before running the workflow.",
+          "input_schema": {
+            "properties": {
+              "request": {
+                "description": "The user's workflow request, including target URL, file, PR, or scope when available.",
+                "type": "string"
+              }
+            },
+            "required": [
+              "request"
+            ],
+            "type": "object"
+          },
+          "name": "gstack_plan_design_review",
+          "output_schema": {
+            "result": "The selected gstack skill should execute its documented workflow and report evidence, changes, or next steps."
+          },
+          "path": "/Users/admin/dev/gstack/.agents/skills/gstack-plan-design-review/SKILL.md",
+          "purpose": "Run the plan-design-review gstack workflow: Designer's eye plan review \u2014 interactive, like CEO and Eng review. Rates each design dimension 0-10, explains what would make it a 10, then fixes the plan to get there. Works in plan mode. For live site visual audits, use /design-review. Use when asked to \"review the design plan\" or \"design critique\". Proactively suggest when the user has a plan with UI/UX components that should be reviewed before implementation.",
+          "quality_checks": [
+            "Confirm the request matches this skill's phase of work.",
+            "Check adjacent gstack skills before selecting this one.",
+            "Preserve no-edit and safety boundaries from the user request."
+          ],
+          "source_hash": "1ed682aaa834148867c74719b5328811387002ac1f7faaff347786856d8d4c09",
+          "source_skill_name": "plan-design-review",
+          "use_when": "Designer's eye plan review \u2014 interactive, like CEO and Eng review. Rates each design dimension 0-10, explains what would make it a 10, then fixes the plan to get there. Works in plan mode. For live site visual audits, use /design-review. Use when asked to \"review the design plan\" or \"design critique\". Proactively suggest when the user has a plan with UI/UX components that should be reviewed before implementation."
+        },
+        {
+          "avoid_when": "Use for architecture, data flow, edge cases, and test-plan review.",
+          "context_controls": [
+            "target path or URL",
+            "mutation intent",
+            "review mode",
+            "stop criteria"
+          ],
+          "error_guidance": "If required context is missing, ask for the missing URL, path, PR, deployment target, or allowed mutation scope before running the workflow.",
+          "input_schema": {
+            "properties": {
+              "request": {
+                "description": "The user's workflow request, including target URL, file, PR, or scope when available.",
+                "type": "string"
+              }
+            },
+            "required": [
+              "request"
+            ],
+            "type": "object"
+          },
+          "name": "gstack_plan_eng_review",
+          "output_schema": {
+            "result": "The selected gstack skill should execute its documented workflow and report evidence, changes, or next steps."
+          },
+          "path": "/Users/admin/dev/gstack/.agents/skills/gstack-plan-eng-review/SKILL.md",
+          "purpose": "Run the plan-eng-review gstack workflow: Eng manager-mode plan review. Lock in the execution plan \u2014 architecture, data flow, diagrams, edge cases, test coverage, performance. Walks through issues interactively with opinionated recommendations. Use when asked to \"review the architecture\", \"engineering review\", or \"lock in the plan\". Proactively suggest when the user has a plan or design doc and is about to start coding \u2014 to catch architecture issues before implementation.",
+          "quality_checks": [
+            "Confirm the request matches this skill's phase of work.",
+            "Check adjacent gstack skills before selecting this one.",
+            "Preserve no-edit and safety boundaries from the user request."
+          ],
+          "source_hash": "fa2507955a4252488d443ed68baf9f3a699244979afadd9d3a56eea4e71267a5",
+          "source_skill_name": "plan-eng-review",
+          "use_when": "Eng manager-mode plan review. Lock in the execution plan \u2014 architecture, data flow, diagrams, edge cases, test coverage, performance. Walks through issues interactively with opinionated recommendations. Use when asked to \"review the architecture\", \"engineering review\", or \"lock in the plan\". Proactively suggest when the user has a plan or design doc and is about to start coding \u2014 to catch architecture issues before implementation."
+        },
+        {
+          "avoid_when": "Use only when the user wants testing plus code fixes. For bug reports without edits, choose gstack_qa_only.",
+          "context_controls": [
+            "target path or URL",
+            "mutation intent",
+            "review mode",
+            "stop criteria"
+          ],
+          "error_guidance": "If required context is missing, ask for the missing URL, path, PR, deployment target, or allowed mutation scope before running the workflow.",
+          "input_schema": {
+            "properties": {
+              "request": {
+                "description": "The user's workflow request, including target URL, file, PR, or scope when available.",
+                "type": "string"
+              }
+            },
+            "required": [
+              "request"
+            ],
+            "type": "object"
+          },
+          "name": "gstack_qa",
+          "output_schema": {
+            "result": "The selected gstack skill should execute its documented workflow and report evidence, changes, or next steps."
+          },
+          "path": "/Users/admin/dev/gstack/.agents/skills/gstack-qa/SKILL.md",
+          "purpose": "Run the qa gstack workflow: Systematically QA test a web application and fix bugs found. Runs QA testing, then iteratively fixes bugs in source code, committing each fix atomically and re-verifying. Use when asked to \"qa\", \"QA\", \"test this site\", \"find bugs\", \"test and fix\", or \"fix what's broken\". Proactively suggest when the user says a feature is ready for testing or asks \"does this work?\". Three tiers: Quick (critical/high only), Standard (+ medium), Exhaustive (+ cosmetic). Produces before/after health scores, fix evidence, and a ship-readiness summary. For report-only mode, use /qa-only.",
+          "quality_checks": [
+            "Confirm the request matches this skill's phase of work.",
+            "Check adjacent gstack skills before selecting this one.",
+            "Preserve no-edit and safety boundaries from the user request."
+          ],
+          "source_hash": "e9e7f5abc709ab490ca2150d82bcd2153740e70c95a0c2a52da44a673e3a32d8",
+          "source_skill_name": "qa",
+          "use_when": "Systematically QA test a web application and fix bugs found. Runs QA testing, then iteratively fixes bugs in source code, committing each fix atomically and re-verifying. Use when asked to \"qa\", \"QA\", \"test this site\", \"find bugs\", \"test and fix\", or \"fix what's broken\". Proactively suggest when the user says a feature is ready for testing or asks \"does this work?\". Three tiers: Quick (critical/high only), Standard (+ medium), Exhaustive (+ cosmetic). Produces before/after health scores, fix evidence, and a ship-readiness summary. For report-only mode, use /qa-only."
+        },
+        {
+          "avoid_when": "Use only when the user wants a report without code changes. For fix-and-verify loops, choose gstack_qa.",
+          "context_controls": [
+            "target path or URL",
+            "mutation intent",
+            "review mode",
+            "stop criteria"
+          ],
+          "error_guidance": "If required context is missing, ask for the missing URL, path, PR, deployment target, or allowed mutation scope before running the workflow.",
+          "input_schema": {
+            "properties": {
+              "request": {
+                "description": "The user's workflow request, including target URL, file, PR, or scope when available.",
+                "type": "string"
+              }
+            },
+            "required": [
+              "request"
+            ],
+            "type": "object"
+          },
+          "name": "gstack_qa_only",
+          "output_schema": {
+            "result": "The selected gstack skill should execute its documented workflow and report evidence, changes, or next steps."
+          },
+          "path": "/Users/admin/dev/gstack/.agents/skills/gstack-qa-only/SKILL.md",
+          "purpose": "Run the qa-only gstack workflow: Report-only QA testing. Systematically tests a web application and produces a structured report with health score, screenshots, and repro steps \u2014 but never fixes anything. Use when asked to \"just report bugs\", \"qa report only\", or \"test but don't fix\". For the full test-fix-verify loop, use /qa instead. Proactively suggest when the user wants a bug report without any code changes.",
+          "quality_checks": [
+            "Confirm the request matches this skill's phase of work.",
+            "Check adjacent gstack skills before selecting this one.",
+            "Preserve no-edit and safety boundaries from the user request."
+          ],
+          "source_hash": "fab974b3a1452741e2ccc50a61cb3b7a2b4adef2a673ce42510f840bbc17c018",
+          "source_skill_name": "qa-only",
+          "use_when": "Report-only QA testing. Systematically tests a web application and produces a structured report with health score, screenshots, and repro steps \u2014 but never fixes anything. Use when asked to \"just report bugs\", \"qa report only\", or \"test but don't fix\". For the full test-fix-verify loop, use /qa instead. Proactively suggest when the user wants a bug report without any code changes."
+        },
+        {
+          "avoid_when": "Use for weekly or sprint retrospective over commits and work patterns.",
+          "context_controls": [
+            "target path or URL",
+            "mutation intent",
+            "review mode",
+            "stop criteria"
+          ],
+          "error_guidance": "If required context is missing, ask for the missing URL, path, PR, deployment target, or allowed mutation scope before running the workflow.",
+          "input_schema": {
+            "properties": {
+              "request": {
+                "description": "The user's workflow request, including target URL, file, PR, or scope when available.",
+                "type": "string"
+              }
+            },
+            "required": [
+              "request"
+            ],
+            "type": "object"
+          },
+          "name": "gstack_retro",
+          "output_schema": {
+            "result": "The selected gstack skill should execute its documented workflow and report evidence, changes, or next steps."
+          },
+          "path": "/Users/admin/dev/gstack/.agents/skills/gstack-retro/SKILL.md",
+          "purpose": "Run the retro gstack workflow: Weekly engineering retrospective. Analyzes commit history, work patterns, and code quality metrics with persistent history and trend tracking. Team-aware: breaks down per-person contributions with praise and growth areas. Use when asked to \"weekly retro\", \"what did we ship\", or \"engineering retrospective\". Proactively suggest at the end of a work week or sprint.",
+          "quality_checks": [
+            "Confirm the request matches this skill's phase of work.",
+            "Check adjacent gstack skills before selecting this one.",
+            "Preserve no-edit and safety boundaries from the user request."
+          ],
+          "source_hash": "d11e7a2321796785504804776e8173dc4473c1b1992d8cdfc7dffc915dcefb3a",
+          "source_skill_name": "retro",
+          "use_when": "Weekly engineering retrospective. Analyzes commit history, work patterns, and code quality metrics with persistent history and trend tracking. Team-aware: breaks down per-person contributions with praise and growth areas. Use when asked to \"weekly retro\", \"what did we ship\", or \"engineering retrospective\". Proactively suggest at the end of a work week or sprint."
+        },
+        {
+          "avoid_when": "Use for pre-landing code review. For root-cause debugging, choose gstack_investigate; for security threat modeling, choose gstack_cso.",
+          "context_controls": [
+            "target path or URL",
+            "mutation intent",
+            "review mode",
+            "stop criteria"
+          ],
+          "error_guidance": "If required context is missing, ask for the missing URL, path, PR, deployment target, or allowed mutation scope before running the workflow.",
+          "input_schema": {
+            "properties": {
+              "request": {
+                "description": "The user's workflow request, including target URL, file, PR, or scope when available.",
+                "type": "string"
+              }
+            },
+            "required": [
+              "request"
+            ],
+            "type": "object"
+          },
+          "name": "gstack_review",
+          "output_schema": {
+            "result": "The selected gstack skill should execute its documented workflow and report evidence, changes, or next steps."
+          },
+          "path": "/Users/admin/dev/gstack/.agents/skills/gstack-review/SKILL.md",
+          "purpose": "Run the review gstack workflow: Pre-landing PR review. Analyzes diff against the base branch for SQL safety, LLM trust boundary violations, conditional side effects, and other structural issues. Use when asked to \"review this PR\", \"code review\", \"pre-landing review\", or \"check my diff\". Proactively suggest when the user is about to merge or land code changes.",
+          "quality_checks": [
+            "Confirm the request matches this skill's phase of work.",
+            "Check adjacent gstack skills before selecting this one.",
+            "Preserve no-edit and safety boundaries from the user request."
+          ],
+          "source_hash": "c2a0114ad90908394a598adfe80d7d6821c139cb5164c925ddf636f28bf47693",
+          "source_skill_name": "review",
+          "use_when": "Pre-landing PR review. Analyzes diff against the base branch for SQL safety, LLM trust boundary violations, conditional side effects, and other structural issues. Use when asked to \"review this PR\", \"code review\", \"pre-landing review\", or \"check my diff\". Proactively suggest when the user is about to merge or land code changes."
+        },
+        {
+          "avoid_when": "Use to import browser cookies before authenticated browser testing. Do not choose for ordinary browser navigation.",
+          "context_controls": [
+            "target path or URL",
+            "mutation intent",
+            "review mode",
+            "stop criteria"
+          ],
+          "error_guidance": "If required context is missing, ask for the missing URL, path, PR, deployment target, or allowed mutation scope before running the workflow.",
+          "input_schema": {
+            "properties": {
+              "request": {
+                "description": "The user's workflow request, including target URL, file, PR, or scope when available.",
+                "type": "string"
+              }
+            },
+            "required": [
+              "request"
+            ],
+            "type": "object"
+          },
+          "name": "gstack_setup_browser_cookies",
+          "output_schema": {
+            "result": "The selected gstack skill should execute its documented workflow and report evidence, changes, or next steps."
+          },
+          "path": "/Users/admin/dev/gstack/.agents/skills/gstack-setup-browser-cookies/SKILL.md",
+          "purpose": "Run the setup-browser-cookies gstack workflow: Import cookies from your real Chromium browser into the headless browse session. Opens an interactive picker UI where you select which cookie domains to import. Use before QA testing authenticated pages. Use when asked to \"import cookies\", \"login to the site\", or \"authenticate the browser\".",
+          "quality_checks": [
+            "Confirm the request matches this skill's phase of work.",
+            "Check adjacent gstack skills before selecting this one.",
+            "Preserve no-edit and safety boundaries from the user request."
+          ],
+          "source_hash": "63b6ca4c2149bb271498cc608fc17a877ff021a140e62c7aa9d005d3cd7b77ec",
+          "source_skill_name": "setup-browser-cookies",
+          "use_when": "Import cookies from your real Chromium browser into the headless browse session. Opens an interactive picker UI where you select which cookie domains to import. Use before QA testing authenticated pages. Use when asked to \"import cookies\", \"login to the site\", or \"authenticate the browser\"."
+        },
+        {
+          "avoid_when": "Use for one-time deployment configuration. Do not choose for actual merge/deploy execution.",
+          "context_controls": [
+            "target path or URL",
+            "mutation intent",
+            "review mode",
+            "stop criteria"
+          ],
+          "error_guidance": "If required context is missing, ask for the missing URL, path, PR, deployment target, or allowed mutation scope before running the workflow.",
+          "input_schema": {
+            "properties": {
+              "request": {
+                "description": "The user's workflow request, including target URL, file, PR, or scope when available.",
+                "type": "string"
+              }
+            },
+            "required": [
+              "request"
+            ],
+            "type": "object"
+          },
+          "name": "gstack_setup_deploy",
+          "output_schema": {
+            "result": "The selected gstack skill should execute its documented workflow and report evidence, changes, or next steps."
+          },
+          "path": "/Users/admin/dev/gstack/.agents/skills/gstack-setup-deploy/SKILL.md",
+          "purpose": "Run the setup-deploy gstack workflow: Configure deployment settings for /land-and-deploy. Detects your deploy platform (Fly.io, Render, Vercel, Netlify, Heroku, GitHub Actions, custom), production URL, health check endpoints, and deploy status commands. Writes the configuration to CLAUDE.md so all future deploys are automatic. Use when: \"setup deploy\", \"configure deployment\", \"set up land-and-deploy\", \"how do I deploy with gstack\", \"add deploy config\".",
+          "quality_checks": [
+            "Confirm the request matches this skill's phase of work.",
+            "Check adjacent gstack skills before selecting this one.",
+            "Preserve no-edit and safety boundaries from the user request."
+          ],
+          "source_hash": "30158565c6ef5492c4203a04404d6b6bfaadbce96b13fa8fb47b0ecdb2f1feec",
+          "source_skill_name": "setup-deploy",
+          "use_when": "Configure deployment settings for /land-and-deploy. Detects your deploy platform (Fly.io, Render, Vercel, Netlify, Heroku, GitHub Actions, custom), production URL, health check endpoints, and deploy status commands. Writes the configuration to CLAUDE.md so all future deploys are automatic. Use when: \"setup deploy\", \"configure deployment\", \"set up land-and-deploy\", \"how do I deploy with gstack\", \"add deploy config\"."
+        },
+        {
+          "avoid_when": "Use to prepare/push/create a PR. For merging an existing PR and verifying deploy, choose gstack_land_and_deploy.",
+          "context_controls": [
+            "target path or URL",
+            "mutation intent",
+            "review mode",
+            "stop criteria"
+          ],
+          "error_guidance": "If required context is missing, ask for the missing URL, path, PR, deployment target, or allowed mutation scope before running the workflow.",
+          "input_schema": {
+            "properties": {
+              "request": {
+                "description": "The user's workflow request, including target URL, file, PR, or scope when available.",
+                "type": "string"
+              }
+            },
+            "required": [
+              "request"
+            ],
+            "type": "object"
+          },
+          "name": "gstack_ship",
+          "output_schema": {
+            "result": "The selected gstack skill should execute its documented workflow and report evidence, changes, or next steps."
+          },
+          "path": "/Users/admin/dev/gstack/.agents/skills/gstack-ship/SKILL.md",
+          "purpose": "Run the ship gstack workflow: Ship workflow: detect + merge base branch, run tests, review diff, bump VERSION, update CHANGELOG, commit, push, create PR. Use when asked to \"ship\", \"deploy\", \"push to main\", \"create a PR\", or \"merge and push\". Proactively suggest when the user says code is ready or asks about deploying.",
+          "quality_checks": [
+            "Confirm the request matches this skill's phase of work.",
+            "Check adjacent gstack skills before selecting this one.",
+            "Preserve no-edit and safety boundaries from the user request."
+          ],
+          "source_hash": "8c385620bcfa8f675458096003051bbd9a4527f5661a274b7bdc1c7d71ccc4da",
+          "source_skill_name": "ship",
+          "use_when": "Ship workflow: detect + merge base branch, run tests, review diff, bump VERSION, update CHANGELOG, commit, push, create PR. Use when asked to \"ship\", \"deploy\", \"push to main\", \"create a PR\", or \"merge and push\". Proactively suggest when the user says code is ready or asks about deploying."
+        },
+        {
+          "avoid_when": "Use for feature shaping plus browser validation. For pure brainstorming without validation, choose gstack_office_hours.",
+          "context_controls": [
+            "target path or URL",
+            "mutation intent",
+            "review mode",
+            "stop criteria"
+          ],
+          "error_guidance": "If required context is missing, ask for the missing URL, path, PR, deployment target, or allowed mutation scope before running the workflow.",
+          "input_schema": {
+            "properties": {
+              "request": {
+                "description": "The user's workflow request, including target URL, file, PR, or scope when available.",
+                "type": "string"
+              }
+            },
+            "required": [
+              "request"
+            ],
+            "type": "object"
+          },
+          "name": "gstack_spec_qa",
+          "output_schema": {
+            "result": "The selected gstack skill should execute its documented workflow and report evidence, changes, or next steps."
+          },
+          "path": "/Users/admin/dev/gstack/.agents/skills/gstack-spec-qa/SKILL.md",
+          "purpose": "Run the spec-qa gstack workflow: Founder/operator workflow for product shaping and browser validation. Turns a rough feature request into a concrete spec, pressure-tests the spec, and validates the critical path in a real browser when a URL is available. Use when asked to \"shape this feature\", \"turn this into a spec\", \"review the plan then test it\", \"spec and QA this\", or \"go from idea to browser verification\". Proactively suggest when the user is bouncing between product-definition work and browser QA and wants one artifact-driven workflow.",
+          "quality_checks": [
+            "Confirm the request matches this skill's phase of work.",
+            "Check adjacent gstack skills before selecting this one.",
+            "Preserve no-edit and safety boundaries from the user request."
+          ],
+          "source_hash": "40847978a8119240848729d64895d1f48e4bd7d70744cae52d924ea0f863f7a2",
+          "source_skill_name": "spec-qa",
+          "use_when": "Founder/operator workflow for product shaping and browser validation. Turns a rough feature request into a concrete spec, pressure-tests the spec, and validates the critical path in a real browser when a URL is available. Use when asked to \"shape this feature\", \"turn this into a spec\", \"review the plan then test it\", \"spec and QA this\", or \"go from idea to browser verification\". Proactively suggest when the user is bouncing between product-definition work and browser QA and wants one artifact-driven workflow."
+        },
+        {
+          "avoid_when": "Use only to clear an existing freeze boundary.",
+          "context_controls": [
+            "target path or URL",
+            "mutation intent",
+            "review mode",
+            "stop criteria"
+          ],
+          "error_guidance": "If required context is missing, ask for the missing URL, path, PR, deployment target, or allowed mutation scope before running the workflow.",
+          "input_schema": {
+            "properties": {
+              "request": {
+                "description": "The user's workflow request, including target URL, file, PR, or scope when available.",
+                "type": "string"
+              }
+            },
+            "required": [
+              "request"
+            ],
+            "type": "object"
+          },
+          "name": "gstack_unfreeze",
+          "output_schema": {
+            "result": "The selected gstack skill should execute its documented workflow and report evidence, changes, or next steps."
+          },
+          "path": "/Users/admin/dev/gstack/.agents/skills/gstack-unfreeze/SKILL.md",
+          "purpose": "Run the unfreeze gstack workflow: Clear the freeze boundary set by /freeze, allowing edits to all directories again. Use when you want to widen edit scope without ending the session. Use when asked to \"unfreeze\", \"unlock edits\", \"remove freeze\", or \"allow all edits\".",
+          "quality_checks": [
+            "Confirm the request matches this skill's phase of work.",
+            "Check adjacent gstack skills before selecting this one.",
+            "Preserve no-edit and safety boundaries from the user request."
+          ],
+          "source_hash": "b13e8d1f235f1c22fb736eaed1dfaab453cb03262301084638dad2d00f6693bd",
+          "source_skill_name": "unfreeze",
+          "use_when": "Clear the freeze boundary set by /freeze, allowing edits to all directories again. Use when you want to widen edit scope without ending the session. Use when asked to \"unfreeze\", \"unlock edits\", \"remove freeze\", or \"allow all edits\"."
+        },
+        {
+          "avoid_when": "Use only to update the gstack installation itself.",
+          "context_controls": [
+            "target path or URL",
+            "mutation intent",
+            "review mode",
+            "stop criteria"
+          ],
+          "error_guidance": "If required context is missing, ask for the missing URL, path, PR, deployment target, or allowed mutation scope before running the workflow.",
+          "input_schema": {
+            "properties": {
+              "request": {
+                "description": "The user's workflow request, including target URL, file, PR, or scope when available.",
+                "type": "string"
+              }
+            },
+            "required": [
+              "request"
+            ],
+            "type": "object"
+          },
+          "name": "gstack_upgrade",
+          "output_schema": {
+            "result": "The selected gstack skill should execute its documented workflow and report evidence, changes, or next steps."
+          },
+          "path": "/Users/admin/dev/gstack/.agents/skills/gstack-upgrade/SKILL.md",
+          "purpose": "Run the gstack-upgrade gstack workflow: Upgrade gstack to the latest version. Detects global vs vendored install, runs the upgrade, and shows what's new. Use when asked to \"upgrade gstack\", \"update gstack\", or \"get latest version\".",
+          "quality_checks": [
+            "Confirm the request matches this skill's phase of work.",
+            "Check adjacent gstack skills before selecting this one.",
+            "Preserve no-edit and safety boundaries from the user request."
+          ],
+          "source_hash": "6b41874db9ab592b1e45257f6bf368620fc40460f6b0946a56fec309a8c7e8bf",
+          "source_skill_name": "gstack-upgrade",
+          "use_when": "Upgrade gstack to the latest version. Detects global vs vendored install, runs the upgrade, and shows what's new. Use when asked to \"upgrade gstack\", \"update gstack\", or \"get latest version\"."
+        },
+        {
+          "avoid_when": "Avoid when one of the gstack workflow skills should actually run.",
+          "context_controls": [
+            "workflow necessity",
+            "user intent"
+          ],
+          "error_guidance": "If the user asks a general question or explicitly says not to run a workflow, choose this pseudo-skill.",
+          "input_schema": {
+            "properties": {
+              "rationale": {
+                "description": "Why no gstack workflow should be selected.",
+                "type": "string"
+              }
+            },
+            "required": [
+              "rationale"
+            ],
+            "type": "object"
+          },
+          "name": "NO_TOOL",
+          "output_schema": {
+            "result": "A short explanation that no gstack workflow should run."
+          },
+          "path": "",
+          "purpose": "Represent the safe decision to run no gstack workflow.",
+          "quality_checks": [
+            "Use only when the user request is general, unsupported, or explicitly says not to run a workflow."
+          ],
+          "source_hash": "",
+          "source_skill_name": "NO_TOOL",
+          "use_when": "Use when no gstack workflow skill should be selected for the user request."
+        }
+      ]
+    }
+  ],
+  "value_bar": {
+    "adversarial_check": "Adjacent gstack skills must not be interchangeable: qa versus qa-only, browse versus connect-chrome, review versus cso, ship versus land-and-deploy, and careful versus freeze versus guard.",
+    "baseline": "Unvalidated skill catalogs can route requests to broad aliases or adjacent workflows.",
+    "claim": "The matrix adds value if it exposes or confirms skill-routing boundaries across providers and harnesses for a pinned gstack version.",
+    "minimum_improvement": "Boundary-tuned descriptions should match or outperform stock descriptions without masking NO_TOOL safety cases."
+  }
+}

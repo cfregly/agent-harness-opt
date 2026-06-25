@@ -1,0 +1,655 @@
+{
+  "created_at": "2026-06-25T16:41:30+00:00",
+  "hash": "289315be7c6cc44647748bd0e814c5bc11718fb03e99f1ddb82497defb96c8c3",
+  "items": [
+    {
+      "case_count": 30,
+      "hash": "eae3ad063717241bc5f81dbc5b05cdb198c8f19ff9c39d83b2c69f7e6a5b4878",
+      "instruction_variants": [
+        {
+          "hash": "5b623681f8c541ce84d2e771a9f54129ab3220572ad6850df68d52c677e29ef3",
+          "name": "baseline_skill_routing"
+        },
+        {
+          "hash": "fc2916de92fad3c696b768a883bb66320bbddb490cabe4d403798a92609988bb",
+          "name": "boundary_routing_rules"
+        }
+      ],
+      "name": "gstack skill-routing matrix",
+      "path": "evals/targets/gstack/gstack_skill_selection_matrix.json",
+      "profiles": [
+        {
+          "harnesses": [
+            "native_tools",
+            "prompt_json"
+          ],
+          "model": "claude-sonnet-4-5",
+          "model_env": "ANTHROPIC_MATRIX_MODEL",
+          "name": "anthropic-sonnet",
+          "provider": "anthropic"
+        },
+        {
+          "harnesses": [
+            "native_tools",
+            "prompt_json"
+          ],
+          "model": "gpt-4.1",
+          "model_env": "OPENAI_MATRIX_MODEL",
+          "name": "openai-gpt",
+          "provider": "openai"
+        },
+        {
+          "harnesses": [
+            "native_tools",
+            "prompt_json"
+          ],
+          "model": "gemini-2.5-pro",
+          "model_env": "GEMINI_MATRIX_MODEL",
+          "name": "gemini-pro",
+          "provider": "gemini"
+        }
+      ],
+      "source": {
+        "commit": "cd66fc2f890982351e3178925be563681d0ab2c5",
+        "generated_surface_hash": "68d60eeefdde254818b03ee310bf1c4c9aaf0efee8d6db35141fe9cb7da8ae12",
+        "package_name": "gstack",
+        "package_version": "0.13.3.0",
+        "remote": "git@github.com:garrytan/gstack.git",
+        "source_path": "/Users/admin/dev/gstack",
+        "target_surface": ".agents/skills/*/SKILL.md generated skill files",
+        "target_surface_dirty": false,
+        "worktree_dirty": true
+      },
+      "tool_variants": [
+        {
+          "hash": "d95a0874d539707be40eaef907afa635180723075611f9a26196c8b849792fed",
+          "name": "gstack_stock_skill_descriptions",
+          "tool_count": 31,
+          "tools": [
+            {
+              "description_hash": "253878d94584e4bd6d6e6407aad287e2f007c7a19be89bb34c9e18d567ad527f",
+              "name": "gstack_gstack",
+              "schema_hash": "49ee1926cbd85271177b4c6d17d82dda984a4bafbe0d94746720ae3dd0b52615",
+              "surface_hash": "0fb416e2f75e3f9806bf326baa1a70b96de0aa65cab0f5816c23ad36da18aae6"
+            },
+            {
+              "description_hash": "44fae18eb5eef93e070b7da90fc732bf920adaa0e5c10863f48c5c2982ee96b7",
+              "name": "gstack_autoplan",
+              "schema_hash": "49ee1926cbd85271177b4c6d17d82dda984a4bafbe0d94746720ae3dd0b52615",
+              "surface_hash": "c4d9b9b04288297367620b3f6f20d32085e850fd9abca6a01b61e1fa52dfb74e"
+            },
+            {
+              "description_hash": "42a9eee6159bdb35406dbe6f9641abf055817e809a8596630966f6bd22634603",
+              "name": "gstack_benchmark",
+              "schema_hash": "49ee1926cbd85271177b4c6d17d82dda984a4bafbe0d94746720ae3dd0b52615",
+              "surface_hash": "4879984108c2cd37301e5c085d0e6b1c9d620982f0552b511794efe37fb4099f"
+            },
+            {
+              "description_hash": "ee3a381b5baec1a82814199e631680ecd62f5f84d1034e91e16f392ee3ff7d9b",
+              "name": "gstack_browse",
+              "schema_hash": "49ee1926cbd85271177b4c6d17d82dda984a4bafbe0d94746720ae3dd0b52615",
+              "surface_hash": "caf97288150ea0ab9b40c0744c94fde81a1642dcf44dcd180cb1a196c9f6e068"
+            },
+            {
+              "description_hash": "99f9b4767fac12ed946dd7bdf0544c784643f45a4a1514714332136d88d9de04",
+              "name": "gstack_canary",
+              "schema_hash": "49ee1926cbd85271177b4c6d17d82dda984a4bafbe0d94746720ae3dd0b52615",
+              "surface_hash": "3850e4190437fc1ed567125f4931a73ee6f4b8f2237fa01cc91991d34706f2a2"
+            },
+            {
+              "description_hash": "cf3876b43f5b5da4f1a2546c78b4f5be489392ce83bbb593a0029536eb6cd816",
+              "name": "gstack_careful",
+              "schema_hash": "49ee1926cbd85271177b4c6d17d82dda984a4bafbe0d94746720ae3dd0b52615",
+              "surface_hash": "ee3a330a3ac75a0428fc6efb31a7e2365d07bc582e438d3b50764e99fa7995b1"
+            },
+            {
+              "description_hash": "e00c6bf770d572a3a781cc7e56cf0e121dc117e4147603b49e2de87f055b09f3",
+              "name": "gstack_connect_chrome",
+              "schema_hash": "49ee1926cbd85271177b4c6d17d82dda984a4bafbe0d94746720ae3dd0b52615",
+              "surface_hash": "a1f5d654bacbbcf5325f89c5bcf9a053faed8949cd6d8cf6bb572107cb0aa2dc"
+            },
+            {
+              "description_hash": "1ea4b8a7f6ccc4c9e85bfd36147412e603914b8fd5f2493c56d719acb346c2ac",
+              "name": "gstack_cso",
+              "schema_hash": "49ee1926cbd85271177b4c6d17d82dda984a4bafbe0d94746720ae3dd0b52615",
+              "surface_hash": "8c0a7591d7b38c0dd14033f3a6e8cb8e86fc05959466a6e93c54331afe46343c"
+            },
+            {
+              "description_hash": "688849b0339f782b2b1a0f310a3669f0d17abb1da44762ebcb0e2e1723979015",
+              "name": "gstack_design_consultation",
+              "schema_hash": "49ee1926cbd85271177b4c6d17d82dda984a4bafbe0d94746720ae3dd0b52615",
+              "surface_hash": "49a8fa339c158996c4793aa797df359b876dc41caac1dfdae3e12126c076e96f"
+            },
+            {
+              "description_hash": "7dea4f0d31cd74412c92cf841e3ef3480648bf6e5ba320aa61140baac4267016",
+              "name": "gstack_design_review",
+              "schema_hash": "49ee1926cbd85271177b4c6d17d82dda984a4bafbe0d94746720ae3dd0b52615",
+              "surface_hash": "a9eff5b6c379d0460e691ff24ad6eb4297b1dc19e6993c223b06e15b9d06e20f"
+            },
+            {
+              "description_hash": "96bf268ea3400c53a13be23b63ebeb17258b788f70595ebbf1b65c310272ee25",
+              "name": "gstack_design_shotgun",
+              "schema_hash": "49ee1926cbd85271177b4c6d17d82dda984a4bafbe0d94746720ae3dd0b52615",
+              "surface_hash": "082bd1320851d2f60c1222c05dbbd89f017bcca288baa0fc54942b45729d5740"
+            },
+            {
+              "description_hash": "c7721ade802b479df8736abe4581d9927444da6a922cdf92a3999a419e89f6e4",
+              "name": "gstack_document_release",
+              "schema_hash": "49ee1926cbd85271177b4c6d17d82dda984a4bafbe0d94746720ae3dd0b52615",
+              "surface_hash": "3cc6d0eea75f988a3acd53135ab66fa0256fbddbd4b63af6eda747f086f2d490"
+            },
+            {
+              "description_hash": "15045cd227a638a833edf32f514d50bf3e4537e2e2a26e98f475fe66cd5c7bb9",
+              "name": "gstack_freeze",
+              "schema_hash": "49ee1926cbd85271177b4c6d17d82dda984a4bafbe0d94746720ae3dd0b52615",
+              "surface_hash": "225155d304b162d46a8fcb4313064c235247b5ce3552594aa0d1c0532bc2662d"
+            },
+            {
+              "description_hash": "1b592315e18b08ebe48562a349f4619594e6f74ad5b9c5f364e579009f5b3c3b",
+              "name": "gstack_guard",
+              "schema_hash": "49ee1926cbd85271177b4c6d17d82dda984a4bafbe0d94746720ae3dd0b52615",
+              "surface_hash": "91d4ae47502ad126dfe45ced7582292ccbe27bab8e568d7c5e8e534b20926963"
+            },
+            {
+              "description_hash": "ab0c57d6baafa879340bb5212dd937ef48d49b18a06142504d5d517d64d93fc8",
+              "name": "gstack_investigate",
+              "schema_hash": "49ee1926cbd85271177b4c6d17d82dda984a4bafbe0d94746720ae3dd0b52615",
+              "surface_hash": "3be85f78bcec21c8995b31e4955adcd7ebb04d8c058ed74834fad67b2217e7a0"
+            },
+            {
+              "description_hash": "85fef2d03c2377bd0ba12226c7448864229cb763cf63050b9ee75f846e4926a5",
+              "name": "gstack_land_and_deploy",
+              "schema_hash": "49ee1926cbd85271177b4c6d17d82dda984a4bafbe0d94746720ae3dd0b52615",
+              "surface_hash": "0c31ccaa5a5f9af750dc8101898aeda004efa1ebf2393b37399999e4e8e8f612"
+            },
+            {
+              "description_hash": "e4d470bdd73003efabd06cbd62ecdb59cbf13a0df8a927d1b2625db1d4e2da23",
+              "name": "gstack_office_hours",
+              "schema_hash": "49ee1926cbd85271177b4c6d17d82dda984a4bafbe0d94746720ae3dd0b52615",
+              "surface_hash": "78f656d486a9299d3c1f4986c3a8169c4d16b6426c156047f53941d078216b55"
+            },
+            {
+              "description_hash": "7d8eef192354deca4a54ee36f7024addbcd052ab5a0561b5a48c71f28b9c504b",
+              "name": "gstack_plan_ceo_review",
+              "schema_hash": "49ee1926cbd85271177b4c6d17d82dda984a4bafbe0d94746720ae3dd0b52615",
+              "surface_hash": "583e4dcf01714e8745cabbb012fdc7b5c94c5935abdfccb407c5ebec3424a85a"
+            },
+            {
+              "description_hash": "9108b8f23ac7b634e04ba313fb919c791ce4e59ea1b27ba1645df199636a7b66",
+              "name": "gstack_plan_design_review",
+              "schema_hash": "49ee1926cbd85271177b4c6d17d82dda984a4bafbe0d94746720ae3dd0b52615",
+              "surface_hash": "984b4a4b68ae7e14b64ca12fa0c79a8d40b6d447884bc31a3645f3a24c06ac02"
+            },
+            {
+              "description_hash": "7e66e156a97dc2128aa55fc2a62ad5e598db07d0d406dcb46901b85a647a4c5f",
+              "name": "gstack_plan_eng_review",
+              "schema_hash": "49ee1926cbd85271177b4c6d17d82dda984a4bafbe0d94746720ae3dd0b52615",
+              "surface_hash": "ea694de62d02bee04a69da9a9629d768cd289ac95c125a098e4c15bc18c7600b"
+            },
+            {
+              "description_hash": "4b6da119e07d66db775ca07b4e074c48fd97e6aa80d9065d4bddaa96b63de486",
+              "name": "gstack_qa",
+              "schema_hash": "49ee1926cbd85271177b4c6d17d82dda984a4bafbe0d94746720ae3dd0b52615",
+              "surface_hash": "0c5d942265e9715912fea1243bad350a7d36ef753906436c440a4e16428cfdd4"
+            },
+            {
+              "description_hash": "c4de6bf53049a2613fbfa87e54fc01ed661f3016aa5e83bed2f8be9a56a3e6e7",
+              "name": "gstack_qa_only",
+              "schema_hash": "49ee1926cbd85271177b4c6d17d82dda984a4bafbe0d94746720ae3dd0b52615",
+              "surface_hash": "bca957567e1e9c14fdeaff8b55e89e6dcdda888894cea93a33edc8dc59baa2aa"
+            },
+            {
+              "description_hash": "1b0f862b3827ce9d374413d4ce2a86944bd672deed7a096fcfd3e827290d97ca",
+              "name": "gstack_retro",
+              "schema_hash": "49ee1926cbd85271177b4c6d17d82dda984a4bafbe0d94746720ae3dd0b52615",
+              "surface_hash": "db3cacf93ba12c35fdfad8875ca7e0832bca7409d436edca3fb9c8e9d965492c"
+            },
+            {
+              "description_hash": "f7364912f7b8b120e1f5dc85f31886cd480ed289a0f935d810cfcdedd75a3cfb",
+              "name": "gstack_review",
+              "schema_hash": "49ee1926cbd85271177b4c6d17d82dda984a4bafbe0d94746720ae3dd0b52615",
+              "surface_hash": "35379d22d463d6fae5ce1a649c53c458d7d907a5ffe14b94dddae6e87e246a2d"
+            },
+            {
+              "description_hash": "d48c7c1d36f5d285c14b0cbde11a654303330d270c2b6793329837112129090b",
+              "name": "gstack_setup_browser_cookies",
+              "schema_hash": "49ee1926cbd85271177b4c6d17d82dda984a4bafbe0d94746720ae3dd0b52615",
+              "surface_hash": "994627cb5f56a70fc98cdb0d0f0e9e6a79f1ce3315f73f99b1610905347cb37f"
+            },
+            {
+              "description_hash": "dc6a6b80f534c4a0767205c1c1c4f5438af8db2e4d10b160d06ae01aa5d3dab1",
+              "name": "gstack_setup_deploy",
+              "schema_hash": "49ee1926cbd85271177b4c6d17d82dda984a4bafbe0d94746720ae3dd0b52615",
+              "surface_hash": "f7dbe98c1509d6c7e3f75b99a744b25856c43f659fcca24cdf21bb553bb856aa"
+            },
+            {
+              "description_hash": "6b5687e4f6b0e11aab0df877cbfa3a07bed3e77c874258a2abb6750931d46660",
+              "name": "gstack_ship",
+              "schema_hash": "49ee1926cbd85271177b4c6d17d82dda984a4bafbe0d94746720ae3dd0b52615",
+              "surface_hash": "a21636557ac83df4fa476d866cfee60f28d9e2b21b5ddbe3a6c815a2f80ba7b6"
+            },
+            {
+              "description_hash": "ae95fb77acdae4071a28cd2b519e9414ab933931c09f8c0be8a023d12fa337b1",
+              "name": "gstack_spec_qa",
+              "schema_hash": "49ee1926cbd85271177b4c6d17d82dda984a4bafbe0d94746720ae3dd0b52615",
+              "surface_hash": "e08f3926c518fef59148372975224eb21cc4907b05a345a7b7679ca82b3c9113"
+            },
+            {
+              "description_hash": "3bd9384a2cfd125243eea75ed834adf5b73aef43f898800bf229379f187ea63f",
+              "name": "gstack_unfreeze",
+              "schema_hash": "49ee1926cbd85271177b4c6d17d82dda984a4bafbe0d94746720ae3dd0b52615",
+              "surface_hash": "7b0507025c440097ac5e64654dbc6e3e54ab1bb55b28c067c1eb5a96bc85f7cd"
+            },
+            {
+              "description_hash": "25b3e8ddbfca2910e0ac8f64f61f983bba2917fc114244e79235034bf1cae704",
+              "name": "gstack_upgrade",
+              "schema_hash": "49ee1926cbd85271177b4c6d17d82dda984a4bafbe0d94746720ae3dd0b52615",
+              "surface_hash": "bb69e98b1efd9d8ebbbeb291b4a186121e84fe89c9b43b9357926178fb5cfa3d"
+            },
+            {
+              "description_hash": "63408c2f2a156e55dfff79d4fc3e7ca4d8687fcb87a110555848784b3ef8a24d",
+              "name": "NO_TOOL",
+              "schema_hash": "fd74afce03babb47d6744ee678d9b4af6a35b505b66dd24bc53edae949c5fa17",
+              "surface_hash": "193e45a1d607a79da19ed564ede453a6583bf575c1ba73219359c8bd99cb4872"
+            }
+          ]
+        },
+        {
+          "hash": "289b45845e417444ef6c1066a926fc79bec8802bbd12d43537ad2c952036d134",
+          "name": "gstack_boundary_tuned_skill_descriptions",
+          "tool_count": 31,
+          "tools": [
+            {
+              "description_hash": "e74f6afc5d962988b433d69758acfa40c6098dd5f70709e5debab7daadd33d2f",
+              "name": "gstack_gstack",
+              "schema_hash": "49ee1926cbd85271177b4c6d17d82dda984a4bafbe0d94746720ae3dd0b52615",
+              "surface_hash": "c963fbd090c2a48874483ff5df4c47fca36fa2c66f605f4e846cf8a99c8dbb2d"
+            },
+            {
+              "description_hash": "944df536c79774aa936e6317e5aea2dbaddcf6c8342e00b7a8bdff2af45bd9fe",
+              "name": "gstack_autoplan",
+              "schema_hash": "49ee1926cbd85271177b4c6d17d82dda984a4bafbe0d94746720ae3dd0b52615",
+              "surface_hash": "d22d45a13909ca4c6a62101b5b0eeb217b0da29f8e34f38c9729856e122dcf67"
+            },
+            {
+              "description_hash": "6cba0ffb6d3814b9fc397be085a73e626e8bbc2fd8e2778a6c104066900c9347",
+              "name": "gstack_benchmark",
+              "schema_hash": "49ee1926cbd85271177b4c6d17d82dda984a4bafbe0d94746720ae3dd0b52615",
+              "surface_hash": "ee213211bafc99224b0017577fc706b3fd5f480e4c0c0819091b3a28e4c08859"
+            },
+            {
+              "description_hash": "54ea1a265e02f2187d542fbcd503d7fec5df49417baa5e49b902cd0300936910",
+              "name": "gstack_browse",
+              "schema_hash": "49ee1926cbd85271177b4c6d17d82dda984a4bafbe0d94746720ae3dd0b52615",
+              "surface_hash": "a556a307a2709542040b7f9cf072f87fd3c2e7e0cf5c0f596bc1457f68e9b7e8"
+            },
+            {
+              "description_hash": "ddd7929ffc4691714e5e70e09ef154f5bdef29023757de91d6e034b3c148f7cf",
+              "name": "gstack_canary",
+              "schema_hash": "49ee1926cbd85271177b4c6d17d82dda984a4bafbe0d94746720ae3dd0b52615",
+              "surface_hash": "6f5ac16dcadd9113c097962edd802e38b9d15bc8167fad75312476b0aa4dc463"
+            },
+            {
+              "description_hash": "2d71c4e587a67035dc83dfc10cb44063c3d32d9698f04ad46a15378c9807c96f",
+              "name": "gstack_careful",
+              "schema_hash": "49ee1926cbd85271177b4c6d17d82dda984a4bafbe0d94746720ae3dd0b52615",
+              "surface_hash": "10e8869b86068d6f26edeaa8c2f719e47e0532dd24efdb87719cc0f2498b5402"
+            },
+            {
+              "description_hash": "858bdff2c334196a4fa8143225ed6bb72ffc8b8a60b1f2c3974673af108d7134",
+              "name": "gstack_connect_chrome",
+              "schema_hash": "49ee1926cbd85271177b4c6d17d82dda984a4bafbe0d94746720ae3dd0b52615",
+              "surface_hash": "6079558bf0ee8e797e12a3c40c69697689de19ac3a91289269248907eef56e64"
+            },
+            {
+              "description_hash": "4119bb4d3f91f3b6f2c19b9826eee4e86b1db92588905a4114f052ded15a5283",
+              "name": "gstack_cso",
+              "schema_hash": "49ee1926cbd85271177b4c6d17d82dda984a4bafbe0d94746720ae3dd0b52615",
+              "surface_hash": "52ef845e0a948107e2286f0148334d441329383bf7d1ba1764420a2d49263831"
+            },
+            {
+              "description_hash": "b02ec9204c4208d342ce6116cc0931be27443a627e30192b3cd1943d78fe0813",
+              "name": "gstack_design_consultation",
+              "schema_hash": "49ee1926cbd85271177b4c6d17d82dda984a4bafbe0d94746720ae3dd0b52615",
+              "surface_hash": "4d20c4ba9771a6b2d18b342c8390d3ad143fd18d40c53720e4d61c5a25281bb6"
+            },
+            {
+              "description_hash": "5dc980046bf6479f862517dae1880cb1464a6275dfa6958c521773321837ae64",
+              "name": "gstack_design_review",
+              "schema_hash": "49ee1926cbd85271177b4c6d17d82dda984a4bafbe0d94746720ae3dd0b52615",
+              "surface_hash": "f3b98cd72e80b35e83c1303e6f60dd7c244cd0f54ff4d6ff7d0bce8f9093cb53"
+            },
+            {
+              "description_hash": "a77e8316d185146b5cad06a76fd8ed10c61485d4643f839caab1ccc3cf79873d",
+              "name": "gstack_design_shotgun",
+              "schema_hash": "49ee1926cbd85271177b4c6d17d82dda984a4bafbe0d94746720ae3dd0b52615",
+              "surface_hash": "b66d1f4d4276d66d0c63ac0fdedd79d2cc12d140856004e69b50c6717720add6"
+            },
+            {
+              "description_hash": "1ab1e95ce091db1383867f7b6f91c7503e287aea5d3e61fdd87b6e8d805db381",
+              "name": "gstack_document_release",
+              "schema_hash": "49ee1926cbd85271177b4c6d17d82dda984a4bafbe0d94746720ae3dd0b52615",
+              "surface_hash": "00ed8776ab16b376184bc0c5522ca142ad697424b555bc011acdf682c4c10bbe"
+            },
+            {
+              "description_hash": "9367c3a253ea0ee0beef42dff34440040c29cf832897fe81c385e4bce77c0b23",
+              "name": "gstack_freeze",
+              "schema_hash": "49ee1926cbd85271177b4c6d17d82dda984a4bafbe0d94746720ae3dd0b52615",
+              "surface_hash": "c98a5a9b765328651c63d590608f0f55bf1e38d311c65b9c179d68f4fa6654ac"
+            },
+            {
+              "description_hash": "787ba22c2b7259240bcbe2229a6ade0a4cf44fb6852bb4e2cf5d9cc39d5e7465",
+              "name": "gstack_guard",
+              "schema_hash": "49ee1926cbd85271177b4c6d17d82dda984a4bafbe0d94746720ae3dd0b52615",
+              "surface_hash": "d60eae38c72f9cdd6f14627e7721b53718a4c69f4b66c50744ded8a8f20447a2"
+            },
+            {
+              "description_hash": "e7da689e16f746450bdfd31b29ec7c94ef66333fc3496587e849ea90b26cd567",
+              "name": "gstack_investigate",
+              "schema_hash": "49ee1926cbd85271177b4c6d17d82dda984a4bafbe0d94746720ae3dd0b52615",
+              "surface_hash": "a96c9500b47e4e4f972d47c9d88a1b170bdbbe1b1da464041e41296c0921e665"
+            },
+            {
+              "description_hash": "cbb8c0d966e4ab5ef73077eb443a5307f4860e33499f2f204a4be913262b585c",
+              "name": "gstack_land_and_deploy",
+              "schema_hash": "49ee1926cbd85271177b4c6d17d82dda984a4bafbe0d94746720ae3dd0b52615",
+              "surface_hash": "4d51206dc07a13a4f8e9dc635d30ecc17af201d678d3705e10badacd134702aa"
+            },
+            {
+              "description_hash": "7c748719306c500950e3c383a4fb91b3d1626ffffa6f295ef080d0ea809893c7",
+              "name": "gstack_office_hours",
+              "schema_hash": "49ee1926cbd85271177b4c6d17d82dda984a4bafbe0d94746720ae3dd0b52615",
+              "surface_hash": "07bf400eddd02dbc277c08f9d70eb491d8eb4e87737403c2e6d480ada4c4ab08"
+            },
+            {
+              "description_hash": "35fd9cee18e41d2c87ba8198c6a56373113d8e500a503341c8d3f7f3260f5969",
+              "name": "gstack_plan_ceo_review",
+              "schema_hash": "49ee1926cbd85271177b4c6d17d82dda984a4bafbe0d94746720ae3dd0b52615",
+              "surface_hash": "f537993543fcf60038cfe6285caf7fb16b395cb6b0173c83a5ce88a19e723280"
+            },
+            {
+              "description_hash": "fce03a2ae5b95a2c620a6c89a4a5262773266374006463c0a340deeb60da89e9",
+              "name": "gstack_plan_design_review",
+              "schema_hash": "49ee1926cbd85271177b4c6d17d82dda984a4bafbe0d94746720ae3dd0b52615",
+              "surface_hash": "015d070ddd42df2c024416d57dbd444dc8b8a14390dc7b9ddfb7f817a111c87b"
+            },
+            {
+              "description_hash": "2227ac868a87def88c6b6dc0fbef02398722592c86d0abb1566cbdab9679e2d0",
+              "name": "gstack_plan_eng_review",
+              "schema_hash": "49ee1926cbd85271177b4c6d17d82dda984a4bafbe0d94746720ae3dd0b52615",
+              "surface_hash": "da7464285e1bf4f7023934328d06c293f1e1997c34735dfcce114fb5a2eb53f6"
+            },
+            {
+              "description_hash": "e741bc03f4bfe6f5853ebaaa587a09826b8d26673e53cd9d61eb4a7fa33325d7",
+              "name": "gstack_qa",
+              "schema_hash": "49ee1926cbd85271177b4c6d17d82dda984a4bafbe0d94746720ae3dd0b52615",
+              "surface_hash": "50a8f583de9b3f61abae47daed04b9d5f7e5b103ff3b9e74a015175e8d18741d"
+            },
+            {
+              "description_hash": "429fd2cf4bdbc691b04eef6ef854c05c7e5ecd7201904d72bde4c21a6fe2d8a0",
+              "name": "gstack_qa_only",
+              "schema_hash": "49ee1926cbd85271177b4c6d17d82dda984a4bafbe0d94746720ae3dd0b52615",
+              "surface_hash": "8ce9b13cb2e13911451f8702900637d32b8be2a54bf10744a7402d2a7d616133"
+            },
+            {
+              "description_hash": "e260dbb9c00cda40c3264bed091caf7b06eacda31daa1546710125d2d335049d",
+              "name": "gstack_retro",
+              "schema_hash": "49ee1926cbd85271177b4c6d17d82dda984a4bafbe0d94746720ae3dd0b52615",
+              "surface_hash": "559283320c646f3f79c53c3c37a69987893f5bafbb1c707d641d488106e4cb98"
+            },
+            {
+              "description_hash": "295db6d9ed730aeba92e3c9eca771d056d538ee181c5a33d3809622502e2e7da",
+              "name": "gstack_review",
+              "schema_hash": "49ee1926cbd85271177b4c6d17d82dda984a4bafbe0d94746720ae3dd0b52615",
+              "surface_hash": "4def3bb604dece7a9f5f75e6452ffea81500d9e2cbfc23af99851358de9b0d04"
+            },
+            {
+              "description_hash": "552f361942b77b880a0ce5cdc8bd092a083cc2d03bcf6a2f387e6682d7c030bd",
+              "name": "gstack_setup_browser_cookies",
+              "schema_hash": "49ee1926cbd85271177b4c6d17d82dda984a4bafbe0d94746720ae3dd0b52615",
+              "surface_hash": "8a554bd7407fd1e43e0f30945bc78237658238a2d3e6b8db05cadbf6cc33fba2"
+            },
+            {
+              "description_hash": "7f2783d7846f6b89180bd1c70b212bcfc88780ca1460c89332f44e9b8451ae34",
+              "name": "gstack_setup_deploy",
+              "schema_hash": "49ee1926cbd85271177b4c6d17d82dda984a4bafbe0d94746720ae3dd0b52615",
+              "surface_hash": "92a4566d6a71525f8216e5fe5bdcb1c7326d6832858f7fb69fd8e3215ad4dd09"
+            },
+            {
+              "description_hash": "8f0e122bbd11f29f7d3e8f8619e11cf1c8b995a2a642ceff17b557a46ca427bc",
+              "name": "gstack_ship",
+              "schema_hash": "49ee1926cbd85271177b4c6d17d82dda984a4bafbe0d94746720ae3dd0b52615",
+              "surface_hash": "8dadd17dcf8544c4dbb1e3705f4ae5329c6b649de2118ecc61f6d5ae3701f6ea"
+            },
+            {
+              "description_hash": "aaed77423c6af54d0d25284a844f8239ef224da5254d75fa5d3218e2b58417c5",
+              "name": "gstack_spec_qa",
+              "schema_hash": "49ee1926cbd85271177b4c6d17d82dda984a4bafbe0d94746720ae3dd0b52615",
+              "surface_hash": "ed81cb2d0aed79c0e8a1a2908806a329318b06afdef1923a38f075177d1a61b8"
+            },
+            {
+              "description_hash": "2f968999da94bdec37bf4e027acdb07166004410aac4ba8020d9a938c8e607fe",
+              "name": "gstack_unfreeze",
+              "schema_hash": "49ee1926cbd85271177b4c6d17d82dda984a4bafbe0d94746720ae3dd0b52615",
+              "surface_hash": "b0ba7e3c5681b6f0800bc02dc6a6a3f7bbdcd56e9c2dac4b559a02c39dbfb4ce"
+            },
+            {
+              "description_hash": "7a3a9595771e50a1d7378f96aeb4a7263987451b49739678102ba710dcee6117",
+              "name": "gstack_upgrade",
+              "schema_hash": "49ee1926cbd85271177b4c6d17d82dda984a4bafbe0d94746720ae3dd0b52615",
+              "surface_hash": "37f6a77f5800dd24421ab23c76cb5ac8701440a4e658c60921c200c288fcdec2"
+            },
+            {
+              "description_hash": "b80728cdea467a8ae2ffb495caaf92ac3cfc5ab7f32606d8267a0c282c983129",
+              "name": "NO_TOOL",
+              "schema_hash": "fd74afce03babb47d6744ee678d9b4af6a35b505b66dd24bc53edae949c5fa17",
+              "surface_hash": "6d5c343a03ae9c3698d60bb3ebe28a904a0fb2217ede6cd30580f109577feee4"
+            }
+          ]
+        }
+      ],
+      "type": "model_matrix"
+    },
+    {
+      "hash": "25bcde16696eddeda323caa9faf4b2d9d05c43571ecfb7fc35bd108244b8107b",
+      "heldout_case_count": 1,
+      "name": "gstack skill-routing audit bundle",
+      "path": "evals/targets/gstack/gstack_agent_audit_bundle.json",
+      "tool_count": 31,
+      "tool_selection_case_count": 30,
+      "tools": [
+        {
+          "description_hash": "e74f6afc5d962988b433d69758acfa40c6098dd5f70709e5debab7daadd33d2f",
+          "name": "gstack_gstack",
+          "schema_hash": "49ee1926cbd85271177b4c6d17d82dda984a4bafbe0d94746720ae3dd0b52615",
+          "surface_hash": "c963fbd090c2a48874483ff5df4c47fca36fa2c66f605f4e846cf8a99c8dbb2d"
+        },
+        {
+          "description_hash": "944df536c79774aa936e6317e5aea2dbaddcf6c8342e00b7a8bdff2af45bd9fe",
+          "name": "gstack_autoplan",
+          "schema_hash": "49ee1926cbd85271177b4c6d17d82dda984a4bafbe0d94746720ae3dd0b52615",
+          "surface_hash": "d22d45a13909ca4c6a62101b5b0eeb217b0da29f8e34f38c9729856e122dcf67"
+        },
+        {
+          "description_hash": "6cba0ffb6d3814b9fc397be085a73e626e8bbc2fd8e2778a6c104066900c9347",
+          "name": "gstack_benchmark",
+          "schema_hash": "49ee1926cbd85271177b4c6d17d82dda984a4bafbe0d94746720ae3dd0b52615",
+          "surface_hash": "ee213211bafc99224b0017577fc706b3fd5f480e4c0c0819091b3a28e4c08859"
+        },
+        {
+          "description_hash": "54ea1a265e02f2187d542fbcd503d7fec5df49417baa5e49b902cd0300936910",
+          "name": "gstack_browse",
+          "schema_hash": "49ee1926cbd85271177b4c6d17d82dda984a4bafbe0d94746720ae3dd0b52615",
+          "surface_hash": "a556a307a2709542040b7f9cf072f87fd3c2e7e0cf5c0f596bc1457f68e9b7e8"
+        },
+        {
+          "description_hash": "ddd7929ffc4691714e5e70e09ef154f5bdef29023757de91d6e034b3c148f7cf",
+          "name": "gstack_canary",
+          "schema_hash": "49ee1926cbd85271177b4c6d17d82dda984a4bafbe0d94746720ae3dd0b52615",
+          "surface_hash": "6f5ac16dcadd9113c097962edd802e38b9d15bc8167fad75312476b0aa4dc463"
+        },
+        {
+          "description_hash": "2d71c4e587a67035dc83dfc10cb44063c3d32d9698f04ad46a15378c9807c96f",
+          "name": "gstack_careful",
+          "schema_hash": "49ee1926cbd85271177b4c6d17d82dda984a4bafbe0d94746720ae3dd0b52615",
+          "surface_hash": "10e8869b86068d6f26edeaa8c2f719e47e0532dd24efdb87719cc0f2498b5402"
+        },
+        {
+          "description_hash": "858bdff2c334196a4fa8143225ed6bb72ffc8b8a60b1f2c3974673af108d7134",
+          "name": "gstack_connect_chrome",
+          "schema_hash": "49ee1926cbd85271177b4c6d17d82dda984a4bafbe0d94746720ae3dd0b52615",
+          "surface_hash": "6079558bf0ee8e797e12a3c40c69697689de19ac3a91289269248907eef56e64"
+        },
+        {
+          "description_hash": "4119bb4d3f91f3b6f2c19b9826eee4e86b1db92588905a4114f052ded15a5283",
+          "name": "gstack_cso",
+          "schema_hash": "49ee1926cbd85271177b4c6d17d82dda984a4bafbe0d94746720ae3dd0b52615",
+          "surface_hash": "52ef845e0a948107e2286f0148334d441329383bf7d1ba1764420a2d49263831"
+        },
+        {
+          "description_hash": "b02ec9204c4208d342ce6116cc0931be27443a627e30192b3cd1943d78fe0813",
+          "name": "gstack_design_consultation",
+          "schema_hash": "49ee1926cbd85271177b4c6d17d82dda984a4bafbe0d94746720ae3dd0b52615",
+          "surface_hash": "4d20c4ba9771a6b2d18b342c8390d3ad143fd18d40c53720e4d61c5a25281bb6"
+        },
+        {
+          "description_hash": "5dc980046bf6479f862517dae1880cb1464a6275dfa6958c521773321837ae64",
+          "name": "gstack_design_review",
+          "schema_hash": "49ee1926cbd85271177b4c6d17d82dda984a4bafbe0d94746720ae3dd0b52615",
+          "surface_hash": "f3b98cd72e80b35e83c1303e6f60dd7c244cd0f54ff4d6ff7d0bce8f9093cb53"
+        },
+        {
+          "description_hash": "a77e8316d185146b5cad06a76fd8ed10c61485d4643f839caab1ccc3cf79873d",
+          "name": "gstack_design_shotgun",
+          "schema_hash": "49ee1926cbd85271177b4c6d17d82dda984a4bafbe0d94746720ae3dd0b52615",
+          "surface_hash": "b66d1f4d4276d66d0c63ac0fdedd79d2cc12d140856004e69b50c6717720add6"
+        },
+        {
+          "description_hash": "1ab1e95ce091db1383867f7b6f91c7503e287aea5d3e61fdd87b6e8d805db381",
+          "name": "gstack_document_release",
+          "schema_hash": "49ee1926cbd85271177b4c6d17d82dda984a4bafbe0d94746720ae3dd0b52615",
+          "surface_hash": "00ed8776ab16b376184bc0c5522ca142ad697424b555bc011acdf682c4c10bbe"
+        },
+        {
+          "description_hash": "9367c3a253ea0ee0beef42dff34440040c29cf832897fe81c385e4bce77c0b23",
+          "name": "gstack_freeze",
+          "schema_hash": "49ee1926cbd85271177b4c6d17d82dda984a4bafbe0d94746720ae3dd0b52615",
+          "surface_hash": "c98a5a9b765328651c63d590608f0f55bf1e38d311c65b9c179d68f4fa6654ac"
+        },
+        {
+          "description_hash": "787ba22c2b7259240bcbe2229a6ade0a4cf44fb6852bb4e2cf5d9cc39d5e7465",
+          "name": "gstack_guard",
+          "schema_hash": "49ee1926cbd85271177b4c6d17d82dda984a4bafbe0d94746720ae3dd0b52615",
+          "surface_hash": "d60eae38c72f9cdd6f14627e7721b53718a4c69f4b66c50744ded8a8f20447a2"
+        },
+        {
+          "description_hash": "e7da689e16f746450bdfd31b29ec7c94ef66333fc3496587e849ea90b26cd567",
+          "name": "gstack_investigate",
+          "schema_hash": "49ee1926cbd85271177b4c6d17d82dda984a4bafbe0d94746720ae3dd0b52615",
+          "surface_hash": "a96c9500b47e4e4f972d47c9d88a1b170bdbbe1b1da464041e41296c0921e665"
+        },
+        {
+          "description_hash": "cbb8c0d966e4ab5ef73077eb443a5307f4860e33499f2f204a4be913262b585c",
+          "name": "gstack_land_and_deploy",
+          "schema_hash": "49ee1926cbd85271177b4c6d17d82dda984a4bafbe0d94746720ae3dd0b52615",
+          "surface_hash": "4d51206dc07a13a4f8e9dc635d30ecc17af201d678d3705e10badacd134702aa"
+        },
+        {
+          "description_hash": "7c748719306c500950e3c383a4fb91b3d1626ffffa6f295ef080d0ea809893c7",
+          "name": "gstack_office_hours",
+          "schema_hash": "49ee1926cbd85271177b4c6d17d82dda984a4bafbe0d94746720ae3dd0b52615",
+          "surface_hash": "07bf400eddd02dbc277c08f9d70eb491d8eb4e87737403c2e6d480ada4c4ab08"
+        },
+        {
+          "description_hash": "35fd9cee18e41d2c87ba8198c6a56373113d8e500a503341c8d3f7f3260f5969",
+          "name": "gstack_plan_ceo_review",
+          "schema_hash": "49ee1926cbd85271177b4c6d17d82dda984a4bafbe0d94746720ae3dd0b52615",
+          "surface_hash": "f537993543fcf60038cfe6285caf7fb16b395cb6b0173c83a5ce88a19e723280"
+        },
+        {
+          "description_hash": "fce03a2ae5b95a2c620a6c89a4a5262773266374006463c0a340deeb60da89e9",
+          "name": "gstack_plan_design_review",
+          "schema_hash": "49ee1926cbd85271177b4c6d17d82dda984a4bafbe0d94746720ae3dd0b52615",
+          "surface_hash": "015d070ddd42df2c024416d57dbd444dc8b8a14390dc7b9ddfb7f817a111c87b"
+        },
+        {
+          "description_hash": "2227ac868a87def88c6b6dc0fbef02398722592c86d0abb1566cbdab9679e2d0",
+          "name": "gstack_plan_eng_review",
+          "schema_hash": "49ee1926cbd85271177b4c6d17d82dda984a4bafbe0d94746720ae3dd0b52615",
+          "surface_hash": "da7464285e1bf4f7023934328d06c293f1e1997c34735dfcce114fb5a2eb53f6"
+        },
+        {
+          "description_hash": "e741bc03f4bfe6f5853ebaaa587a09826b8d26673e53cd9d61eb4a7fa33325d7",
+          "name": "gstack_qa",
+          "schema_hash": "49ee1926cbd85271177b4c6d17d82dda984a4bafbe0d94746720ae3dd0b52615",
+          "surface_hash": "50a8f583de9b3f61abae47daed04b9d5f7e5b103ff3b9e74a015175e8d18741d"
+        },
+        {
+          "description_hash": "429fd2cf4bdbc691b04eef6ef854c05c7e5ecd7201904d72bde4c21a6fe2d8a0",
+          "name": "gstack_qa_only",
+          "schema_hash": "49ee1926cbd85271177b4c6d17d82dda984a4bafbe0d94746720ae3dd0b52615",
+          "surface_hash": "8ce9b13cb2e13911451f8702900637d32b8be2a54bf10744a7402d2a7d616133"
+        },
+        {
+          "description_hash": "e260dbb9c00cda40c3264bed091caf7b06eacda31daa1546710125d2d335049d",
+          "name": "gstack_retro",
+          "schema_hash": "49ee1926cbd85271177b4c6d17d82dda984a4bafbe0d94746720ae3dd0b52615",
+          "surface_hash": "559283320c646f3f79c53c3c37a69987893f5bafbb1c707d641d488106e4cb98"
+        },
+        {
+          "description_hash": "295db6d9ed730aeba92e3c9eca771d056d538ee181c5a33d3809622502e2e7da",
+          "name": "gstack_review",
+          "schema_hash": "49ee1926cbd85271177b4c6d17d82dda984a4bafbe0d94746720ae3dd0b52615",
+          "surface_hash": "4def3bb604dece7a9f5f75e6452ffea81500d9e2cbfc23af99851358de9b0d04"
+        },
+        {
+          "description_hash": "552f361942b77b880a0ce5cdc8bd092a083cc2d03bcf6a2f387e6682d7c030bd",
+          "name": "gstack_setup_browser_cookies",
+          "schema_hash": "49ee1926cbd85271177b4c6d17d82dda984a4bafbe0d94746720ae3dd0b52615",
+          "surface_hash": "8a554bd7407fd1e43e0f30945bc78237658238a2d3e6b8db05cadbf6cc33fba2"
+        },
+        {
+          "description_hash": "7f2783d7846f6b89180bd1c70b212bcfc88780ca1460c89332f44e9b8451ae34",
+          "name": "gstack_setup_deploy",
+          "schema_hash": "49ee1926cbd85271177b4c6d17d82dda984a4bafbe0d94746720ae3dd0b52615",
+          "surface_hash": "92a4566d6a71525f8216e5fe5bdcb1c7326d6832858f7fb69fd8e3215ad4dd09"
+        },
+        {
+          "description_hash": "8f0e122bbd11f29f7d3e8f8619e11cf1c8b995a2a642ceff17b557a46ca427bc",
+          "name": "gstack_ship",
+          "schema_hash": "49ee1926cbd85271177b4c6d17d82dda984a4bafbe0d94746720ae3dd0b52615",
+          "surface_hash": "8dadd17dcf8544c4dbb1e3705f4ae5329c6b649de2118ecc61f6d5ae3701f6ea"
+        },
+        {
+          "description_hash": "aaed77423c6af54d0d25284a844f8239ef224da5254d75fa5d3218e2b58417c5",
+          "name": "gstack_spec_qa",
+          "schema_hash": "49ee1926cbd85271177b4c6d17d82dda984a4bafbe0d94746720ae3dd0b52615",
+          "surface_hash": "ed81cb2d0aed79c0e8a1a2908806a329318b06afdef1923a38f075177d1a61b8"
+        },
+        {
+          "description_hash": "2f968999da94bdec37bf4e027acdb07166004410aac4ba8020d9a938c8e607fe",
+          "name": "gstack_unfreeze",
+          "schema_hash": "49ee1926cbd85271177b4c6d17d82dda984a4bafbe0d94746720ae3dd0b52615",
+          "surface_hash": "b0ba7e3c5681b6f0800bc02dc6a6a3f7bbdcd56e9c2dac4b559a02c39dbfb4ce"
+        },
+        {
+          "description_hash": "7a3a9595771e50a1d7378f96aeb4a7263987451b49739678102ba710dcee6117",
+          "name": "gstack_upgrade",
+          "schema_hash": "49ee1926cbd85271177b4c6d17d82dda984a4bafbe0d94746720ae3dd0b52615",
+          "surface_hash": "37f6a77f5800dd24421ab23c76cb5ac8701440a4e658c60921c200c288fcdec2"
+        },
+        {
+          "description_hash": "b80728cdea467a8ae2ffb495caaf92ac3cfc5ab7f32606d8267a0c282c983129",
+          "name": "NO_TOOL",
+          "schema_hash": "fd74afce03babb47d6744ee678d9b4af6a35b505b66dd24bc53edae949c5fa17",
+          "surface_hash": "6d5c343a03ae9c3698d60bb3ebe28a904a0fb2217ede6cd30580f109577feee4"
+        }
+      ],
+      "trace_count": 0,
+      "traces": [],
+      "type": "agent_audit_bundle",
+      "value_bar_hash": "332184fbfa3368ae8a0d5e8aab7c6d543d97603b3e2e4da6d949e6b108215c29"
+    }
+  ],
+  "snapshot_version": "1"
+}

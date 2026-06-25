@@ -148,6 +148,8 @@ Use [docs/firecrawl-mcp-tool-tuning.md](docs/firecrawl-mcp-tool-tuning.md) for t
 Firecrawl scrape-versus-extract description optimization.
 Use [docs/supabase-mcp-tool-tuning.md](docs/supabase-mcp-tool-tuning.md) for the confirmed
 Supabase DDL-versus-SQL migration boundary optimization.
+Use [docs/gstack-skill-routing-audit.md](docs/gstack-skill-routing-audit.md) for the cross-provider
+gstack skills-as-tools routing matrix and upstream PR packet evidence.
 Use [docs/credentialed-service-probes.md](docs/credentialed-service-probes.md) to verify local
 service credentials without printing secrets or mutating vendor state.
 Use [docs/autoresearch-hill-climbing.md](docs/autoresearch-hill-climbing.md) when the goal is to
