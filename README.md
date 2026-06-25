@@ -110,7 +110,7 @@ Use [docs/github-mcp-tool-tuning.md](docs/github-mcp-tool-tuning.md) for a publi
 tool-selection baseline across Anthropic, OpenAI, Gemini, native tools, and prompt JSON harnesses.
 Use [docs/public-mcp-sweep.md](docs/public-mcp-sweep.md) for the broader public MCP sweep across
 GitHub, Playwright, Slack, Filesystem, Postgres MCP Pro, Firecrawl, Context7, Supabase, and
-ClickHouse.
+ClickHouse, and Zymtrace.
 Use [docs/confirmed-improvements.md](docs/confirmed-improvements.md) for the pinned ledger of
 confirmed tuning wins, guardrails without promotion, and the upstream MCP versions those results
 apply to.
@@ -248,6 +248,7 @@ python -m claude_agent_harness_optimization model-matrix evals/model_matrix/gith
 python -m claude_agent_harness_optimization model-matrix evals/model_matrix/firecrawl_mcp_tool_selection.json --providers anthropic --harnesses prompt_json --variants tuned_firecrawl_mcp_boundaries --instruction-variants firecrawl_host_rules --max-cases 2
 python -m claude_agent_harness_optimization model-matrix evals/model_matrix/supabase_mcp_database_tool_selection.json --providers anthropic --harnesses prompt_json --variants tuned_supabase_database_boundaries --instruction-variants supabase_database_host_rules --max-cases 2
 python -m claude_agent_harness_optimization model-matrix evals/model_matrix/clickhouse_mcp_tool_selection.json --providers anthropic --harnesses prompt_json --variants tuned_clickhouse_readonly_boundaries --instruction-variants clickhouse_host_rules --max-cases 2
+python -m claude_agent_harness_optimization model-matrix evals/model_matrix/zymtrace_mcp_tool_selection.json --providers anthropic --harnesses prompt_json --variants tuned_zymtrace_mcp_boundaries --instruction-variants zymtrace_host_and_skill_rules --max-cases 2
 python -m claude_agent_harness_optimization model-matrix evals/model_matrix/harness_trace_adapters.json --live --require-live --providers trace_fixture
 python -m claude_agent_harness_optimization grind-harness evals/model_matrix/coding_tool_selection.json
 python scripts/probe_service_keys.py --env-file .env --no-fail

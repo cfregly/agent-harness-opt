@@ -1,0 +1,240 @@
+{
+  "name": "zymtrace mcp tool-selection matrix",
+  "description": "Compare stock and tuned descriptions for the Zymtrace MCP profiling-analysis tools.",
+  "source": {
+    "docs": [
+      "https://docs.zymtrace.com/getting-started/",
+      "https://docs.zymtrace.com/category/model-context-protocol-mcp/"
+    ],
+    "default_project_id": "00000000-0000-0000-0000-000000000000",
+    "local_mcp_server": "zymtrace-mcp 26.6.1",
+    "local_mcp_url": "http://localhost:8080/mcp",
+    "resource_count": 3,
+    "resources": ["flamegraph", "topfunctions", "topentities"],
+    "skills": [
+      "configure-zymtrace-mcp",
+      "optimize-cpu-workloads",
+      "optimize-gpu-workloads",
+      "optimize-memory-allocation"
+    ],
+    "tool_count": 25
+  },
+  "profiles": [
+    {
+      "api_key_env": "ANTHROPIC_API_KEY",
+      "harnesses": ["prompt_json"],
+      "model": "claude-sonnet-4-5",
+      "model_env": "ANTHROPIC_MATRIX_MODEL",
+      "name": "anthropic-sonnet",
+      "provider": "anthropic"
+    },
+    {
+      "api_key_env": "OPENAI_API_KEY",
+      "harnesses": ["prompt_json"],
+      "model": "gpt-4.1",
+      "model_env": "OPENAI_MATRIX_MODEL",
+      "name": "openai-default",
+      "provider": "openai"
+    },
+    {
+      "api_key_env": "GEMINI_API_KEY",
+      "harnesses": ["prompt_json"],
+      "max_tokens": 4096,
+      "model": "gemini-2.5-pro",
+      "model_env": "GEMINI_MATRIX_MODEL",
+      "name": "gemini-default",
+      "provider": "gemini"
+    }
+  ],
+  "instruction_variants": [
+    {
+      "instructions": "Choose the single Zymtrace MCP tool that should be called next. The live server also exposes MCP resources named topfunctions, topentities, and flamegraph; in a resource-capable host, read those resources before calling the same-named tools, but in this tool-only matrix choose the fallback tool. Use get_date_time when the user gives relative time or omits a range, because omitted ranges default to the last 1 hour and generated REST-style project APIs require Unix milliseconds. Unless the user explicitly asks for multiple projects or names a different project, project-scoped tools should use the default project_id 00000000-0000-0000-0000-000000000000. Use projects_search only when the user asks to list/find/search/switch projects or names a non-default project without its UUID. Prefer high-level tools for common profiling questions: topfunctions for hot functions, topentities for hot executables/scripts/hosts/threads/containers/pods/apps, hot_traces for stack-trace/call-tree discovery, flamegraph for a rendered flamegraph fallback, and recommendations for already-generated optimization advice. Use project_metrics_activity_aggr before project_metrics_query, especially for GPU/inference metrics discovery. Use raw project event/stat endpoints only when the user has a project scope and asks for low-level aggregate/raw event payloads.",
+      "name": "zymtrace_host_rules"
+    },
+    {
+      "instructions": "Apply the Zymtrace MCP server rules plus the Zymtrace optimization skills. CPU-only or entity-only investigations default to CPU. Rank-first CPU requests such as what is eating CPU, which app/container/pod/process is hottest, or biggest ROI should start with topentities or topfunctions, then drill into the selected user-owned entry with hot_traces. GPU, CUDA, inference, vLLM, SGLang, Triton, training, or accelerator requests use the GPU workflow: discover matching GPU/framework/CPU metrics first with project_metrics_activity_aggr, then query metric values when names are known, then pull the GPU hot_traces view and the matching CPU hot_traces view with the same filters. For call-tree or flamegraph analysis on CPU, GPU, or ALLOC, prefer hot_traces when available; use flamegraph only as a fallback or when the user explicitly wants rendered flamegraph data. First hot_traces calls must use meta_only=true and limit<=5; full trace fetches require a selected prefix_hash and should use limit=1. For allocation or memory-profile requests use profile_type ALLOC. Exclude zymtrace-profiler from ranking targets.",
+      "name": "zymtrace_host_and_skill_rules"
+    }
+  ],
+  "tool_variants": [
+    {
+      "name": "stock_zymtrace_mcp",
+      "tools": [
+        {"input_schema": {"properties": {"profile_type": "CPU, GPU, or ALLOC", "start_time": "RFC3339 start", "end_time": "RFC3339 end"}, "required": ["profile_type", "start_time", "end_time"], "type": "object"}, "name": "flamegraph", "purpose": "Return profiling data as flamegraph."},
+        {"input_schema": {"properties": {}, "type": "object"}, "name": "get_date_time", "purpose": "Get the current local date/time and machine-usable Unix milliseconds."},
+        {"input_schema": {"properties": {"profile_type": "CPU, GPU, or ALLOC", "start_time": "RFC3339 start", "end_time": "RFC3339 end", "meta_only": "Discovery mode", "filter_text": "Entity text filter", "prefix_hash": "Trace prefix hash"}, "required": ["profile_type", "start_time", "end_time"], "type": "object"}, "name": "hot_traces", "purpose": "Find hot CPU/GPU profiling stack traces."},
+        {"input_schema": {"properties": {"project_id": "Project UUID", "request_body": "Raw events request"}, "required": ["project_id", "request_body"], "type": "object"}, "name": "project_events_raw", "purpose": "Fetch raw events."},
+        {"input_schema": {"properties": {"project_id": "Project UUID", "request_body": "Flamegraph request"}, "required": ["project_id", "request_body"], "type": "object"}, "name": "project_flamegraph_json", "purpose": "Generate a JSON-format flamegraph."},
+        {"input_schema": {"properties": {"project_id": "Project UUID", "request_body": "Metric activity request"}, "required": ["project_id", "request_body"], "type": "object"}, "name": "project_metrics_activity_aggr", "purpose": "Retrieve metrics activity aggregations for a project."},
+        {"input_schema": {"properties": {"project_id": "Project UUID", "request_body": "Metric query request"}, "required": ["project_id", "request_body"], "type": "object"}, "name": "project_metrics_query", "purpose": "Query metrics for a project with custom filters."},
+        {"input_schema": {"properties": {"project_id": "Project UUID", "request_body": "Aggregate request"}, "required": ["project_id", "request_body"], "type": "object"}, "name": "projects_events_aggregate", "purpose": "Aggregate project events."},
+        {"input_schema": {"properties": {"project_id": "Project UUID", "request_body": "Host metadata aggregate request"}, "required": ["project_id", "request_body"], "type": "object"}, "name": "projects_events_aggregate_host_metadata", "purpose": "Aggregate host metadata."},
+        {"input_schema": {"properties": {"project_id": "Project UUID", "request_body": "Top field values request"}, "required": ["project_id", "request_body"], "type": "object"}, "name": "projects_events_aggregate_top_field_values", "purpose": "Return the most common values for common filter fields."},
+        {"input_schema": {"properties": {"request_body": "Project search request"}, "required": ["request_body"], "type": "object"}, "name": "projects_search", "purpose": "Search projects."},
+        {"input_schema": {"properties": {"project_id": "Project UUID", "request_body": "Top architectures request"}, "required": ["project_id", "request_body"], "type": "object"}, "name": "projects_stats_aggregate_top_architectures", "purpose": "Return top architectures."},
+        {"input_schema": {"properties": {"project_id": "Project UUID", "request_body": "Top clusters request"}, "required": ["project_id", "request_body"], "type": "object"}, "name": "projects_stats_aggregate_top_clusters", "purpose": "Return top clusters."},
+        {"input_schema": {"properties": {"project_id": "Project UUID", "request_body": "Top containers request"}, "required": ["project_id", "request_body"], "type": "object"}, "name": "projects_stats_aggregate_top_containers", "purpose": "Return top containers."},
+        {"input_schema": {"properties": {"project_id": "Project UUID", "request_body": "Top deployments request"}, "required": ["project_id", "request_body"], "type": "object"}, "name": "projects_stats_aggregate_top_deployments", "purpose": "Return top deployments."},
+        {"input_schema": {"properties": {"project_id": "Project UUID", "request_body": "Top hosts request"}, "required": ["project_id", "request_body"], "type": "object"}, "name": "projects_stats_aggregate_top_hosts", "purpose": "Return top hosts."},
+        {"input_schema": {"properties": {"project_id": "Project UUID", "request_body": "Top executables request"}, "required": ["project_id", "request_body"], "type": "object"}, "name": "projects_stats_aggregate_top_main_exes", "purpose": "Return top main executables."},
+        {"input_schema": {"properties": {"project_id": "Project UUID", "request_body": "Top namespaces request"}, "required": ["project_id", "request_body"], "type": "object"}, "name": "projects_stats_aggregate_top_namespaces", "purpose": "Return top namespaces."},
+        {"input_schema": {"properties": {"project_id": "Project UUID", "request_body": "Top pods request"}, "required": ["project_id", "request_body"], "type": "object"}, "name": "projects_stats_aggregate_top_pods", "purpose": "Return top pods."},
+        {"input_schema": {"properties": {"project_id": "Project UUID", "request_body": "Top script names request"}, "required": ["project_id", "request_body"], "type": "object"}, "name": "projects_stats_aggregate_top_script_names", "purpose": "Return top script names."},
+        {"input_schema": {"properties": {"project_id": "Project UUID", "request_body": "Top thread names request"}, "required": ["project_id", "request_body"], "type": "object"}, "name": "projects_stats_aggregate_top_thread_names", "purpose": "Return top thread names."},
+        {"input_schema": {"properties": {"project_id": "Project UUID", "request_body": "Top user tags request"}, "required": ["project_id", "request_body"], "type": "object"}, "name": "projects_stats_aggregate_top_user_tags", "purpose": "Return top user tags."},
+        {"input_schema": {"properties": {"profile_type": "CPU, GPU, or ALLOC", "start_time": "RFC3339 start", "end_time": "RFC3339 end"}, "required": ["profile_type", "start_time", "end_time"], "type": "object"}, "name": "recommendations", "purpose": "Return recommendations already generated for a project's hot traces."},
+        {"input_schema": {"properties": {"profile_type": "CPU, GPU, or ALLOC", "start_time": "RFC3339 start", "end_time": "RFC3339 end", "entity": "executable, script, host, thread, deployment, container, namespace, or pod"}, "required": ["profile_type", "start_time", "end_time", "entity"], "type": "object"}, "name": "topentities", "purpose": "Return list of GPU, CPU or allocation top entities."},
+        {"input_schema": {"properties": {"profile_type": "CPU, GPU, or ALLOC", "start_time": "RFC3339 start", "end_time": "RFC3339 end"}, "required": ["profile_type", "start_time", "end_time"], "type": "object"}, "name": "topfunctions", "purpose": "Return list of GPU, CPU or allocation top functions."}
+      ]
+    },
+    {
+      "name": "tuned_zymtrace_mcp_boundaries",
+      "tools": [
+        {"avoid_when": "Avoid when the user asks for ranked functions, entities, generated recommendations, raw event aggregates, or a call-tree drilldown that should start with hot_traces.", "input_schema": {"properties": {"profile_type": "CPU, GPU, or ALLOC", "start_time": "RFC3339 start", "end_time": "RFC3339 end", "project": "Optional project filter", "executable": "Optional executable filter", "script": "Optional script filter", "host": "Optional host filter", "limit": "Optional function limit"}, "required": ["profile_type", "start_time", "end_time"], "type": "object"}, "name": "flamegraph", "purpose": "Return a high-level rendered flamegraph fallback for a time window and optional runtime filters.", "quality_checks": ["Use the MCP flamegraph resource first when the host supports resources.", "Use CPU unless the user asks for GPU or allocation data.", "Include a bounded time window.", "Apply named entity filters instead of fetching unfiltered data."], "use_when": "Use when the user explicitly asks for rendered flamegraph data and hot_traces is not the better call-tree first step."},
+        {"avoid_when": "Avoid when the user already supplied absolute RFC3339 timestamps or Unix millisecond timestamps.", "input_schema": {"properties": {}, "type": "object"}, "name": "get_date_time", "purpose": "Get current local time and Unix milliseconds for relative or omitted Zymtrace time-window requests.", "quality_checks": ["Use before REST-style project tools that require start_ts/end_ts in Unix milliseconds.", "Use when the range is omitted so the default last-1-hour window can be calculated.", "Do not hand-convert relative dates when this tool is available."], "use_when": "Use when the user says now, last hour, today, yesterday, recent, or gives no time range."},
+        {"avoid_when": "Avoid as a first full-stack fetch. Use meta_only=true and a small limit before requesting a selected prefix_hash.", "input_schema": {"properties": {"profile_type": "CPU, GPU, or ALLOC", "start_time": "RFC3339 start", "end_time": "RFC3339 end", "limit": "Small result limit", "meta_only": "Use true for discovery; false only after selecting a prefix_hash or when full stacks are explicit", "filter_text": "Entity text filter", "prefix_hash": "Selected trace prefix hash"}, "required": ["profile_type", "start_time", "end_time"], "type": "object"}, "name": "hot_traces", "purpose": "Discover hot stack traces/call trees and drill into one selected trace.", "quality_checks": ["First call uses meta_only=true unless the user explicitly asks for full stacks.", "Default limit is 5 or lower.", "Use filter_text or structured filters when the user names an entity.", "For full drilldown, set prefix_hash, meta_only=false, and limit=1."], "use_when": "Use when the user asks what trace, stack, call tree, call path, or GPU/CPU flamegraph evidence is hot, or asks to drill into a specific hot trace."},
+        {"avoid_when": "Avoid for ordinary top functions, top entities, metrics, recommendations, or summaries. Prefer higher-level tools first.", "input_schema": {"properties": {"project_id": "Project UUID", "request_body": "Raw event filter with start_ts/end_ts and approx_limit"}, "required": ["project_id", "request_body"], "type": "object"}, "name": "project_events_raw", "purpose": "Fetch raw profiling events for one project scope.", "quality_checks": ["Use project_id 00000000-0000-0000-0000-000000000000 when the user did not name a different project.", "Keep approx_limit small.", "Use get_date_time first for relative time ranges."], "use_when": "Use when the user explicitly asks for raw events or event samples."},
+        {"avoid_when": "Avoid when the user only wants a high-level rendered flamegraph; use flamegraph resource/tool or hot_traces for call-tree analysis.", "input_schema": {"properties": {"project_id": "Project UUID", "request_body": "Project flamegraph JSON request"}, "required": ["project_id", "request_body"], "type": "object"}, "name": "project_flamegraph_json", "purpose": "Generate project-specific JSON flamegraph data for downstream processing.", "quality_checks": ["Use project_id 00000000-0000-0000-0000-000000000000 when the user did not name a different project.", "Use when JSON is needed, not just a rendered flamegraph."], "use_when": "Use when the user asks for JSON flamegraph data from a project scope."},
+        {"avoid_when": "Avoid when the metric name is already known and the user asks for values; use project_metrics_query then.", "input_schema": {"properties": {"project_id": "Project UUID", "request_body": "Metric discovery/activity request"}, "required": ["project_id", "request_body"], "type": "object"}, "name": "project_metrics_activity_aggr", "purpose": "Discover active metric names and useful attributes for a project, including GPU, CPU, model, service, token, latency, and framework metrics.", "quality_checks": ["Use project_id 00000000-0000-0000-0000-000000000000 when the user did not name a different project.", "Use before metric value queries.", "Return all relevant metric names and dimensions instead of choosing one representative metric.", "Start GPU and inference investigations here before pulling flamegraphs or hot traces."], "use_when": "Use when the user asks what metrics exist, which model/service/token/GPU/framework metrics are active, or when a GPU/inference workflow needs metrics-first context."},
+        {"avoid_when": "Avoid before discovering metric names when the user is unsure what metrics exist.", "input_schema": {"properties": {"project_id": "Project UUID", "request_body": "Metric query request with filters"}, "required": ["project_id", "request_body"], "type": "object"}, "name": "project_metrics_query", "purpose": "Query metric time-series values for known metric names and dimensions.", "quality_checks": ["Use project_id 00000000-0000-0000-0000-000000000000 when the user did not name a different project.", "Use project_metrics_activity_aggr first when metric names are unknown.", "Include every relevant discovered metric instead of picking one representative metric."], "use_when": "Use when the user asks for metric values, latency series, token metrics, gauges, counters, histograms, GPU utilization, memory, SM efficiency, or inference framework metrics for a known metric name."},
+        {"avoid_when": "Avoid for top dimensions that have a dedicated stats endpoint or for raw event samples.", "input_schema": {"properties": {"project_id": "Project UUID", "request_body": "Event aggregate request"}, "required": ["project_id", "request_body"], "type": "object"}, "name": "projects_events_aggregate", "purpose": "Aggregate profiling events for one project scope.", "quality_checks": ["Use project_id 00000000-0000-0000-0000-000000000000 when the user did not name a different project.", "Use time filters and event kind filters."], "use_when": "Use when the user asks for event aggregate counts or grouped event summaries."},
+        {"avoid_when": "Avoid for generic top hosts; use projects_stats_aggregate_top_hosts for host ranking.", "input_schema": {"properties": {"project_id": "Project UUID", "request_body": "Host metadata aggregate request"}, "required": ["project_id", "request_body"], "type": "object"}, "name": "projects_events_aggregate_host_metadata", "purpose": "Aggregate host metadata for a project scope.", "quality_checks": ["Use project_id 00000000-0000-0000-0000-000000000000 when the user did not name a different project.", "Use only when host metadata is requested."], "use_when": "Use when the user asks for host architecture, GPU, OS, or other host metadata aggregation."},
+        {"avoid_when": "Avoid when the user names one specific dimension with a dedicated top endpoint.", "input_schema": {"properties": {"project_id": "Project UUID", "request_body": "Top filter field values request"}, "required": ["project_id", "request_body"], "type": "object"}, "name": "projects_events_aggregate_top_field_values", "purpose": "Find common values across multiple common Zymtrace filter fields.", "quality_checks": ["Use project_id 00000000-0000-0000-0000-000000000000 when the user did not name a different project.", "Prefer dedicated top endpoints for one exact dimension."], "use_when": "Use when the user asks which filters or field values are available or common."},
+        {"avoid_when": "Avoid for the normal default-project path. Do not search just because a project-scoped tool needs a project_id; use default project_id 00000000-0000-0000-0000-000000000000 unless the user explicitly asks otherwise.", "input_schema": {"properties": {"request_body": "Project search request"}, "required": ["request_body"], "type": "object"}, "name": "projects_search", "purpose": "Find, list, or switch Zymtrace projects before calling tools for a non-default project.", "quality_checks": ["Use only when the user asks to list/search projects or names a different project without a UUID.", "Do not use for default project metrics, events, stats, or recommendations."], "use_when": "Use when the user asks what projects are available, asks to find/search/list projects, or names a non-default project but does not provide its UUID."},
+        {"avoid_when": "Avoid for runtime hot paths; use topfunctions, topentities, or hot_traces.", "input_schema": {"properties": {"project_id": "Project UUID", "request_body": "Top architectures request"}, "required": ["project_id", "request_body"], "type": "object"}, "name": "projects_stats_aggregate_top_architectures", "purpose": "Rank host CPU architectures for a known project.", "use_when": "Use when the user asks which architectures are present or hottest."},
+        {"avoid_when": "Avoid for pod, namespace, deployment, host, or container-specific ranking.", "input_schema": {"properties": {"project_id": "Project UUID", "request_body": "Top clusters request"}, "required": ["project_id", "request_body"], "type": "object"}, "name": "projects_stats_aggregate_top_clusters", "purpose": "Rank clusters for a known project.", "use_when": "Use when the user asks which clusters are contributing most."},
+        {"avoid_when": "Avoid for pod, namespace, deployment, host, or executable ranking.", "input_schema": {"properties": {"project_id": "Project UUID", "request_body": "Top containers request"}, "required": ["project_id", "request_body"], "type": "object"}, "name": "projects_stats_aggregate_top_containers", "purpose": "Rank containers for a known project.", "use_when": "Use when the user asks which containers are hottest or most active."},
+        {"avoid_when": "Avoid for pod, namespace, container, host, or executable ranking.", "input_schema": {"properties": {"project_id": "Project UUID", "request_body": "Top deployments request"}, "required": ["project_id", "request_body"], "type": "object"}, "name": "projects_stats_aggregate_top_deployments", "purpose": "Rank deployments for a known project.", "use_when": "Use when the user asks which deployments are hottest or most active."},
+        {"avoid_when": "Avoid for host metadata details; use projects_events_aggregate_host_metadata then.", "input_schema": {"properties": {"project_id": "Project UUID", "request_body": "Top hosts request"}, "required": ["project_id", "request_body"], "type": "object"}, "name": "projects_stats_aggregate_top_hosts", "purpose": "Rank hosts for a known project.", "use_when": "Use when the user asks which hosts are hottest or most active."},
+        {"avoid_when": "Avoid for script, thread, container, pod, or function ranking.", "input_schema": {"properties": {"project_id": "Project UUID", "request_body": "Top executable names request"}, "required": ["project_id", "request_body"], "type": "object"}, "name": "projects_stats_aggregate_top_main_exes", "purpose": "Rank main executables for a known project.", "use_when": "Use when the user asks which executables or processes are hottest."},
+        {"avoid_when": "Avoid for pod, deployment, container, host, or executable ranking.", "input_schema": {"properties": {"project_id": "Project UUID", "request_body": "Top namespaces request"}, "required": ["project_id", "request_body"], "type": "object"}, "name": "projects_stats_aggregate_top_namespaces", "purpose": "Rank Kubernetes namespaces for a known project.", "use_when": "Use when the user asks which namespaces are hottest or most active."},
+        {"avoid_when": "Avoid for namespace, deployment, container, host, or executable ranking.", "input_schema": {"properties": {"project_id": "Project UUID", "request_body": "Top pods request"}, "required": ["project_id", "request_body"], "type": "object"}, "name": "projects_stats_aggregate_top_pods", "purpose": "Rank Kubernetes pods for a known project.", "use_when": "Use when the user asks which pods are hottest or most active."},
+        {"avoid_when": "Avoid for executable or function ranking.", "input_schema": {"properties": {"project_id": "Project UUID", "request_body": "Top script names request"}, "required": ["project_id", "request_body"], "type": "object"}, "name": "projects_stats_aggregate_top_script_names", "purpose": "Rank script names for a known project.", "use_when": "Use when the user asks which scripts are hottest or most active."},
+        {"avoid_when": "Avoid for function ranking; use topfunctions for function names.", "input_schema": {"properties": {"project_id": "Project UUID", "request_body": "Top thread names request"}, "required": ["project_id", "request_body"], "type": "object"}, "name": "projects_stats_aggregate_top_thread_names", "purpose": "Rank thread names for a known project.", "use_when": "Use when the user asks which threads are hottest or most active."},
+        {"avoid_when": "Avoid for built-in dimensions such as host, pod, container, executable, or script.", "input_schema": {"properties": {"project_id": "Project UUID", "request_body": "Top user tags request"}, "required": ["project_id", "request_body"], "type": "object"}, "name": "projects_stats_aggregate_top_user_tags", "purpose": "Rank custom user tags for a known project.", "use_when": "Use when the user asks which custom tags are hottest or most active."},
+        {"avoid_when": "Avoid when the user asks for raw stack evidence first; use hot_traces or topfunctions to inspect evidence.", "input_schema": {"properties": {"profile_type": "CPU, GPU, or ALLOC", "start_time": "RFC3339 start", "end_time": "RFC3339 end", "limit": "Recommendation limit", "trace_tag_display": "Optional tag display filter", "page": "Pagination page"}, "required": ["profile_type", "start_time", "end_time"], "type": "object"}, "name": "recommendations", "purpose": "Return already-generated actionable optimization recommendations for hot traces.", "quality_checks": ["Use after or alongside hot-trace discovery when the user asks what to change.", "Use a wider window such as 30 days when the user asks for existing recommendations without a time range.", "Page only when more recommendations are needed."], "use_when": "Use when the user asks for optimization recommendations, suggested fixes, or already-generated advice."},
+        {"avoid_when": "Avoid when the user asks for function names, stack traces, call trees, or flamegraphs.", "input_schema": {"properties": {"profile_type": "CPU, GPU, or ALLOC", "start_time": "RFC3339 start", "end_time": "RFC3339 end", "entity": "executable, script, host, thread, deployment, container, namespace, or pod", "limit": "Optional entity limit"}, "required": ["profile_type", "start_time", "end_time", "entity"], "type": "object"}, "name": "topentities", "purpose": "Rank top runtime entities such as executables, scripts, hosts, threads, deployments, containers, namespaces, pods, apps, services, or workloads.", "quality_checks": ["Use the MCP topentities resource first when the host supports resources.", "Set entity to the dimension the user named; for containerized apps choose entity=container.", "Use CPU unless the user asks for GPU or allocation data.", "Exclude zymtrace-profiler from optimization targets."], "use_when": "Use for rank-first requests asking which host, container, pod, namespace, executable, script, deployment, app, service, workload, or thread is hottest or should be optimized first."},
+        {"avoid_when": "Avoid when the user asks for hosts, containers, pods, scripts, raw traces, a call tree, or a flamegraph.", "input_schema": {"properties": {"profile_type": "CPU, GPU, or ALLOC", "start_time": "RFC3339 start", "end_time": "RFC3339 end", "project": "Optional project filter", "executable": "Optional executable filter", "script": "Optional script filter", "host": "Optional host filter", "limit": "Optional function limit"}, "required": ["profile_type", "start_time", "end_time"], "type": "object"}, "name": "topfunctions", "purpose": "Rank hottest functions for CPU, GPU, or allocation profiles.", "quality_checks": ["Use the MCP topfunctions resource first when the host supports resources.", "Use CPU unless the user asks for GPU or allocation data.", "Apply entity filters when the user names a host, container, pod, executable, or script."], "use_when": "Use when the user asks which functions, methods, frames, or symbols are hottest, or for rank-first function summaries before a hot_traces drilldown."}
+      ]
+    }
+  ],
+  "cases": [
+    {
+      "expected_tools": ["get_date_time"],
+      "forbidden_tools": ["topfunctions", "project_metrics_query", "projects_events_aggregate"],
+      "name": "relative time needs date helper",
+      "task": "For the last 30 minutes of Zymtrace data, prepare the time range I should use for generated project metrics API calls."
+    },
+    {
+      "expected_tools": ["projects_search"],
+      "forbidden_tools": ["topfunctions", "project_metrics_query", "project_events_raw"],
+      "name": "unknown project id uses search",
+      "task": "Find the Zymtrace project named llama-inference before we inspect its metrics."
+    },
+    {
+      "expected_args_contains": {"profile_type": "CPU"},
+      "expected_tools": ["topfunctions"],
+      "forbidden_tools": ["topentities", "hot_traces", "flamegraph", "recommendations"],
+      "name": "cpu hot functions",
+      "task": "Show the hottest CPU functions from 2026-06-25T04:00:00+00:00 to 2026-06-25T05:00:00+00:00."
+    },
+    {
+      "expected_args_contains": {"entity": "container"},
+      "expected_tools": ["topentities"],
+      "forbidden_tools": ["topfunctions", "hot_traces", "flamegraph"],
+      "name": "hot containers use entities",
+      "task": "Which containers consumed the most CPU between 2026-06-25T04:00:00+00:00 and 2026-06-25T05:00:00+00:00?"
+    },
+    {
+      "expected_args_contains": {"meta_only": "true"},
+      "expected_tools": ["hot_traces"],
+      "forbidden_tools": ["flamegraph", "topfunctions", "project_events_raw"],
+      "name": "first trace discovery is meta only",
+      "task": "Find the hottest stack traces for python workers in the last hour, but do not dump full stacks yet."
+    },
+    {
+      "expected_tools": ["flamegraph"],
+      "forbidden_tools": ["topfunctions", "topentities", "project_flamegraph_json"],
+      "name": "high level flamegraph",
+      "task": "Give me a CPU flamegraph for the vllm executable from 2026-06-25T04:00:00+00:00 to 2026-06-25T05:00:00+00:00."
+    },
+    {
+      "expected_tools": ["project_metrics_activity_aggr"],
+      "forbidden_tools": ["project_metrics_query", "projects_events_aggregate", "topfunctions"],
+      "name": "discover metrics before query",
+      "task": "For project 123e4567-e89b-12d3-a456-426614174000, what metric names and attributes are active?"
+    },
+    {
+      "expected_tools": ["project_metrics_query"],
+      "forbidden_tools": ["project_metrics_activity_aggr", "projects_events_aggregate", "topfunctions"],
+      "name": "known metric query",
+      "task": "For project 123e4567-e89b-12d3-a456-426614174000, query the known request_latency histogram for service api over this time window."
+    },
+    {
+      "expected_tools": ["recommendations"],
+      "forbidden_tools": ["topfunctions", "topentities", "project_events_raw"],
+      "name": "generated optimization advice",
+      "task": "Show already-generated Zymtrace optimization recommendations for CPU traces from 2026-06-25T04:00:00+00:00 to 2026-06-25T05:00:00+00:00."
+    },
+    {
+      "expected_tools": ["project_events_raw"],
+      "forbidden_tools": ["topfunctions", "hot_traces", "recommendations"],
+      "name": "raw events are explicit",
+      "task": "For project 123e4567-e89b-12d3-a456-426614174000, fetch a small raw event sample for debugging the event payload shape."
+    },
+    {
+      "expected_tools": ["projects_events_aggregate_top_field_values"],
+      "forbidden_tools": ["projects_stats_aggregate_top_containers", "topentities", "topfunctions"],
+      "name": "discover common filter fields",
+      "task": "For project 123e4567-e89b-12d3-a456-426614174000, show the most common available filter field values across profiling events."
+    },
+    {
+      "expected_tools": ["projects_stats_aggregate_top_pods"],
+      "forbidden_tools": ["projects_stats_aggregate_top_containers", "projects_stats_aggregate_top_namespaces", "topfunctions"],
+      "name": "project top pods endpoint",
+      "task": "For project 123e4567-e89b-12d3-a456-426614174000, rank the hottest Kubernetes pods."
+    },
+    {
+      "expected_args_contains": {"project_id": "00000000-0000-0000-0000-000000000000"},
+      "expected_tools": ["project_metrics_activity_aggr"],
+      "forbidden_tools": ["projects_search", "project_metrics_query", "topfunctions"],
+      "name": "default project metrics discovery skips search",
+      "task": "For the default Zymtrace project, discover active GPU, CPU, model, service, token, and latency metric names between 2026-06-25T04:00:00+00:00 and 2026-06-25T05:00:00+00:00."
+    },
+    {
+      "expected_args_contains": {"project_id": "00000000-0000-0000-0000-000000000000"},
+      "expected_tools": ["project_events_raw"],
+      "forbidden_tools": ["projects_search", "topfunctions", "hot_traces"],
+      "name": "default project raw sample skips search",
+      "task": "For the default Zymtrace project, fetch a small raw event sample between 2026-06-25T04:00:00+00:00 and 2026-06-25T05:00:00+00:00 to inspect payload shape."
+    },
+    {
+      "expected_args_contains": {"entity": "container"},
+      "expected_tools": ["topentities"],
+      "forbidden_tools": ["hot_traces", "flamegraph", "recommendations"],
+      "name": "cpu rank first containerized apps",
+      "task": "Which containerized app should I optimize first by CPU cost from 2026-06-25T04:00:00+00:00 to 2026-06-25T05:00:00+00:00?"
+    },
+    {
+      "expected_args_contains": {"project_id": "00000000-0000-0000-0000-000000000000"},
+      "expected_tools": ["project_metrics_activity_aggr"],
+      "forbidden_tools": ["hot_traces", "flamegraph", "topfunctions"],
+      "name": "gpu inference workflow starts with metrics",
+      "task": "For the default Zymtrace project, start investigating why the vLLM inference workload has low GPU utilization between 2026-06-25T04:00:00+00:00 and 2026-06-25T05:00:00+00:00 by finding the relevant GPU, CPU, and framework metrics."
+    },
+    {
+      "expected_args_contains": {"meta_only": "true", "profile_type": "GPU"},
+      "expected_tools": ["hot_traces"],
+      "forbidden_tools": ["flamegraph", "topfunctions", "project_flamegraph_json"],
+      "name": "gpu call tree uses hot traces",
+      "task": "Pull the GPU call tree for the vLLM workload from 2026-06-25T04:00:00+00:00 to 2026-06-25T05:00:00+00:00, but only do first-pass discovery."
+    },
+    {
+      "expected_args_contains": {"limit": "1", "meta_only": "false", "prefix_hash": "981237"},
+      "expected_tools": ["hot_traces"],
+      "forbidden_tools": ["flamegraph", "topfunctions", "project_events_raw"],
+      "name": "selected trace drilldown is bounded",
+      "task": "Drill into hot trace prefix_hash 981237 and fetch exactly that full trace for the CPU profile from 2026-06-25T04:00:00+00:00 to 2026-06-25T05:00:00+00:00."
+    }
+  ]
+}

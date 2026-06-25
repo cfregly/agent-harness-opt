@@ -58,6 +58,13 @@ Checked on 2026-06-24.
     experiment, measure a clear score, keep or discard the candidate, and preserve an experiment
     log. In this repo the editable surface is the agent harness rather than model training code.
 
+## Public MCP Sources
+
+- [Zymtrace getting started](https://docs.zymtrace.com/getting-started/)
+  - Used for the Zymtrace MCP and profiler setup context in the public MCP sweep.
+- [Zymtrace Model Context Protocol docs](https://docs.zymtrace.com/category/model-context-protocol-mcp/)
+  - Used for the Zymtrace MCP tool-selection matrix and sweep source links.
+
 ## Local Screenshots
 
 The initial implementation also used user-provided screenshots of these slides:

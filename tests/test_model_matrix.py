@@ -173,6 +173,16 @@ class ModelMatrixTests(unittest.TestCase):
                 "tuned_clickhouse_readonly_boundaries",
                 "clickhouse_host_rules",
             ),
+            (
+                "zymtrace_mcp_tool_selection.json",
+                "tuned_zymtrace_mcp_boundaries",
+                "zymtrace_host_rules",
+            ),
+            (
+                "zymtrace_mcp_tool_selection.json",
+                "tuned_zymtrace_mcp_boundaries",
+                "zymtrace_host_and_skill_rules",
+            ),
         ]
 
         for filename, variant, instruction_variant in cases:
@@ -192,6 +202,32 @@ class ModelMatrixTests(unittest.TestCase):
                 self.assertFalse(result["live"])
                 self.assertEqual(2, result["summary"]["total"])
                 self.assertEqual("planned", result["results"][0]["status"])
+
+    def test_zymtrace_skill_rules_plan_heldout_cases(self):
+        result = run_model_matrix(
+            ROOT / "evals" / "model_matrix" / "zymtrace_mcp_tool_selection.json",
+            filters=MatrixFilters(
+                providers={"anthropic"},
+                harnesses={"prompt_json"},
+                variants={"tuned_zymtrace_mcp_boundaries"},
+                instruction_variants={"zymtrace_host_and_skill_rules"},
+                cases={
+                    "default project metrics discovery skips search",
+                    "gpu inference workflow starts with metrics",
+                },
+            ),
+        )
+
+        self.assertTrue(result["passed"])
+        self.assertFalse(result["live"])
+        self.assertEqual(2, result["summary"]["total"])
+        self.assertEqual(
+            {
+                "default project metrics discovery skips search",
+                "gpu inference workflow starts with metrics",
+            },
+            {item["case"] for item in result["results"]},
+        )
 
     def test_prompt_json_matrix_can_evaluate_no_tool_safety_case(self):
         result = evaluate_model_choice(
