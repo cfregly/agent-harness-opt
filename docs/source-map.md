@@ -61,6 +61,22 @@ Checked on 2026-06-25.
     `codex exec --json`, Codex SDK, app-server, Codex MCP server, GitHub Action, plugins, and
     import behavior.
 
+## Live Harness CLI Docs
+
+- [Claude Code CLI reference](https://code.claude.com/docs/en/cli-reference)
+  - Used for `claude -p`, `--output-format stream-json`, `--verbose`, permission mode, tool
+    selection, and budget flags in the live harness suite.
+- [Claude Code headless mode](https://code.claude.com/docs/en/headless)
+  - Used for treating Claude Code as a non-interactive harness under test.
+- [Gemini CLI docs](https://developers.google.com/gemini-code-assist/docs/gemini-cli)
+  - Used for Gemini CLI stream JSON, shell-tool use, and MCP-capable CLI coverage.
+- [Cursor CLI headless mode](https://cursor.com/docs/cli/headless)
+  - Used for Cursor Agent headless execution and auth expectations.
+- [Cursor CLI output format](https://cursor.com/docs/cli/reference/output-format)
+  - Used for Cursor Agent stream JSON output coverage.
+- [OpenCode CLI docs](https://opencode.ai/docs/cli/)
+  - Used for OpenCode `run`, model selection, and log capture coverage.
+
 ## Anthropic Engineering
 
 - [Writing effective tools for agents](https://www.anthropic.com/engineering/writing-tools-for-agents)

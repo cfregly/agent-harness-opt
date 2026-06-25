@@ -63,12 +63,13 @@ Highest-value harnesses for this repo:
 | OpenAI native tools / Responses API | Different function-call schema and reasoning behavior. | Live matrix supported. |
 | Gemini function calling | Third provider with different schema and tool-selection behavior. | Live matrix supported. |
 | Prompt JSON | Cheap cross-provider control harness that makes tool-choice output explicit. | Live matrix supported. |
-| Codex CLI / app-server / SDK | Real coding-agent runtime with AGENTS.md, skills, MCP, hooks, sandbox, command execution, and JSONL traces. | Fixture adapter added. Live exports next. |
-| Claude Code / Claude API skill | Anthropic coding-agent runtime and bundled migration skill. | Guidance captured. Real exported trace adapter still pending. |
+| Codex CLI / app-server / SDK | Real coding-agent runtime with AGENTS.md, skills, MCP, hooks, sandbox, command execution, and JSONL traces. | Fixture and live `codex exec --json` adapter covered. |
+| Claude Code / Claude API skill | Anthropic coding-agent runtime and bundled migration skill. | Live `claude -p --output-format stream-json --verbose` adapter covered. |
 | OpenAI Agents SDK | Common multi-agent SDK with handoffs, MCP, traces, and guardrails. | Fixture adapter supported. |
-| Cursor-style IDE agents | Popular IDE harness with hidden/system rules and codebase tools. | Fixture adapter supported. |
+| Cursor-style IDE agents | Popular IDE harness with hidden/system rules and codebase tools. | Fixture adapter supported. Live Cursor Agent currently auth-failed locally. |
 | LangGraph / LangSmith | Common production orchestration and trace-review stack. | Adapter aliases supported. Deeper schema fixtures needed. |
-| Vercel AI SDK / Mastra / CrewAI / AutoGen / Pydantic AI | Popular app-agent orchestration layers with different loop and tool policies. | Candidate future adapters. |
+| OpenCode | Popular terminal coding harness with provider-backed model selection and command logs. | Live text-log adapter covered. |
+| Vercel AI SDK / Mastra / CrewAI / AutoGen / Pydantic AI | Popular app-agent orchestration layers with different loop and tool policies. | Candidate adapters. No live claim until runnable traces are captured. |
 
 The right next step is not to add every framework at once. Add one harness only when we can export
 real traces with reasoning summaries, tool calls, tool outputs, final answers, source pins, and exact
@@ -115,8 +116,8 @@ and fixtures for each provider's breaking API changes.
 
 ## Gaps To Close Next
 
-- Add a Claude Code export adapter or a documented import path for Claude Code transcripts.
-- Add live Codex JSONL runs for the same cases as the fixture matrix.
+- Add directed-reasoning instrumentation cases to the live headless CLI suite.
+- Authenticate Cursor Agent locally and rerun the live Cursor cell.
 - Add model-migration fixtures for unsupported sampling parameters, prefill replacement, thinking
   config removal, refusal stop details, and provider-specific model IDs.
 - Add cost and latency result fields so effort and prompt-caching migrations can be judged by more

@@ -1,0 +1,126 @@
+{
+  "name": "headless CLI live harness smoke",
+  "checked_at": "2026-06-25T15:50:16Z",
+  "command": "python -m claude_agent_harness_optimization live-harness evals/live_harnesses/headless_cli_smoke.json --env-file .env --out-dir /tmp/aho-live-suite-v3/artifacts --out /tmp/aho-live-suite-v3/result.json",
+  "raw_result_path": "/tmp/aho-live-suite-v3/result.json",
+  "raw_artifact_root": "/tmp/aho-live-suite-v3/artifacts",
+  "summary": {
+    "directed_thinking_visible": 3,
+    "errors": 2,
+    "failed": 0,
+    "not_installed": 0,
+    "passed": 8,
+    "planned": 0
+  },
+  "passed": false,
+  "cells": [
+    {
+      "harness": "codex_exec_jsonl",
+      "version": "codex-cli 0.142.0",
+      "case": "pwd shell tool smoke",
+      "status": "passed",
+      "exit_code": 0,
+      "tool_use_passed": true,
+      "directed_thinking_passed": false,
+      "tool_call_count": 1
+    },
+    {
+      "harness": "codex_exec_jsonl",
+      "version": "codex-cli 0.142.0",
+      "case": "directed decision-note shell smoke",
+      "status": "passed",
+      "exit_code": 0,
+      "tool_use_passed": true,
+      "directed_thinking_passed": true,
+      "tool_call_count": 1
+    },
+    {
+      "harness": "claude_code_stream_json",
+      "version": "2.1.179 (Claude Code)",
+      "case": "pwd shell tool smoke",
+      "status": "passed",
+      "exit_code": 0,
+      "tool_use_passed": true,
+      "directed_thinking_passed": false,
+      "tool_call_count": 1
+    },
+    {
+      "harness": "claude_code_stream_json",
+      "version": "2.1.179 (Claude Code)",
+      "case": "directed decision-note shell smoke",
+      "status": "passed",
+      "exit_code": 0,
+      "tool_use_passed": true,
+      "directed_thinking_passed": true,
+      "tool_call_count": 1
+    },
+    {
+      "harness": "gemini_cli_stream_json",
+      "version": "0.46.0",
+      "case": "pwd shell tool smoke",
+      "status": "passed",
+      "exit_code": 0,
+      "tool_use_passed": true,
+      "directed_thinking_passed": false,
+      "tool_call_count": 1
+    },
+    {
+      "harness": "gemini_cli_stream_json",
+      "version": "0.46.0",
+      "case": "directed decision-note shell smoke",
+      "status": "passed",
+      "exit_code": 0,
+      "tool_use_passed": true,
+      "directed_thinking_passed": true,
+      "tool_call_count": 1
+    },
+    {
+      "harness": "cursor_agent_stream_json",
+      "version": "32c684dc5c8a0e364043db77d4e5b9a5dc1e2d3b",
+      "case": "pwd shell tool smoke",
+      "status": "auth_failed",
+      "exit_code": 1,
+      "tool_use_passed": false,
+      "directed_thinking_passed": false,
+      "tool_call_count": 0,
+      "finding": "Installed but returned an interactive sign-in prompt instead of stream JSON."
+    },
+    {
+      "harness": "cursor_agent_stream_json",
+      "version": "32c684dc5c8a0e364043db77d4e5b9a5dc1e2d3b",
+      "case": "directed decision-note shell smoke",
+      "status": "auth_failed",
+      "exit_code": 1,
+      "tool_use_passed": false,
+      "directed_thinking_passed": false,
+      "tool_call_count": 0,
+      "finding": "Installed but returned an interactive sign-in prompt instead of stream JSON."
+    },
+    {
+      "harness": "opencode_run_logs",
+      "version": "0.3.133",
+      "case": "pwd shell tool smoke",
+      "status": "passed",
+      "exit_code": 0,
+      "tool_use_passed": true,
+      "directed_thinking_passed": false,
+      "tool_call_count": 1
+    },
+    {
+      "harness": "opencode_run_logs",
+      "version": "0.3.133",
+      "case": "directed decision-note shell smoke",
+      "status": "passed",
+      "exit_code": 0,
+      "tool_use_passed": true,
+      "directed_thinking_passed": false,
+      "tool_call_count": 1,
+      "finding": "Tool use passes, but the current prompt and text-log adapter do not preserve visible before or after decision notes."
+    }
+  ],
+  "source_spec": "evals/live_harnesses/headless_cli_smoke.json",
+  "value_bar": {
+    "claim": "Live harness tests add value only when they expose version-pinned pass and fail cells, not only offline fixtures.",
+    "adversarial_result": "Overall suite remains failed because Cursor Agent is auth-blocked. This prevents overclaiming full harness parity."
+  }
+}

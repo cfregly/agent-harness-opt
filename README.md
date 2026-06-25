@@ -40,6 +40,7 @@ python -m claude_agent_harness_optimization model-matrix evals/model_matrix/codi
 python -m claude_agent_harness_optimization model-matrix evals/model_matrix/harness_trace_adapters.json --live --require-live --providers trace_fixture --markdown
 python -m claude_agent_harness_optimization model-matrix evals/model_matrix/coding_tool_selection.json --env-file .env --live --concurrency 8 --markdown
 python -m claude_agent_harness_optimization grind-harness evals/model_matrix/coding_tool_selection.json --env-file .env --live --concurrency 8 --heldout-cases "find python files,read known file" --markdown
+python -m claude_agent_harness_optimization live-harness evals/live_harnesses/headless_cli_smoke.json --env-file .env --out-dir /tmp/aho-live --markdown
 python -m claude_agent_harness_optimization render-report /tmp/harness-matrix.json --out /tmp/harness-matrix.html
 python -m claude_agent_harness_optimization pr-comment /tmp/harness-matrix.json --out /tmp/harness-matrix.md
 python scripts/probe_service_keys.py --env-file .env --no-fail
@@ -82,6 +83,8 @@ Claude prompt engineering docs:
 - static HTML and PR-comment reports with backing data from audit, matrix, grind, snapshot, and E2E JSON
 - upstream PR packets with source pins, exact examples, reproduction commands, and result evidence
 - reusable harness check families for boundary, safety, argument, recovery, output, resource, thinking, parity, and reproducibility failures
+- live headless CLI harness probes for Codex, Claude Code, Gemini CLI, Cursor Agent, and OpenCode,
+  with redacted artifacts, version pins, normalized traces, and directed-thinking visibility status
 - autoresearch-style harness grinding that turns matrix failures into candidate variants, checks
   held-out cases, logs keep or reject decisions, and promotes only live improvements
 - value-bar enforcement for baseline comparison, minimum improvement, and adversarial confirmation
@@ -100,6 +103,7 @@ claude_agent_harness_optimization/
   model_matrix.py    # live provider matrix for tool and instruction tuning
   harness_optimizer.py # hill-climb candidate tool descriptions from matrix failures
   import_run.py       # convert external harness exports into audit bundles
+  live_harness.py     # run real harness CLIs and normalize redacted trace artifacts
   snapshots.py        # pin tool, matrix, skill, and file versions under eval
   e2e.py              # read-oriented credentialed service and harness checks
   reports.py          # HTML and PR-comment rendering for JSON results
@@ -146,6 +150,8 @@ Use [docs/autoresearch-hill-climbing.md](docs/autoresearch-hill-climbing.md) whe
 run an eval-driven optimization loop over harness, tool, `CLAUDE.md`, or skill changes.
 Use [docs/repeatable-harness-lab.md](docs/repeatable-harness-lab.md) to import a real harness run,
 pin the tested surfaces, run credentialed read checks, and produce review artifacts.
+Use [docs/live-harness-hardening.md](docs/live-harness-hardening.md) when testing Codex, Claude
+Code, Gemini CLI, Cursor Agent, OpenCode, or another installed harness as the system under test.
 
 ## Claude Code Skill
 

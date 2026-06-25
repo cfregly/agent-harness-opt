@@ -1,0 +1,170 @@
+{
+  "name": "headless CLI live harness smoke",
+  "description": "Credentialed live smoke tests for popular headless agent harnesses. Each run must call one shell tool, return a marker, save redacted raw output, normalize the trace, and separately report whether directed inter-tool reasoning is visible.",
+  "source": {
+    "checked_on": "2026-06-25",
+    "codex_docs": "https://developers.openai.com/codex/codex-manual.md",
+    "claude_code_cli_reference": "https://code.claude.com/docs/en/cli-reference",
+    "claude_code_headless": "https://code.claude.com/docs/en/headless",
+    "cursor_cli_headless": "https://cursor.com/docs/cli/headless",
+    "cursor_cli_output_format": "https://cursor.com/docs/cli/reference/output-format",
+    "gemini_cli_docs": "https://developers.google.com/gemini-code-assist/docs/gemini-cli",
+    "opencode_cli_docs": "https://opencode.ai/docs/cli/"
+  },
+  "value_bar": {
+    "claim": "A headless harness is useful for optimization only when it can be run live, pinned by version, and exported into the shared trace contract with tool calls, tool results, final answer, and visible reasoning status.",
+    "baseline": "Offline fixture-only adapters cannot prove installed CLI auth, command shape, output format, tool-call recovery, or reasoning visibility.",
+    "minimum_improvement": "Every included harness must produce a redacted artifact and an explicit pass/fail status. Passing harnesses must preserve the selected tool and arguments. Failing harnesses must expose the concrete blocker.",
+    "adversarial_check": "The suite fails when a required harness is missing, unauthenticated, exits nonzero, omits the marker, or cannot normalize the trace."
+  },
+  "cases": [
+    {
+      "name": "pwd shell tool smoke",
+      "shell_command": "pwd",
+      "prompt_template": "Run exactly one shell command: {shell_command}. Then answer with HARNESS_OK {marker} and the command output.",
+      "required_marker_template": "HARNESS_OK {marker}",
+      "expected_args_contains": {
+        "command": "pwd"
+      },
+      "min_tool_calls": 1,
+      "max_tool_calls": 1
+    },
+    {
+      "name": "directed decision-note shell smoke",
+      "shell_command": "pwd",
+      "prompt_template": "Before using a tool, write exactly one line beginning with DECISION_NOTE_BEFORE that mentions complexity, tool budget, evidence needed, and stop criteria. Then run exactly one shell command: {shell_command}. After the tool result and before the final answer, write exactly one line beginning with DECISION_NOTE_AFTER that mentions result quality, verification, and the continue or stop decision. Then answer with HARNESS_OK {marker} and the command output.",
+      "required_marker_template": "HARNESS_OK {marker}",
+      "expected_args_contains": {
+        "command": "pwd"
+      },
+      "min_tool_calls": 1,
+      "max_tool_calls": 1
+    }
+  ],
+  "harnesses": [
+    {
+      "name": "codex_exec_jsonl",
+      "marker": "codex",
+      "adapter": "codex_jsonl",
+      "command": [
+        "codex",
+        "exec",
+        "--json",
+        "--ephemeral",
+        "--sandbox",
+        "read-only",
+        "--cd",
+        ".",
+        "{prompt}"
+      ],
+      "version_command": [
+        "codex",
+        "--version"
+      ],
+      "expected_tool": "Bash",
+      "expected_args_contains": {
+        "command": "pwd"
+      },
+      "timeout_seconds": 180
+    },
+    {
+      "name": "claude_code_stream_json",
+      "marker": "claude",
+      "adapter": "claude_code_stream_json",
+      "command": [
+        "claude",
+        "-p",
+        "{prompt}",
+        "--bare",
+        "--verbose",
+        "--no-session-persistence",
+        "--output-format",
+        "stream-json",
+        "--max-budget-usd",
+        "0.30",
+        "--permission-mode",
+        "bypassPermissions",
+        "--tools",
+        "Bash"
+      ],
+      "version_command": [
+        "claude",
+        "--version"
+      ],
+      "expected_tool": "Bash",
+      "expected_args_contains": {
+        "command": "pwd"
+      },
+      "timeout_seconds": 180
+    },
+    {
+      "name": "gemini_cli_stream_json",
+      "marker": "gemini",
+      "adapter": "gemini_stream_json",
+      "command": [
+        "gemini",
+        "--prompt",
+        "{prompt}",
+        "--output-format",
+        "stream-json",
+        "--approval-mode",
+        "yolo",
+        "--skip-trust"
+      ],
+      "version_command": [
+        "gemini",
+        "--version"
+      ],
+      "expected_tool": "run_shell_command",
+      "expected_args_contains": {
+        "command": "pwd"
+      },
+      "timeout_seconds": 240
+    },
+    {
+      "name": "cursor_agent_stream_json",
+      "marker": "cursor",
+      "adapter": "cursor_agent_stream_json",
+      "command": [
+        "cursor-agent",
+        "-p",
+        "--output-format",
+        "stream-json",
+        "-f",
+        "{prompt}"
+      ],
+      "version_command": [
+        "cursor-agent",
+        "--version"
+      ],
+      "expected_tool": "Bash",
+      "expected_args_contains": {
+        "command": "pwd"
+      },
+      "timeout_seconds": 180
+    },
+    {
+      "name": "opencode_run_logs",
+      "marker": "opencode",
+      "adapter": "opencode_text",
+      "command": [
+        "opencode",
+        "run",
+        "{prompt}",
+        "--model",
+        "openai/gpt-4.1",
+        "--print-logs"
+      ],
+      "version_command": [
+        "opencode",
+        "--version"
+      ],
+      "expected_tool": "Bash",
+      "expected_args_contains": {
+        "command": "pwd"
+      },
+      "max_tool_calls": 3,
+      "timeout_seconds": 240
+    }
+  ]
+}

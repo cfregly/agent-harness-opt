@@ -1,7 +1,9 @@
 import os
+import json
 from pathlib import Path
 import subprocess
 import sys
+import tempfile
 import unittest
 
 
@@ -68,6 +70,68 @@ class CliTests(unittest.TestCase):
         self.assertEqual(0, result.returncode, result.stderr)
         self.assertIn('"baseline_variant": "baseline_short"', result.stdout)
         self.assertIn('"projected_live_calls": 2', result.stdout)
+
+    def test_live_harness_command_with_fake_local_harness(self):
+        fake_events = [
+            {
+                "type": "item.started",
+                "item": {
+                    "id": "call_1",
+                    "type": "command_execution",
+                    "command": "pwd",
+                    "status": "in_progress",
+                },
+            },
+            {
+                "type": "item.completed",
+                "item": {
+                    "id": "call_1",
+                    "type": "command_execution",
+                    "command": "pwd",
+                    "aggregated_output": str(ROOT),
+                    "status": "completed",
+                },
+            },
+            {
+                "type": "item.completed",
+                "item": {
+                    "id": "message_1",
+                    "type": "agent_message",
+                    "text": f"HARNESS_OK fake {ROOT}",
+                },
+            },
+        ]
+        code = "import json; events = " + repr(fake_events) + "; [print(json.dumps(item)) for item in events]"
+        spec = {
+            "cases": [
+                {
+                    "name": "fake pwd",
+                    "prompt_template": "Run {shell_command}. HARNESS_OK {marker}",
+                    "required_marker_template": "HARNESS_OK {marker}",
+                }
+            ],
+            "harnesses": [
+                {
+                    "name": "fake_codex",
+                    "marker": "fake",
+                    "adapter": "codex_jsonl",
+                    "command": [sys.executable, "-c", code],
+                    "expected_args_contains": {"command": "pwd"},
+                    "expected_tool": "Bash",
+                    "version_command": [sys.executable, "--version"],
+                }
+            ],
+        }
+
+        with tempfile.TemporaryDirectory() as temp_dir:
+            spec_path = Path(temp_dir) / "fake-live-harness.json"
+            out_dir = Path(temp_dir) / "artifacts"
+            spec_path.write_text(json.dumps(spec), encoding="utf-8")
+            result = self.run_cli("live-harness", str(spec_path), "--out-dir", str(out_dir))
+
+        self.assertEqual(0, result.returncode, result.stderr)
+        self.assertIn('"harness": "fake_codex"', result.stdout)
+        self.assertIn('"tool_use_passed": true', result.stdout)
 
     def test_claude_judge_requires_api_key(self):
         env = os.environ.copy()

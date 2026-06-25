@@ -20,6 +20,11 @@ from .claude_judge import (
 from .evals import build_judge_prompt, evaluate_case, load_eval_case
 from .e2e import E2EError, run_e2e_spec
 from .import_run import import_run_export
+from .live_harness import (
+    LiveHarnessFilters,
+    render_live_harness_markdown,
+    run_live_harness_spec,
+)
 from .model_matrix import (
     MatrixFilters,
     render_model_matrix_markdown,
@@ -258,6 +263,19 @@ def main(argv: list[str] | None = None) -> int:
     grind_parser.add_argument("--concurrency", type=int, default=1)
     grind_parser.add_argument("--markdown", action="store_true", help="print a Markdown report")
     grind_parser.add_argument("--out", type=Path, help="write the JSON or Markdown report to a file")
+
+    live_harness_parser = subparsers.add_parser(
+        "live-harness",
+        help="run real headless agent harness CLIs and normalize their traces",
+    )
+    live_harness_parser.add_argument("spec", type=Path)
+    live_harness_parser.add_argument("--env-file", type=Path, help="dotenv file with provider API keys")
+    live_harness_parser.add_argument("--harnesses", help="comma-separated harness names")
+    live_harness_parser.add_argument("--cases", help="comma-separated case names")
+    live_harness_parser.add_argument("--dry-run", action="store_true", help="render commands without executing them")
+    live_harness_parser.add_argument("--markdown", action="store_true", help="print a Markdown report")
+    live_harness_parser.add_argument("--out-dir", type=Path, help="directory for redacted raw outputs and traces")
+    live_harness_parser.add_argument("--out", type=Path, help="write the JSON or Markdown report to a file")
 
     args = parser.parse_args(argv)
 
@@ -513,6 +531,30 @@ def main(argv: list[str] | None = None) -> int:
         )
         output = (
             render_harness_grind_markdown(result)
+            if args.markdown
+            else json.dumps(result, indent=2, sort_keys=True)
+        )
+        if args.out:
+            args.out.write_text(output, encoding="utf-8")
+        else:
+            sys.stdout.write(output)
+            if not output.endswith("\n"):
+                sys.stdout.write("\n")
+        return 0 if result["passed"] else 1
+
+    if args.command == "live-harness":
+        result = run_live_harness_spec(
+            args.spec,
+            env_file=args.env_file,
+            out_dir=args.out_dir,
+            filters=LiveHarnessFilters(
+                harnesses=_csv_set(args.harnesses),
+                cases=_csv_set(args.cases),
+            ),
+            dry_run=args.dry_run,
+        )
+        output = (
+            render_live_harness_markdown(result)
             if args.markdown
             else json.dumps(result, indent=2, sort_keys=True)
         )

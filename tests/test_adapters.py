@@ -111,6 +111,65 @@ class AdapterTests(unittest.TestCase):
         self.assertEqual("final", trace["steps"][-1]["type"])
         self.assertTrue(review_trace(trace).passed)
 
+    def test_visible_decision_notes_are_reviewable_reasoning(self):
+        payload = [
+            {
+                "type": "item.completed",
+                "item": {
+                    "id": "message_0",
+                    "type": "agent_message",
+                    "text": (
+                        "DECISION_NOTE_BEFORE complexity simple; tool budget one call; "
+                        "evidence needed is pwd output; stop criteria is successful output."
+                    ),
+                },
+            },
+            {
+                "type": "item.started",
+                "item": {
+                    "id": "call_1",
+                    "type": "command_execution",
+                    "command": "pwd",
+                    "status": "in_progress",
+                },
+            },
+            {
+                "type": "item.completed",
+                "item": {
+                    "id": "call_1",
+                    "type": "command_execution",
+                    "command": "pwd",
+                    "aggregated_output": "/tmp/repo",
+                    "status": "completed",
+                },
+            },
+            {
+                "type": "item.completed",
+                "item": {
+                    "id": "message_1",
+                    "type": "agent_message",
+                    "text": (
+                        "DECISION_NOTE_AFTER quality is direct; verification confirmed expected output; "
+                        "decision stop and final answer.\nHARNESS_OK codex /tmp/repo"
+                    ),
+                },
+            },
+        ]
+        trace = normalize_run_export(
+            {
+                "adapter": "codex_jsonl",
+                "events": payload,
+                "rubric": {
+                    "expected_call_args": [{"args_contains": {"command": "pwd"}, "name": "Bash"}],
+                    "required_final_contains": ["HARNESS_OK codex"],
+                    "required_tools": ["Bash"],
+                },
+            }
+        )
+
+        self.assertEqual(["reasoning", "tool_call", "tool_result", "reasoning", "final"], [s["type"] for s in trace["steps"]])
+        self.assertTrue(review_trace(trace).passed)
+
     def test_cli_normalize_runtime(self):
         result = subprocess.run(
             [
@@ -136,6 +195,138 @@ class AdapterTests(unittest.TestCase):
         self.assertEqual("Task", trace["steps"][1]["name"])
         self.assertIn("openai_agents", supported_adapters())
         self.assertIn("codex_jsonl", supported_adapters())
+
+    def test_claude_code_stream_json_normalizes_tool_use_and_result(self):
+        payload = [
+            {
+                "type": "system",
+                "subtype": "init",
+                "model": "claude-opus-4-8",
+                "tools": ["Bash"],
+                "claude_code_version": "2.1.179",
+            },
+            {
+                "type": "assistant",
+                "message": {
+                    "role": "assistant",
+                    "content": [
+                        {
+                            "type": "tool_use",
+                            "id": "toolu_1",
+                            "name": "Bash",
+                            "input": {"command": "pwd", "description": "Print cwd"},
+                        }
+                    ],
+                },
+            },
+            {
+                "type": "user",
+                "message": {
+                    "role": "user",
+                    "content": [
+                        {
+                            "type": "tool_result",
+                            "tool_use_id": "toolu_1",
+                            "content": "/tmp/repo",
+                            "is_error": False,
+                        }
+                    ],
+                },
+            },
+            {
+                "type": "assistant",
+                "message": {
+                    "role": "assistant",
+                    "content": [{"type": "text", "text": "HARNESS_OK claude /tmp/repo"}],
+                },
+            },
+        ]
+
+        trace = normalize_run_export(payload, "claude_code_stream_json")
+
+        self.assertEqual("claude_code_stream_json", trace["metadata"]["source_harness"])
+        self.assertEqual("Bash", trace["steps"][0]["name"])
+        self.assertEqual("tool_result", trace["steps"][1]["type"])
+        self.assertEqual("final", trace["steps"][2]["type"])
+
+    def test_gemini_stream_json_normalizes_tool_use_and_final_deltas(self):
+        payload = [
+            {"type": "init", "model": "auto"},
+            {
+                "type": "tool_use",
+                "tool_name": "run_shell_command",
+                "tool_id": "call_1",
+                "parameters": {"command": "pwd", "description": "Print cwd"},
+            },
+            {
+                "type": "tool_result",
+                "tool_id": "call_1",
+                "status": "success",
+                "output": "/tmp/repo",
+            },
+            {"type": "message", "role": "assistant", "content": "HARNESS_OK gemini ", "delta": True},
+            {"type": "message", "role": "assistant", "content": "/tmp/repo", "delta": True},
+        ]
+
+        trace = normalize_run_export(payload, "gemini_stream_json")
+
+        self.assertEqual("run_shell_command", trace["steps"][0]["name"])
+        self.assertEqual("call_1", trace["steps"][1]["tool_call_id"])
+        self.assertIn("HARNESS_OK gemini", trace["steps"][2]["text"])
+
+    def test_gemini_stream_buffers_split_decision_note_deltas(self):
+        payload = [
+            {"type": "message", "role": "assistant", "content": "DECISION_NOTE_BEFORE complexity low, tool budget one call, evidence", "delta": True},
+            {"type": "message", "role": "assistant", "content": " needed is pwd output, stop criteria success.", "delta": True},
+            {
+                "type": "tool_use",
+                "tool_name": "run_shell_command",
+                "tool_id": "call_1",
+                "parameters": {"command": "pwd"},
+            },
+            {"type": "tool_result", "tool_id": "call_1", "status": "success", "output": "/tmp/repo"},
+            {"type": "message", "role": "assistant", "content": "DECISION_NOTE_AFTER result", "delta": True},
+            {
+                "type": "message",
+                "role": "assistant",
+                "content": " quality direct, verification confirmed, decision stop.\nHARNESS_OK gemini /tmp/repo",
+                "delta": True,
+            },
+            {"type": "result", "status": "success"},
+        ]
+        trace = normalize_run_export(
+            {
+                "adapter": "gemini_stream_json",
+                "events": payload,
+                "rubric": {
+                    "expected_call_args": [
+                        {"args_contains": {"command": "pwd"}, "name": "run_shell_command"}
+                    ],
+                    "required_final_contains": ["HARNESS_OK gemini"],
+                    "required_tools": ["run_shell_command"],
+                },
+            }
+        )
+
+        self.assertEqual(["reasoning", "tool_call", "tool_result", "reasoning", "final"], [s["type"] for s in trace["steps"]])
+        self.assertTrue(review_trace(trace).passed)
+
+    def test_opencode_text_normalizes_command_logs_when_json_export_is_missing(self):
+        raw = "\n".join(
+            [
+                'type=tool-call part {"command":"pwd","timeout":60000}',
+                "HARNESS_OK opencode",
+                "Command output:",
+                "/tmp/repo",
+            ]
+        )
+
+        trace = normalize_run_export(raw, "opencode_text")
+
+        self.assertEqual("opencode_text", trace["metadata"]["source_harness"])
+        self.assertEqual("Bash", trace["steps"][0]["name"])
+        self.assertEqual("pwd", trace["steps"][0]["args"]["command"])
+        self.assertEqual("final", trace["steps"][-1]["type"])
 
 
 if __name__ == "__main__":
