@@ -1,0 +1,413 @@
+{
+  "name": "filesystem mcp tool-selection matrix",
+  "description": "Compare stock and tuned tool descriptions for common Filesystem MCP read, write, edit, list, tree, search, metadata, and move workflows.",
+  "source": {
+    "repo": "https://github.com/modelcontextprotocol/servers/tree/main/src/filesystem",
+    "tool_reference": "https://hub.docker.com/r/mcp/filesystem",
+    "registry": "https://mcpservers.org/servers/modelcontextprotocol/filesystem"
+  },
+  "profiles": [
+    {
+      "api_key_env": "ANTHROPIC_API_KEY",
+      "harnesses": ["native_tools", "prompt_json"],
+      "model": "claude-sonnet-4-5",
+      "model_env": "ANTHROPIC_MATRIX_MODEL",
+      "name": "anthropic-sonnet",
+      "provider": "anthropic"
+    },
+    {
+      "api_key_env": "OPENAI_API_KEY",
+      "harnesses": ["native_tools", "prompt_json"],
+      "model": "gpt-4.1",
+      "model_env": "OPENAI_MATRIX_MODEL",
+      "name": "openai-default",
+      "provider": "openai"
+    },
+    {
+      "api_key_env": "GEMINI_API_KEY",
+      "harnesses": ["native_tools", "prompt_json"],
+      "max_tokens": 4096,
+      "model": "gemini-2.5-pro",
+      "model_env": "GEMINI_MATRIX_MODEL",
+      "name": "gemini-default",
+      "provider": "gemini"
+    }
+  ],
+  "instruction_variants": [
+    {
+      "instructions": "Choose the single filesystem MCP tool that should be called next. Prefer non-recursive tools for bounded directory questions. Use edit tools for small targeted changes to existing files. Use write tools only for creating or fully replacing a file.",
+      "name": "filesystem_host_rules"
+    }
+  ],
+  "tool_variants": [
+    {
+      "name": "stock_filesystem_mcp",
+      "tools": [
+        {
+          "input_schema": {
+            "properties": {
+              "path": {"description": "Path to file", "type": "string"}
+            },
+            "required": ["path"],
+            "type": "object"
+          },
+          "name": "read_file",
+          "purpose": "Read the complete contents of a file from the file system. Use this tool when you need to examine the contents of a single file."
+        },
+        {
+          "input_schema": {
+            "properties": {
+              "paths": {"description": "Paths to files", "items": {"type": "string"}, "type": "array"}
+            },
+            "required": ["paths"],
+            "type": "object"
+          },
+          "name": "read_multiple_files",
+          "purpose": "Read the contents of multiple files simultaneously. This is more efficient than reading files one by one when you need to analyze or compare multiple files."
+        },
+        {
+          "input_schema": {
+            "properties": {
+              "path": {"description": "Path to file", "type": "string"},
+              "content": {"description": "Complete file content", "type": "string"}
+            },
+            "required": ["path", "content"],
+            "type": "object"
+          },
+          "name": "write_file",
+          "purpose": "Create a new file or completely overwrite an existing file with new content."
+        },
+        {
+          "input_schema": {
+            "properties": {
+              "path": {"description": "Path to file", "type": "string"},
+              "edits": {"description": "Line-based edits to apply", "items": {"type": "object"}, "type": "array"},
+              "dryRun": {"description": "Preview changes without applying", "type": "boolean"}
+            },
+            "required": ["path", "edits"],
+            "type": "object"
+          },
+          "name": "edit_file",
+          "purpose": "Make line-based edits to a text file. Each edit replaces exact line sequences with new content."
+        },
+        {
+          "input_schema": {
+            "properties": {
+              "path": {"description": "Path to directory", "type": "string"}
+            },
+            "required": ["path"],
+            "type": "object"
+          },
+          "name": "create_directory",
+          "purpose": "Create a new directory or ensure a directory exists. Can create multiple nested directories in one operation."
+        },
+        {
+          "input_schema": {
+            "properties": {
+              "path": {"description": "Path to directory", "type": "string"}
+            },
+            "required": ["path"],
+            "type": "object"
+          },
+          "name": "list_directory",
+          "purpose": "Get a detailed listing of all files and directories in a specified path."
+        },
+        {
+          "input_schema": {
+            "properties": {
+              "path": {"description": "Path to directory", "type": "string"}
+            },
+            "required": ["path"],
+            "type": "object"
+          },
+          "name": "directory_tree",
+          "purpose": "Get a recursive tree view of files and directories as a JSON structure."
+        },
+        {
+          "input_schema": {
+            "properties": {
+              "path": {"description": "Starting path", "type": "string"},
+              "pattern": {"description": "Pattern to match files and directories", "type": "string"},
+              "excludePatterns": {"description": "Patterns to exclude", "items": {"type": "string"}, "type": "array"}
+            },
+            "required": ["path", "pattern"],
+            "type": "object"
+          },
+          "name": "search_files",
+          "purpose": "Recursively search for files and directories matching a pattern."
+        },
+        {
+          "input_schema": {
+            "properties": {
+              "path": {"description": "Path to file or directory", "type": "string"}
+            },
+            "required": ["path"],
+            "type": "object"
+          },
+          "name": "get_file_info",
+          "purpose": "Retrieve detailed metadata about a file or directory, including size, creation time, last modified time, permissions, and type."
+        },
+        {
+          "input_schema": {
+            "properties": {
+              "source": {"description": "Source path", "type": "string"},
+              "destination": {"description": "Destination path", "type": "string"}
+            },
+            "required": ["source", "destination"],
+            "type": "object"
+          },
+          "name": "move_file",
+          "purpose": "Move or rename files and directories."
+        },
+        {
+          "input_schema": {
+            "properties": {},
+            "type": "object"
+          },
+          "name": "list_allowed_directories",
+          "purpose": "Returns the list of directories that this server is allowed to access."
+        }
+      ]
+    },
+    {
+      "name": "tuned_filesystem_mcp_boundaries",
+      "tools": [
+        {
+          "avoid_when": "Avoid for multiple files, metadata-only questions, directory listings, or edits.",
+          "input_schema": {
+            "properties": {
+              "path": {"description": "Exact path to the single file to read.", "type": "string"}
+            },
+            "required": ["path"],
+            "type": "object"
+          },
+          "name": "read_file",
+          "purpose": "Read the full content of one known file.",
+          "quality_checks": ["Use only when one file path is known.", "Do not use for metadata, existence checks, or directory listing."],
+          "use_when": "Use when the user asks to inspect the contents of a single file."
+        },
+        {
+          "avoid_when": "Avoid for one file, directory listings, metadata, or writes.",
+          "input_schema": {
+            "properties": {
+              "paths": {"description": "Exact file paths to read together.", "items": {"type": "string"}, "type": "array"}
+            },
+            "required": ["paths"],
+            "type": "object"
+          },
+          "name": "read_multiple_files",
+          "purpose": "Read several known files in one call.",
+          "quality_checks": ["Use when two or more file paths are known.", "Preserve all requested paths."],
+          "use_when": "Use to compare, summarize, or inspect multiple named files."
+        },
+        {
+          "avoid_when": "Avoid for small edits to existing files; use edit_file. Avoid for reading or metadata.",
+          "input_schema": {
+            "properties": {
+              "path": {"description": "File path to create or replace.", "type": "string"},
+              "content": {"description": "Complete replacement file content.", "type": "string"}
+            },
+            "required": ["path", "content"],
+            "type": "object"
+          },
+          "name": "write_file",
+          "purpose": "Create a new file or fully replace an existing file.",
+          "quality_checks": ["Use only when complete content is known.", "Do not use for targeted patches."],
+          "use_when": "Use when the user provides full file content or asks to create a new file."
+        },
+        {
+          "avoid_when": "Avoid for creating new files from scratch, full-file replacement, or binary files.",
+          "input_schema": {
+            "properties": {
+              "path": {"description": "Existing text file path to edit.", "type": "string"},
+              "edits": {"description": "Exact line replacements.", "items": {"type": "object"}, "type": "array"},
+              "dryRun": {"description": "True to preview changes before applying.", "type": "boolean"}
+            },
+            "required": ["path", "edits"],
+            "type": "object"
+          },
+          "name": "edit_file",
+          "purpose": "Apply targeted line-based edits to an existing text file.",
+          "quality_checks": ["Use for replace/patch/update requests.", "Use dryRun=true when the user asks to preview."],
+          "use_when": "Use when the user wants to change specific lines or replace a known string in a file."
+        },
+        {
+          "avoid_when": "Avoid for moving, listing, searching, or writing file contents.",
+          "input_schema": {
+            "properties": {
+              "path": {"description": "Directory path to create or ensure.", "type": "string"}
+            },
+            "required": ["path"],
+            "type": "object"
+          },
+          "name": "create_directory",
+          "purpose": "Create or ensure a directory exists, including nested directories.",
+          "quality_checks": ["Use only for directories.", "Do not create files."],
+          "use_when": "Use when the user asks to make a folder/directory."
+        },
+        {
+          "avoid_when": "Avoid for recursive trees or recursive filename search. Avoid for reading file contents.",
+          "input_schema": {
+            "properties": {
+              "path": {"description": "Directory path to list non-recursively.", "type": "string"}
+            },
+            "required": ["path"],
+            "type": "object"
+          },
+          "name": "list_directory",
+          "purpose": "List the immediate children of one directory.",
+          "quality_checks": ["Use for bounded one-level listings.", "Prefer over directory_tree when recursion is not requested."],
+          "use_when": "Use when the user asks what is in a directory or whether a top-level entry exists."
+        },
+        {
+          "avoid_when": "Avoid for simple one-level listings or filename search by pattern.",
+          "input_schema": {
+            "properties": {
+              "path": {"description": "Directory path to render recursively.", "type": "string"}
+            },
+            "required": ["path"],
+            "type": "object"
+          },
+          "name": "directory_tree",
+          "purpose": "Return a recursive directory tree as structured JSON.",
+          "quality_checks": ["Use only when the user asks for recursive structure/tree.", "Avoid on very large roots unless bounded."],
+          "use_when": "Use when the user asks for a tree view or full recursive structure."
+        },
+        {
+          "avoid_when": "Avoid for known exact paths, one-level listings, file contents, or metadata-only questions.",
+          "input_schema": {
+            "properties": {
+              "path": {"description": "Directory to search recursively.", "type": "string"},
+              "pattern": {"description": "Filename or directory-name pattern to match.", "type": "string"},
+              "excludePatterns": {"description": "Patterns to skip during recursive search.", "items": {"type": "string"}, "type": "array"}
+            },
+            "required": ["path", "pattern"],
+            "type": "object"
+          },
+          "name": "search_files",
+          "purpose": "Recursively find files or directories by name/pattern.",
+          "quality_checks": ["Use only when recursive search is needed.", "Include excludePatterns for large noisy directories when known."],
+          "use_when": "Use when the user asks to find files/directories matching a pattern and the exact location is unknown."
+        },
+        {
+          "avoid_when": "Avoid when the user wants file contents, directory contents, or to change the file.",
+          "input_schema": {
+            "properties": {
+              "path": {"description": "File or directory path for metadata.", "type": "string"}
+            },
+            "required": ["path"],
+            "type": "object"
+          },
+          "name": "get_file_info",
+          "purpose": "Return metadata for one file or directory without reading contents.",
+          "quality_checks": ["Use for size, timestamps, permissions, and type.", "Do not read file contents."],
+          "use_when": "Use when the user asks for size, modified time, permissions, or whether a path is file or directory."
+        },
+        {
+          "avoid_when": "Avoid for copying, editing contents, or creating directories.",
+          "input_schema": {
+            "properties": {
+              "source": {"description": "Current path.", "type": "string"},
+              "destination": {"description": "New path.", "type": "string"}
+            },
+            "required": ["source", "destination"],
+            "type": "object"
+          },
+          "name": "move_file",
+          "purpose": "Move or rename one file or directory.",
+          "quality_checks": ["Use source and destination exactly.", "Do not use when destination already exists unless behavior is specified."],
+          "use_when": "Use when the user asks to move or rename a file or directory."
+        },
+        {
+          "avoid_when": "Avoid for any specific file operation when the allowed root is already known.",
+          "input_schema": {
+            "properties": {},
+            "type": "object"
+          },
+          "name": "list_allowed_directories",
+          "purpose": "List filesystem roots the MCP server can access.",
+          "quality_checks": ["Use before file operations when access roots are unknown.", "Do not use as a directory listing."],
+          "use_when": "Use when the user asks what directories are accessible or when no allowed root is known."
+        }
+      ]
+    }
+  ],
+  "cases": [
+    {
+      "expected_args_contains": {"path": "/project/README.md"},
+      "expected_tools": ["read_file"],
+      "forbidden_tools": ["read_multiple_files", "write_file", "edit_file", "create_directory", "list_directory", "directory_tree", "search_files", "get_file_info", "move_file", "list_allowed_directories"],
+      "name": "read one known file",
+      "task": "Read the contents of /project/README.md."
+    },
+    {
+      "expected_args_contains": {"paths": "README.md"},
+      "expected_tools": ["read_multiple_files"],
+      "forbidden_tools": ["read_file", "write_file", "edit_file", "create_directory", "list_directory", "directory_tree", "search_files", "get_file_info", "move_file", "list_allowed_directories"],
+      "name": "read several known files",
+      "task": "Read /project/README.md, /project/package.json, and /project/CHANGELOG.md so I can compare them."
+    },
+    {
+      "expected_args_contains": {"path": "/project/notes/new-plan.md"},
+      "expected_tools": ["write_file"],
+      "forbidden_tools": ["read_file", "read_multiple_files", "edit_file", "create_directory", "list_directory", "directory_tree", "search_files", "get_file_info", "move_file", "list_allowed_directories"],
+      "name": "create new file with full content",
+      "task": "Create /project/notes/new-plan.md with the full content I provided."
+    },
+    {
+      "expected_args_contains": {"path": "/project/config.yaml"},
+      "expected_tools": ["edit_file"],
+      "forbidden_tools": ["read_file", "read_multiple_files", "write_file", "create_directory", "list_directory", "directory_tree", "search_files", "get_file_info", "move_file", "list_allowed_directories"],
+      "name": "targeted line edit",
+      "task": "In /project/config.yaml, replace the line timeout: 30 with timeout: 60 without rewriting the whole file."
+    },
+    {
+      "expected_args_contains": {"path": "/project/reports/2026/june"},
+      "expected_tools": ["create_directory"],
+      "forbidden_tools": ["read_file", "read_multiple_files", "write_file", "edit_file", "list_directory", "directory_tree", "search_files", "get_file_info", "move_file", "list_allowed_directories"],
+      "name": "create nested directory",
+      "task": "Create the nested directory /project/reports/2026/june."
+    },
+    {
+      "expected_args_contains": {"path": "/project/src"},
+      "expected_tools": ["list_directory"],
+      "forbidden_tools": ["read_file", "read_multiple_files", "write_file", "edit_file", "create_directory", "directory_tree", "search_files", "get_file_info", "move_file", "list_allowed_directories"],
+      "name": "list immediate directory children",
+      "task": "List the immediate files and folders directly inside /project/src. Do not recurse."
+    },
+    {
+      "expected_args_contains": {"path": "/project/src"},
+      "expected_tools": ["directory_tree"],
+      "forbidden_tools": ["read_file", "read_multiple_files", "write_file", "edit_file", "create_directory", "list_directory", "search_files", "get_file_info", "move_file", "list_allowed_directories"],
+      "name": "recursive tree view",
+      "task": "Show a recursive tree view of /project/src."
+    },
+    {
+      "expected_args_contains": {"path": "/project", "pattern": "*.test.ts"},
+      "expected_tools": ["search_files"],
+      "forbidden_tools": ["read_file", "read_multiple_files", "write_file", "edit_file", "create_directory", "list_directory", "directory_tree", "get_file_info", "move_file", "list_allowed_directories"],
+      "name": "recursive filename search",
+      "task": "Find all files matching *.test.ts somewhere under /project."
+    },
+    {
+      "expected_args_contains": {"path": "/project/build/output.zip"},
+      "expected_tools": ["get_file_info"],
+      "forbidden_tools": ["read_file", "read_multiple_files", "write_file", "edit_file", "create_directory", "list_directory", "directory_tree", "search_files", "move_file", "list_allowed_directories"],
+      "name": "get file metadata",
+      "task": "Get the size and last modified time for /project/build/output.zip without reading its contents."
+    },
+    {
+      "expected_args_contains": {"destination": "/project/archive/old.txt", "source": "/project/tmp/old.txt"},
+      "expected_tools": ["move_file"],
+      "forbidden_tools": ["read_file", "read_multiple_files", "write_file", "edit_file", "create_directory", "list_directory", "directory_tree", "search_files", "get_file_info", "list_allowed_directories"],
+      "name": "move file to archive",
+      "task": "Move /project/tmp/old.txt to /project/archive/old.txt."
+    },
+    {
+      "expected_tools": ["list_allowed_directories"],
+      "forbidden_tools": ["read_file", "read_multiple_files", "write_file", "edit_file", "create_directory", "list_directory", "directory_tree", "search_files", "get_file_info", "move_file"],
+      "name": "list accessible roots",
+      "task": "What filesystem directories is this MCP server allowed to access?"
+    }
+  ]
+}

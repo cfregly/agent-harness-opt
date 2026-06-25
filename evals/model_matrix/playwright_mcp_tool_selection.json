@@ -1,0 +1,523 @@
+{
+  "name": "playwright mcp tool-selection matrix",
+  "description": "Compare stock and tuned tool descriptions for Microsoft Playwright MCP core browser automation workflows.",
+  "source": {
+    "repo": "https://github.com/microsoft/playwright-mcp",
+    "commit": "511320db60d6774557243a32b2ff201f14ca4188",
+    "docs": [
+      "README.md#tools",
+      "https://playwright.dev/docs/getting-started-mcp"
+    ]
+  },
+  "profiles": [
+    {
+      "api_key_env": "ANTHROPIC_API_KEY",
+      "harnesses": ["native_tools", "prompt_json"],
+      "model": "claude-sonnet-4-5",
+      "model_env": "ANTHROPIC_MATRIX_MODEL",
+      "name": "anthropic-sonnet",
+      "provider": "anthropic"
+    },
+    {
+      "api_key_env": "OPENAI_API_KEY",
+      "harnesses": ["native_tools", "prompt_json"],
+      "model": "gpt-4.1",
+      "model_env": "OPENAI_MATRIX_MODEL",
+      "name": "openai-default",
+      "provider": "openai"
+    },
+    {
+      "api_key_env": "GEMINI_API_KEY",
+      "harnesses": ["native_tools", "prompt_json"],
+      "max_tokens": 4096,
+      "model": "gemini-2.5-pro",
+      "model_env": "GEMINI_MATRIX_MODEL",
+      "name": "gemini-default",
+      "provider": "gemini"
+    }
+  ],
+  "instruction_variants": [
+    {
+      "instructions": "Choose the single Playwright MCP tool that should be called next. Prefer accessibility snapshots for action planning and element references. Use screenshots only for visual evidence or layout inspection. Use JavaScript evaluation only when the task requires page state, DOM data, or a computation that normal browser actions cannot provide.",
+      "name": "playwright_host_rules"
+    }
+  ],
+  "tool_variants": [
+    {
+      "name": "stock_playwright_mcp",
+      "tools": [
+        {
+          "input_schema": {
+            "properties": {
+              "url": {"description": "The URL to navigate to", "type": "string"}
+            },
+            "required": ["url"],
+            "type": "object"
+          },
+          "name": "browser_navigate",
+          "purpose": "Navigate to a URL"
+        },
+        {
+          "input_schema": {
+            "properties": {
+              "target": {"description": "Exact target element reference from the page snapshot, or a unique element selector", "type": "string"},
+              "filename": {"description": "Save snapshot to markdown file instead of returning it in the response.", "type": "string"},
+              "depth": {"description": "Limit the depth of the snapshot tree", "type": "number"},
+              "boxes": {"description": "Include each element's bounding box", "type": "boolean"}
+            },
+            "type": "object"
+          },
+          "name": "browser_snapshot",
+          "purpose": "Capture accessibility snapshot of the current page, this is better than screenshot"
+        },
+        {
+          "input_schema": {
+            "properties": {
+              "element": {"description": "Human-readable element description used to obtain permission to interact with the element", "type": "string"},
+              "target": {"description": "Exact target element reference from the page snapshot, or a unique element selector", "type": "string"},
+              "type": {"description": "Image format for the screenshot. Default is png.", "type": "string"},
+              "filename": {"description": "File name to save the screenshot to.", "type": "string"},
+              "fullPage": {"description": "When true, takes a screenshot of the full scrollable page.", "type": "boolean"}
+            },
+            "type": "object"
+          },
+          "name": "browser_take_screenshot",
+          "purpose": "Take a screenshot of the current page. You can't perform actions based on the screenshot, use browser_snapshot for actions."
+        },
+        {
+          "input_schema": {
+            "properties": {
+              "element": {"description": "Human-readable element description used to obtain permission to interact with the element", "type": "string"},
+              "target": {"description": "Exact target element reference from the page snapshot, or a unique element selector", "type": "string"},
+              "doubleClick": {"description": "Whether to perform a double click instead of a single click", "type": "boolean"},
+              "button": {"description": "Button to click, defaults to left", "type": "string"},
+              "modifiers": {"description": "Modifier keys to press", "items": {"type": "string"}, "type": "array"}
+            },
+            "required": ["target"],
+            "type": "object"
+          },
+          "name": "browser_click",
+          "purpose": "Perform click on a web page"
+        },
+        {
+          "input_schema": {
+            "properties": {
+              "element": {"description": "Human-readable element description used to obtain permission to interact with the element", "type": "string"},
+              "target": {"description": "Exact target element reference from the page snapshot, or a unique element selector", "type": "string"},
+              "text": {"description": "Text to type into the element", "type": "string"},
+              "submit": {"description": "Whether to submit entered text (press Enter after)", "type": "boolean"},
+              "slowly": {"description": "Whether to type one character at a time.", "type": "boolean"}
+            },
+            "required": ["target", "text"],
+            "type": "object"
+          },
+          "name": "browser_type",
+          "purpose": "Type text into editable element"
+        },
+        {
+          "input_schema": {
+            "properties": {
+              "fields": {"description": "Fields to fill in", "items": {"type": "object"}, "type": "array"}
+            },
+            "required": ["fields"],
+            "type": "object"
+          },
+          "name": "browser_fill_form",
+          "purpose": "Fill multiple form fields"
+        },
+        {
+          "input_schema": {
+            "properties": {
+              "element": {"description": "Human-readable element description used to obtain permission to interact with the element", "type": "string"},
+              "target": {"description": "Exact target element reference from the page snapshot, or a unique element selector", "type": "string"},
+              "values": {"description": "Array of values to select in the dropdown.", "items": {"type": "string"}, "type": "array"}
+            },
+            "required": ["target", "values"],
+            "type": "object"
+          },
+          "name": "browser_select_option",
+          "purpose": "Select an option in a dropdown"
+        },
+        {
+          "input_schema": {
+            "properties": {
+              "time": {"description": "The time to wait in seconds", "type": "number"},
+              "text": {"description": "The text to wait for", "type": "string"},
+              "textGone": {"description": "The text to wait for to disappear", "type": "string"}
+            },
+            "type": "object"
+          },
+          "name": "browser_wait_for",
+          "purpose": "Wait for text to appear or disappear or a specified time to pass"
+        },
+        {
+          "input_schema": {
+            "properties": {
+              "element": {"description": "Human-readable element description used to obtain permission to interact with the element", "type": "string"},
+              "target": {"description": "Exact target element reference from the page snapshot, or a unique element selector", "type": "string"},
+              "function": {"description": "() => { /* code */ } or (element) => { /* code */ } when element is provided", "type": "string"},
+              "filename": {"description": "Filename to save the result to.", "type": "string"}
+            },
+            "required": ["function"],
+            "type": "object"
+          },
+          "name": "browser_evaluate",
+          "purpose": "Evaluate JavaScript expression on page or element"
+        },
+        {
+          "input_schema": {
+            "properties": {
+              "key": {"description": "Name of the key to press or a character to generate, such as ArrowLeft or a", "type": "string"}
+            },
+            "required": ["key"],
+            "type": "object"
+          },
+          "name": "browser_press_key",
+          "purpose": "Press a key on the keyboard"
+        },
+        {
+          "input_schema": {
+            "properties": {
+              "static": {"description": "Whether to include successful static resources like images, fonts, scripts, etc.", "type": "boolean"},
+              "filter": {"description": "Only return requests whose URL matches this regexp.", "type": "string"},
+              "filename": {"description": "Filename to save the network requests to.", "type": "string"}
+            },
+            "required": ["static"],
+            "type": "object"
+          },
+          "name": "browser_network_requests",
+          "purpose": "Returns a numbered list of network requests since loading the page. Use browser_network_request with the number to get full details."
+        },
+        {
+          "input_schema": {
+            "properties": {
+              "index": {"description": "1-based index of the request, as printed by browser_network_requests.", "type": "integer"},
+              "part": {"description": "Return only this part of the request. Omit to return full details.", "type": "string"},
+              "filename": {"description": "Filename to save the result to.", "type": "string"}
+            },
+            "required": ["index"],
+            "type": "object"
+          },
+          "name": "browser_network_request",
+          "purpose": "Returns full details (headers and body) of a single network request, or a single part if part is set. Use the number from browser_network_requests."
+        },
+        {
+          "input_schema": {
+            "properties": {
+              "level": {"description": "Level of the console messages to return.", "type": "string"},
+              "all": {"description": "Return all console messages since the beginning of the session.", "type": "boolean"},
+              "filename": {"description": "Filename to save the console messages to.", "type": "string"}
+            },
+            "required": ["level"],
+            "type": "object"
+          },
+          "name": "browser_console_messages",
+          "purpose": "Returns all console messages"
+        }
+      ]
+    },
+    {
+      "name": "tuned_playwright_mcp_boundaries",
+      "tools": [
+        {
+          "avoid_when": "Avoid when the page is already loaded and the user wants to inspect, click, type, wait, or collect data.",
+          "input_schema": {
+            "properties": {
+              "url": {"description": "Absolute URL to load in the current browser page.", "type": "string"}
+            },
+            "required": ["url"],
+            "type": "object"
+          },
+          "name": "browser_navigate",
+          "purpose": "Load a new URL in the browser.",
+          "quality_checks": ["Use only for navigation to a URL.", "Do not use for back navigation."],
+          "use_when": "Use when the next action is opening a URL or moving the browser to a new address."
+        },
+        {
+          "avoid_when": "Avoid when the user needs a visual image artifact or layout proof; use browser_take_screenshot for that.",
+          "input_schema": {
+            "properties": {
+              "target": {"description": "Optional element reference or selector to scope the snapshot.", "type": "string"},
+              "filename": {"description": "Optional markdown file path for saving the snapshot.", "type": "string"},
+              "depth": {"description": "Optional tree depth limit.", "type": "number"},
+              "boxes": {"description": "True to include viewport-relative bounding boxes.", "type": "boolean"}
+            },
+            "type": "object"
+          },
+          "name": "browser_snapshot",
+          "purpose": "Capture an accessibility snapshot that contains actionable element references for planning clicks, typing, selection, and assertions.",
+          "quality_checks": ["Use before actions when element refs are unknown.", "Prefer this over screenshots for interaction planning."],
+          "use_when": "Use to inspect current page structure, find element references, or decide what UI action to take next."
+        },
+        {
+          "avoid_when": "Avoid when the next step is to click, type, select, or otherwise act on an element; use browser_snapshot to get actionable refs.",
+          "input_schema": {
+            "properties": {
+              "element": {"description": "Optional human-readable element description.", "type": "string"},
+              "target": {"description": "Optional element reference or selector for element screenshots.", "type": "string"},
+              "type": {"description": "png or jpeg.", "type": "string"},
+              "filename": {"description": "File name for the screenshot.", "type": "string"},
+              "fullPage": {"description": "True for a full scrollable page screenshot.", "type": "boolean"}
+            },
+            "type": "object"
+          },
+          "name": "browser_take_screenshot",
+          "purpose": "Capture a visual screenshot artifact for layout review, visual proof, or debugging.",
+          "quality_checks": ["Use fullPage=true only for full page evidence.", "Do not use screenshots to discover clickable refs."],
+          "use_when": "Use when the user asks for visual proof, layout inspection, or a screenshot file."
+        },
+        {
+          "avoid_when": "Avoid when element refs are unknown; take a snapshot first. Avoid for typing text, selecting options, hovering, or arbitrary JavaScript.",
+          "input_schema": {
+            "properties": {
+              "element": {"description": "Human-readable element description for permission.", "type": "string"},
+              "target": {"description": "Exact target element reference from snapshot or unique selector.", "type": "string"},
+              "doubleClick": {"description": "True for double click.", "type": "boolean"},
+              "button": {"description": "Mouse button; defaults to left.", "type": "string"},
+              "modifiers": {"description": "Modifier keys to hold.", "items": {"type": "string"}, "type": "array"}
+            },
+            "required": ["target"],
+            "type": "object"
+          },
+          "name": "browser_click",
+          "purpose": "Click a known target element.",
+          "quality_checks": ["Target must come from snapshot or be a unique selector.", "Set doubleClick only when requested."],
+          "use_when": "Use when the user asks to click, press a button/link/checkbox, or activate a known UI element."
+        },
+        {
+          "avoid_when": "Avoid for multiple fields at once; use browser_fill_form. Avoid for dropdowns; use browser_select_option.",
+          "input_schema": {
+            "properties": {
+              "element": {"description": "Human-readable element description for permission.", "type": "string"},
+              "target": {"description": "Exact target element reference from snapshot or unique selector.", "type": "string"},
+              "text": {"description": "Text to type.", "type": "string"},
+              "submit": {"description": "True to press Enter after typing.", "type": "boolean"},
+              "slowly": {"description": "True to trigger per-key handlers.", "type": "boolean"}
+            },
+            "required": ["target", "text"],
+            "type": "object"
+          },
+          "name": "browser_type",
+          "purpose": "Type text into one editable target element.",
+          "quality_checks": ["Use submit=true when the user asks to press Enter or submit the search.", "Use slowly=true only for key-handler-sensitive inputs."],
+          "use_when": "Use for one input or textarea when the target is known."
+        },
+        {
+          "avoid_when": "Avoid for a single field unless batching is useful. Avoid for dropdown-only changes; use browser_select_option.",
+          "input_schema": {
+            "properties": {
+              "fields": {"description": "Array of form fields and values to fill.", "items": {"type": "object"}, "type": "array"}
+            },
+            "required": ["fields"],
+            "type": "object"
+          },
+          "name": "browser_fill_form",
+          "purpose": "Fill several form fields in one call.",
+          "quality_checks": ["Use when at least two fields need values.", "Preserve each field's target and intended value."],
+          "use_when": "Use for login, checkout, signup, settings, or other multi-field forms."
+        },
+        {
+          "avoid_when": "Avoid for free-text inputs, buttons, radio buttons, or checkboxes.",
+          "input_schema": {
+            "properties": {
+              "element": {"description": "Human-readable dropdown description for permission.", "type": "string"},
+              "target": {"description": "Exact select element reference from snapshot or unique selector.", "type": "string"},
+              "values": {"description": "Option values to select.", "items": {"type": "string"}, "type": "array"}
+            },
+            "required": ["target", "values"],
+            "type": "object"
+          },
+          "name": "browser_select_option",
+          "purpose": "Select one or more options in a dropdown/select element.",
+          "quality_checks": ["Use values from the select element.", "Do not type into dropdowns."],
+          "use_when": "Use when the user asks to choose an option from a dropdown."
+        },
+        {
+          "avoid_when": "Avoid when the next action can proceed immediately or when the user asks to inspect the page; use snapshot for inspection.",
+          "input_schema": {
+            "properties": {
+              "time": {"description": "Seconds to wait.", "type": "number"},
+              "text": {"description": "Text to wait to appear.", "type": "string"},
+              "textGone": {"description": "Text to wait to disappear.", "type": "string"}
+            },
+            "type": "object"
+          },
+          "name": "browser_wait_for",
+          "purpose": "Wait for text to appear, text to disappear, or a specific time to pass.",
+          "quality_checks": ["Prefer text/textGone over raw time when possible.", "Use time only when a delay is explicitly needed."],
+          "use_when": "Use after an action when the page needs time to show or hide a known text."
+        },
+        {
+          "avoid_when": "Avoid for normal user-visible actions like clicking, typing, selecting, waiting, screenshots, or snapshots.",
+          "input_schema": {
+            "properties": {
+              "element": {"description": "Optional element description for permission.", "type": "string"},
+              "target": {"description": "Optional element reference or selector.", "type": "string"},
+              "function": {"description": "JavaScript function to evaluate on page or element.", "type": "string"},
+              "filename": {"description": "Optional file path for saving the result.", "type": "string"}
+            },
+            "required": ["function"],
+            "type": "object"
+          },
+          "name": "browser_evaluate",
+          "purpose": "Evaluate JavaScript to read or compute page state that normal browser tools cannot expose.",
+          "quality_checks": ["Use for DOM state, localStorage/sessionStorage, computed values, or custom extraction.", "Do not use to bypass available safe UI tools."],
+          "use_when": "Use when the user asks for JavaScript evaluation, page variables, storage, computed DOM data, or custom extraction."
+        },
+        {
+          "avoid_when": "Avoid when the keypress is text entry into an input; use browser_type.",
+          "input_schema": {
+            "properties": {
+              "key": {"description": "Key name such as Escape, Enter, ArrowLeft, or a single character.", "type": "string"}
+            },
+            "required": ["key"],
+            "type": "object"
+          },
+          "name": "browser_press_key",
+          "purpose": "Press one keyboard key.",
+          "quality_checks": ["Use named keys for navigation or modal control.", "Use browser_type for entering text."],
+          "use_when": "Use for Escape, Enter, arrows, shortcuts, and other non-text keypresses."
+        },
+        {
+          "avoid_when": "Avoid when the user asks for headers/body/details for a specific numbered request; use browser_network_request.",
+          "input_schema": {
+            "properties": {
+              "static": {"description": "True to include successful static resources.", "type": "boolean"},
+              "filter": {"description": "Regular expression filter for request URLs.", "type": "string"},
+              "filename": {"description": "Optional file path for saving results.", "type": "string"}
+            },
+            "required": ["static"],
+            "type": "object"
+          },
+          "name": "browser_network_requests",
+          "purpose": "List network requests since page load and assign request indexes.",
+          "quality_checks": ["Use filter for URL patterns.", "Use static=false unless static assets matter."],
+          "use_when": "Use when the user asks what requests occurred, wants to find API calls, or needs request indexes."
+        },
+        {
+          "avoid_when": "Avoid when the user has not chosen a request index yet; list requests first.",
+          "input_schema": {
+            "properties": {
+              "index": {"description": "1-based request index from browser_network_requests.", "type": "integer"},
+              "part": {"description": "Optional part such as headers or body.", "type": "string"},
+              "filename": {"description": "Optional file path for saving details.", "type": "string"}
+            },
+            "required": ["index"],
+            "type": "object"
+          },
+          "name": "browser_network_request",
+          "purpose": "Get full headers/body/details for one numbered network request.",
+          "quality_checks": ["Use the index from a previous request list.", "Set part only when the user asks for one part."],
+          "use_when": "Use when the user asks for details of request #N."
+        },
+        {
+          "avoid_when": "Avoid for network requests, DOM extraction, screenshots, or page actions.",
+          "input_schema": {
+            "properties": {
+              "level": {"description": "Minimum severity level, such as info, warning, or error.", "type": "string"},
+              "all": {"description": "True to include messages since session start.", "type": "boolean"},
+              "filename": {"description": "Optional file path for saving console output.", "type": "string"}
+            },
+            "required": ["level"],
+            "type": "object"
+          },
+          "name": "browser_console_messages",
+          "purpose": "Return browser console messages filtered by severity.",
+          "quality_checks": ["Use level=error for console errors.", "Use all=true only when messages before the last navigation matter."],
+          "use_when": "Use when the user asks for console logs, warnings, or errors."
+        }
+      ]
+    }
+  ],
+  "cases": [
+    {
+      "expected_args_contains": {"url": "https://example.com"},
+      "expected_tools": ["browser_navigate"],
+      "forbidden_tools": ["browser_snapshot", "browser_take_screenshot", "browser_click", "browser_type", "browser_fill_form", "browser_select_option", "browser_wait_for", "browser_evaluate", "browser_press_key", "browser_network_requests", "browser_network_request", "browser_console_messages"],
+      "name": "navigate to url",
+      "task": "Open https://example.com in the browser."
+    },
+    {
+      "expected_tools": ["browser_snapshot"],
+      "forbidden_tools": ["browser_navigate", "browser_take_screenshot", "browser_click", "browser_type", "browser_fill_form", "browser_select_option", "browser_wait_for", "browser_evaluate", "browser_press_key", "browser_network_requests", "browser_network_request", "browser_console_messages"],
+      "name": "inspect page for actionable refs",
+      "task": "Inspect the current page so I can find the button references needed for the next click. I need actionable element refs, not a visual image."
+    },
+    {
+      "expected_args_contains": {"fullPage": "true"},
+      "expected_tools": ["browser_take_screenshot"],
+      "forbidden_tools": ["browser_navigate", "browser_snapshot", "browser_click", "browser_type", "browser_fill_form", "browser_select_option", "browser_wait_for", "browser_evaluate", "browser_press_key", "browser_network_requests", "browser_network_request", "browser_console_messages"],
+      "name": "capture full page visual proof",
+      "task": "Take a full-page screenshot of the current page for visual proof."
+    },
+    {
+      "expected_args_contains": {"target": "submit"},
+      "expected_tools": ["browser_click"],
+      "forbidden_tools": ["browser_navigate", "browser_snapshot", "browser_take_screenshot", "browser_type", "browser_fill_form", "browser_select_option", "browser_wait_for", "browser_evaluate", "browser_press_key", "browser_network_requests", "browser_network_request", "browser_console_messages"],
+      "name": "click known target",
+      "task": "Click the Submit button using target ref submit-button from the current snapshot."
+    },
+    {
+      "expected_args_contains": {"text": "playwright mcp", "submit": "true"},
+      "expected_tools": ["browser_type"],
+      "forbidden_tools": ["browser_navigate", "browser_snapshot", "browser_take_screenshot", "browser_click", "browser_fill_form", "browser_select_option", "browser_wait_for", "browser_evaluate", "browser_press_key", "browser_network_requests", "browser_network_request", "browser_console_messages"],
+      "name": "type search and submit",
+      "task": "Type \"playwright mcp\" into the search input target search-box and press Enter."
+    },
+    {
+      "expected_tools": ["browser_fill_form"],
+      "forbidden_tools": ["browser_navigate", "browser_snapshot", "browser_take_screenshot", "browser_click", "browser_type", "browser_select_option", "browser_wait_for", "browser_evaluate", "browser_press_key", "browser_network_requests", "browser_network_request", "browser_console_messages"],
+      "name": "fill multi field form",
+      "task": "Fill the login form in one step using known field refs email-input and password-input: email user@example.com and password correct-horse-battery-staple."
+    },
+    {
+      "expected_args_contains": {"values": "Canada"},
+      "expected_tools": ["browser_select_option"],
+      "forbidden_tools": ["browser_navigate", "browser_snapshot", "browser_take_screenshot", "browser_click", "browser_type", "browser_fill_form", "browser_wait_for", "browser_evaluate", "browser_press_key", "browser_network_requests", "browser_network_request", "browser_console_messages"],
+      "name": "select dropdown option",
+      "task": "Select Canada from the country dropdown target country-select."
+    },
+    {
+      "expected_args_contains": {"text": "Success"},
+      "expected_tools": ["browser_wait_for"],
+      "forbidden_tools": ["browser_navigate", "browser_snapshot", "browser_take_screenshot", "browser_click", "browser_type", "browser_fill_form", "browser_select_option", "browser_evaluate", "browser_press_key", "browser_network_requests", "browser_network_request", "browser_console_messages"],
+      "name": "wait for success text",
+      "task": "Wait until the text Success appears on the page."
+    },
+    {
+      "expected_args_contains": {"function": "localStorage"},
+      "expected_tools": ["browser_evaluate"],
+      "forbidden_tools": ["browser_navigate", "browser_snapshot", "browser_take_screenshot", "browser_click", "browser_type", "browser_fill_form", "browser_select_option", "browser_wait_for", "browser_press_key", "browser_network_requests", "browser_network_request", "browser_console_messages"],
+      "name": "evaluate local storage",
+      "task": "Read window.localStorage.getItem('authToken') from the current page."
+    },
+    {
+      "expected_args_contains": {"key": "Escape"},
+      "expected_tools": ["browser_press_key"],
+      "forbidden_tools": ["browser_navigate", "browser_snapshot", "browser_take_screenshot", "browser_click", "browser_type", "browser_fill_form", "browser_select_option", "browser_wait_for", "browser_evaluate", "browser_network_requests", "browser_network_request", "browser_console_messages"],
+      "name": "press escape key",
+      "task": "Press Escape to close the current modal."
+    },
+    {
+      "expected_args_contains": {"filter": "/api/"},
+      "expected_tools": ["browser_network_requests"],
+      "forbidden_tools": ["browser_navigate", "browser_snapshot", "browser_take_screenshot", "browser_click", "browser_type", "browser_fill_form", "browser_select_option", "browser_wait_for", "browser_evaluate", "browser_press_key", "browser_network_request", "browser_console_messages"],
+      "name": "list api network requests",
+      "task": "List network requests since page load, filtered to URLs matching /api/."
+    },
+    {
+      "expected_args_contains": {"index": "3"},
+      "expected_tools": ["browser_network_request"],
+      "forbidden_tools": ["browser_navigate", "browser_snapshot", "browser_take_screenshot", "browser_click", "browser_type", "browser_fill_form", "browser_select_option", "browser_wait_for", "browser_evaluate", "browser_press_key", "browser_network_requests", "browser_console_messages"],
+      "name": "inspect numbered network request",
+      "task": "Show full details for network request #3 from the previous request list."
+    },
+    {
+      "expected_args_contains": {"level": "error"},
+      "expected_tools": ["browser_console_messages"],
+      "forbidden_tools": ["browser_navigate", "browser_snapshot", "browser_take_screenshot", "browser_click", "browser_type", "browser_fill_form", "browser_select_option", "browser_wait_for", "browser_evaluate", "browser_press_key", "browser_network_requests", "browser_network_request"],
+      "name": "get console errors",
+      "task": "Return browser console errors since the last navigation."
+    }
+  ]
+}

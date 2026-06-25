@@ -1,0 +1,471 @@
+{
+  "name": "firecrawl mcp tool-selection matrix",
+  "description": "Compare legacy and tuned Firecrawl MCP tool descriptions for scrape, batch scrape, map, search, crawl, extract, agent, interact, status, feedback, and monitor workflows.",
+  "source": {
+    "repo": "https://github.com/firecrawl/firecrawl-mcp-server",
+    "commit": "e744bba494c0e77086d66af838d7a64fab52f138",
+    "legacy_descriptions": "src/legacy/index.md",
+    "current_descriptions": "src/index.ts",
+    "docs": "README.md#how-to-choose-a-tool"
+  },
+  "profiles": [
+    {
+      "api_key_env": "ANTHROPIC_API_KEY",
+      "harnesses": ["native_tools", "prompt_json"],
+      "model": "claude-sonnet-4-5",
+      "model_env": "ANTHROPIC_MATRIX_MODEL",
+      "name": "anthropic-sonnet",
+      "provider": "anthropic"
+    },
+    {
+      "api_key_env": "OPENAI_API_KEY",
+      "harnesses": ["native_tools", "prompt_json"],
+      "model": "gpt-4.1",
+      "model_env": "OPENAI_MATRIX_MODEL",
+      "name": "openai-default",
+      "provider": "openai"
+    },
+    {
+      "api_key_env": "GEMINI_API_KEY",
+      "harnesses": ["native_tools", "prompt_json"],
+      "max_tokens": 4096,
+      "model": "gemini-2.5-pro",
+      "model_env": "GEMINI_MATRIX_MODEL",
+      "name": "gemini-default",
+      "provider": "gemini"
+    }
+  ],
+  "instruction_variants": [
+    {
+      "instructions": "Choose the single Firecrawl MCP tool that should be called next. Do not use built-in browsing or other web tools. Prefer the Firecrawl tool that produces the requested evidence with the smallest practical scope.",
+      "name": "firecrawl_host_rules"
+    }
+  ],
+  "tool_variants": [
+    {
+      "name": "legacy_firecrawl_mcp",
+      "tools": [
+        {
+          "input_schema": {
+            "properties": {
+              "formats": {"description": "Content formats to extract", "items": {"type": "string"}, "type": "array"},
+              "url": {"description": "The URL to scrape", "type": "string"}
+            },
+            "required": ["url"],
+            "type": "object"
+          },
+          "name": "firecrawl_scrape",
+          "purpose": "Scrape content from a single URL with advanced options. This is the most powerful, fastest and most reliable scraper tool, if available you should always default to using this tool for any web scraping needs. Best for single page content extraction, when you know exactly which page contains the information. Not recommended for multiple pages (use batch_scrape), unknown page (use search), structured data (use extract)."
+        },
+        {
+          "input_schema": {
+            "properties": {
+              "options": {"description": "Scrape options for each URL", "type": "object"},
+              "urls": {"description": "URLs to scrape", "items": {"type": "string"}, "type": "array"}
+            },
+            "required": ["urls"],
+            "type": "object"
+          },
+          "name": "firecrawl_batch_scrape",
+          "purpose": "Scrape multiple URLs efficiently with built-in rate limiting and parallel processing. Best for retrieving content from multiple pages, when you know exactly which pages to scrape. Not recommended for discovering URLs or scraping a single page."
+        },
+        {
+          "input_schema": {
+            "properties": {
+              "id": {"description": "Batch operation ID to check", "type": "string"}
+            },
+            "required": ["id"],
+            "type": "object"
+          },
+          "name": "firecrawl_check_batch_status",
+          "purpose": "Check the status of a batch operation."
+        },
+        {
+          "input_schema": {
+            "properties": {
+              "limit": {"description": "Maximum number of URLs to return", "type": "number"},
+              "search": {"description": "Optional search term to filter URLs", "type": "string"},
+              "url": {"description": "Starting URL for URL discovery", "type": "string"}
+            },
+            "required": ["url"],
+            "type": "object"
+          },
+          "name": "firecrawl_map",
+          "purpose": "Map a website to discover all indexed URLs on the site. Best for discovering URLs on a website before deciding what to scrape; finding specific sections of a website. Not recommended when you already know which specific URL you need or when you need the content of the pages."
+        },
+        {
+          "input_schema": {
+            "properties": {
+              "limit": {"description": "Maximum number of results", "type": "number"},
+              "query": {"description": "Search query string", "type": "string"},
+              "scrapeOptions": {"description": "Options for scraping search results", "type": "object"}
+            },
+            "required": ["query"],
+            "type": "object"
+          },
+          "name": "firecrawl_search",
+          "purpose": "Search the web and optionally extract content from search results. This is the most powerful web search tool available, and if available you should always default to using this tool for any web search needs. Best for finding specific information across multiple websites, when you don't know which website has the information; when you need the most relevant content for a query."
+        },
+        {
+          "input_schema": {
+            "properties": {
+              "limit": {"description": "Maximum number of pages to crawl", "type": "number"},
+              "maxDiscoveryDepth": {"description": "Maximum crawl discovery depth", "type": "number"},
+              "url": {"description": "Starting URL for the crawl", "type": "string"}
+            },
+            "required": ["url"],
+            "type": "object"
+          },
+          "name": "firecrawl_crawl",
+          "purpose": "Starts a crawl job on a website and extracts content from all pages. Best for extracting content from multiple related pages, when you need comprehensive coverage. Not recommended for a single page, when token limits are a concern, or when you need fast results."
+        },
+        {
+          "input_schema": {
+            "properties": {
+              "id": {"description": "Crawl job ID to check", "type": "string"}
+            },
+            "required": ["id"],
+            "type": "object"
+          },
+          "name": "firecrawl_check_crawl_status",
+          "purpose": "Check the status of a crawl job."
+        },
+        {
+          "input_schema": {
+            "properties": {
+              "prompt": {"description": "Prompt for the LLM extraction", "type": "string"},
+              "schema": {"description": "JSON schema for structured data extraction", "type": "object"},
+              "urls": {"description": "List of URLs to extract information from", "items": {"type": "string"}, "type": "array"}
+            },
+            "required": ["urls", "prompt"],
+            "type": "object"
+          },
+          "name": "firecrawl_extract",
+          "purpose": "Extract structured information from web pages using LLM capabilities. Supports both cloud AI and self-hosted LLM extraction. Best for extracting specific structured data like prices, names, details from web pages. Not recommended when you need the full content of a page or when you're not looking for specific structured data."
+        },
+        {
+          "input_schema": {
+            "properties": {
+              "prompt": {"description": "Natural-language research goal", "type": "string"},
+              "schema": {"description": "Optional JSON schema for structured output", "type": "object"},
+              "urls": {"description": "Optional URLs to focus research", "items": {"type": "string"}, "type": "array"}
+            },
+            "required": ["prompt"],
+            "type": "object"
+          },
+          "name": "firecrawl_agent",
+          "purpose": "Autonomous web research agent that independently browses the internet, searches for information, navigates through pages, and extracts structured data based on your query."
+        },
+        {
+          "input_schema": {
+            "properties": {
+              "id": {"description": "Agent job ID", "type": "string"}
+            },
+            "required": ["id"],
+            "type": "object"
+          },
+          "name": "firecrawl_agent_status",
+          "purpose": "Check the status of an agent job and retrieve results when complete."
+        },
+        {
+          "input_schema": {
+            "properties": {
+              "prompt": {"description": "Instruction for the browser interaction", "type": "string"},
+              "scrapeId": {"description": "Optional prior scrape ID to reuse", "type": "string"},
+              "url": {"description": "Page URL to open and interact with", "type": "string"}
+            },
+            "required": ["prompt"],
+            "type": "object"
+          },
+          "name": "firecrawl_interact",
+          "purpose": "Interact with a page by clicking, typing, navigating, or operating dynamic page UI."
+        },
+        {
+          "input_schema": {
+            "properties": {
+              "goal": {"description": "Plain-language monitor goal", "type": "string"},
+              "page": {"description": "Page URL to monitor", "type": "string"},
+              "pages": {"description": "Page URLs to monitor", "items": {"type": "string"}, "type": "array"}
+            },
+            "type": "object"
+          },
+          "name": "firecrawl_monitor_create",
+          "purpose": "Create a recurring page monitor that runs scheduled scrapes or crawls, diffs each result against the last retained snapshot, and can notify by webhook or email."
+        }
+      ]
+    },
+    {
+      "name": "tuned_firecrawl_mcp_boundaries",
+      "tools": [
+        {
+          "avoid_when": "Avoid for multiple known URLs, unknown URLs, whole-site coverage, open-ended research, or previously queued job status checks. Avoid using markdown by default when the user only needs specific fields.",
+          "input_schema": {
+            "properties": {
+              "formats": {"description": "Formats to return. Prefer a json format object with prompt/schema for specific fields; use markdown only when full page text is needed.", "items": {"type": "string"}, "type": "array"},
+              "url": {"description": "Exact single URL to scrape.", "type": "string"}
+            },
+            "required": ["url"],
+            "type": "object"
+          },
+          "name": "firecrawl_scrape",
+          "purpose": "Scrape one known URL into clean content or focused structured JSON.",
+          "quality_checks": ["For one known page plus specific fields, choose scrape with JSON format rather than extract.", "For full article/page reading, choose markdown and onlyMainContent."],
+          "use_when": "Use when the exact page URL is known and the task needs that page's content, metadata, screenshot, branding, or structured fields."
+        },
+        {
+          "avoid_when": "Avoid for a single URL, URL discovery, open-ended web search, whole-site crawl, or structured extraction from unknown pages.",
+          "input_schema": {
+            "properties": {
+              "options": {"description": "Scrape options for each URL.", "type": "object"},
+              "urls": {"description": "Two or more exact URLs to scrape together.", "items": {"type": "string"}, "type": "array"}
+            },
+            "required": ["urls"],
+            "type": "object"
+          },
+          "name": "firecrawl_batch_scrape",
+          "purpose": "Scrape multiple known URLs in one queued batch.",
+          "quality_checks": ["Use only when the URL list is already known.", "Do not use for discovery."],
+          "use_when": "Use when the user provides several exact URLs and wants content from all of them."
+        },
+        {
+          "avoid_when": "Avoid for crawl jobs, agent jobs, search results, or new scraping work.",
+          "input_schema": {
+            "properties": {
+              "id": {"description": "Batch operation ID returned by firecrawl_batch_scrape.", "type": "string"}
+            },
+            "required": ["id"],
+            "type": "object"
+          },
+          "name": "firecrawl_check_batch_status",
+          "purpose": "Poll a queued batch scrape operation.",
+          "quality_checks": ["Only use with a batch scrape ID."],
+          "use_when": "Use when the user gives a batch operation ID and asks for status/results."
+        },
+        {
+          "avoid_when": "Avoid when the exact content URL is already known, when full page content is needed now, or for open-ended web questions across many domains.",
+          "input_schema": {
+            "properties": {
+              "limit": {"description": "Maximum number of URLs to return.", "type": "number"},
+              "search": {"description": "Optional term to find matching URLs on the site.", "type": "string"},
+              "url": {"description": "Starting site or section URL for URL discovery.", "type": "string"}
+            },
+            "required": ["url"],
+            "type": "object"
+          },
+          "name": "firecrawl_map",
+          "purpose": "Discover URLs on one site without fetching their full content.",
+          "quality_checks": ["Use map before scrape when the right page on a known site is unknown.", "Use search parameter to find a topic within a docs/site tree."],
+          "use_when": "Use to list URLs, find matching pages on a known site, or choose pages before scraping."
+        },
+        {
+          "avoid_when": "Avoid when the target site/page URL is already known, when comprehensive coverage of one site is needed, or when polling a previous job.",
+          "input_schema": {
+            "properties": {
+              "limit": {"description": "Maximum number of search results.", "type": "number"},
+              "query": {"description": "Open-web search query.", "type": "string"},
+              "scrapeOptions": {"description": "Optional content extraction options for results.", "type": "object"}
+            },
+            "required": ["query"],
+            "type": "object"
+          },
+          "name": "firecrawl_search",
+          "purpose": "Search the open web when the right source URL is not known.",
+          "quality_checks": ["Use for cross-site discovery.", "After useful results are consumed, call firecrawl_search_feedback in a later step."],
+          "use_when": "Use when the user asks to find information, sources, docs, news, or pages without giving exact target URLs."
+        },
+        {
+          "avoid_when": "Avoid for one page, fast URL discovery, token-sensitive tasks, or known URL lists.",
+          "input_schema": {
+            "properties": {
+              "limit": {"description": "Maximum pages to crawl.", "type": "number"},
+              "maxDepth": {"description": "Maximum crawl depth.", "type": "number"},
+              "url": {"description": "Starting site or section URL.", "type": "string"}
+            },
+            "required": ["url"],
+            "type": "object"
+          },
+          "name": "firecrawl_crawl",
+          "purpose": "Start an asynchronous multi-page extraction job for a site or section.",
+          "quality_checks": ["Set conservative limits/depth.", "Use map plus batch_scrape when you need more control."],
+          "use_when": "Use when the user explicitly needs comprehensive content from many related pages on one site."
+        },
+        {
+          "avoid_when": "Avoid for batch IDs, agent IDs, monitor checks, or starting a new crawl.",
+          "input_schema": {
+            "properties": {
+              "id": {"description": "Crawl job ID returned by firecrawl_crawl.", "type": "string"}
+            },
+            "required": ["id"],
+            "type": "object"
+          },
+          "name": "firecrawl_check_crawl_status",
+          "purpose": "Poll an asynchronous crawl job.",
+          "quality_checks": ["Only use with a crawl job ID."],
+          "use_when": "Use when the user gives a crawl ID and asks whether the crawl is done or wants its results."
+        },
+        {
+          "avoid_when": "Avoid for one known URL; use firecrawl_scrape with JSON format. Avoid for full page content, screenshots, or markdown.",
+          "input_schema": {
+            "properties": {
+              "prompt": {"description": "Extraction instruction.", "type": "string"},
+              "schema": {"description": "JSON schema for structured extraction.", "type": "object"},
+              "urls": {"description": "Multiple URLs or a URL set requiring LLM extraction.", "items": {"type": "string"}, "type": "array"}
+            },
+            "required": ["urls", "prompt"],
+            "type": "object"
+          },
+          "name": "firecrawl_extract",
+          "purpose": "Extract structured data from multiple pages or URL sets using Firecrawl's LLM extraction layer.",
+          "quality_checks": ["Use for multiple product/profile pages or extraction that may follow external links/search if enabled.", "Do not use as the default for one exact page."],
+          "use_when": "Use when the user asks for specific fields across several pages or a structured extraction job broader than one known page."
+        },
+        {
+          "avoid_when": "Avoid for simple single-page scraping, exact known URLs, web search, page interaction, or specific known-page extraction.",
+          "input_schema": {
+            "properties": {
+              "prompt": {"description": "Complex research task.", "type": "string"},
+              "schema": {"description": "Optional JSON schema for final output.", "type": "object"},
+              "urls": {"description": "Optional starting URLs to focus research.", "items": {"type": "string"}, "type": "array"}
+            },
+            "required": ["prompt"],
+            "type": "object"
+          },
+          "name": "firecrawl_agent",
+          "purpose": "Start an autonomous asynchronous research job for complex multi-source web tasks.",
+          "quality_checks": ["Use only when simpler search/map/scrape/extract tools are insufficient.", "Expect to poll with firecrawl_agent_status later."],
+          "use_when": "Use when the task requires open-ended, multi-hop, multi-source research with structured output."
+        },
+        {
+          "avoid_when": "Avoid for batch scrape IDs, crawl IDs, monitor checks, or new research.",
+          "input_schema": {
+            "properties": {
+              "id": {"description": "Agent job ID returned by firecrawl_agent.", "type": "string"}
+            },
+            "required": ["id"],
+            "type": "object"
+          },
+          "name": "firecrawl_agent_status",
+          "purpose": "Poll an autonomous Firecrawl agent job.",
+          "quality_checks": ["Only use with an agent job ID."],
+          "use_when": "Use when the user gives an agent job ID and asks for progress or final results."
+        },
+        {
+          "avoid_when": "Avoid for normal scrape/search/crawl tasks, static pages, or structured extraction from already-visible content.",
+          "input_schema": {
+            "properties": {
+              "prompt": {"description": "Click/type/navigate instruction.", "type": "string"},
+              "scrapeId": {"description": "Prior scrape ID to reuse an already loaded page.", "type": "string"},
+              "url": {"description": "URL to open for fresh interaction.", "type": "string"}
+            },
+            "required": ["prompt"],
+            "type": "object"
+          },
+          "name": "firecrawl_interact",
+          "purpose": "Operate a dynamic page by clicking, typing, waiting, or navigating before extracting.",
+          "quality_checks": ["Use when the requested data requires UI actions.", "Pass scrapeId if the page was just scraped and the scrape returned one."],
+          "use_when": "Use when the user needs actions like search, click, login-free form entry, navigation, or JS interaction."
+        },
+        {
+          "avoid_when": "Avoid for one-time scrape/search/crawl tasks or polling existing monitor checks.",
+          "input_schema": {
+            "properties": {
+              "goal": {"description": "Plain-language meaningful-change goal.", "type": "string"},
+              "page": {"description": "One page URL to monitor.", "type": "string"},
+              "pages": {"description": "Several page URLs to monitor.", "items": {"type": "string"}, "type": "array"}
+            },
+            "type": "object"
+          },
+          "name": "firecrawl_monitor_create",
+          "purpose": "Create a recurring monitor for meaningful changes on one or more pages.",
+          "quality_checks": ["Include a concise goal explaining what changes matter.", "Use for recurring alerts, not ad hoc reads."],
+          "use_when": "Use when the user asks to watch, monitor, alert, track changes, or run recurring checks."
+        }
+      ]
+    }
+  ],
+  "cases": [
+    {
+      "expected_args_contains": {"url": "example.com/product/123"},
+      "expected_tools": ["firecrawl_scrape"],
+      "forbidden_tools": ["firecrawl_extract", "firecrawl_batch_scrape"],
+      "name": "single known page structured fields",
+      "task": "Use Firecrawl on this exact product page and return only structured JSON fields name, price, and availability: https://example.com/product/123"
+    },
+    {
+      "expected_args_contains": {"urls": "example.com/blog/a"},
+      "expected_tools": ["firecrawl_batch_scrape"],
+      "forbidden_tools": ["firecrawl_scrape", "firecrawl_crawl", "firecrawl_extract"],
+      "name": "several known pages",
+      "task": "Get the readable markdown for these three exact URLs: https://example.com/blog/a, https://example.com/blog/b, and https://example.com/blog/c."
+    },
+    {
+      "expected_args_contains": {"id": "batch_123"},
+      "expected_tools": ["firecrawl_check_batch_status"],
+      "forbidden_tools": ["firecrawl_check_crawl_status", "firecrawl_agent_status"],
+      "name": "batch status",
+      "task": "Check whether Firecrawl batch scrape job batch_123 has completed."
+    },
+    {
+      "expected_args_contains": {"search": "webhook", "url": "docs.example.com"},
+      "expected_tools": ["firecrawl_map"],
+      "forbidden_tools": ["firecrawl_search", "firecrawl_crawl", "firecrawl_scrape"],
+      "name": "discover matching urls on known site",
+      "task": "On https://docs.example.com, find URLs related to webhook events. I only need candidate URLs right now, not page content."
+    },
+    {
+      "expected_args_contains": {"query": "latest React Server Components"},
+      "expected_tools": ["firecrawl_search"],
+      "forbidden_tools": ["firecrawl_map", "firecrawl_crawl", "firecrawl_scrape"],
+      "name": "unknown source web search",
+      "task": "Find current sources about the latest React Server Components updates. I do not know which site has the answer."
+    },
+    {
+      "expected_args_contains": {"url": "example.com/blog"},
+      "expected_tools": ["firecrawl_crawl"],
+      "forbidden_tools": ["firecrawl_scrape", "firecrawl_map", "firecrawl_batch_scrape"],
+      "name": "comprehensive section crawl",
+      "task": "Extract content from all posts in the first two levels under https://example.com/blog/ so I can analyze the whole section."
+    },
+    {
+      "expected_args_contains": {"id": "crawl_456"},
+      "expected_tools": ["firecrawl_check_crawl_status"],
+      "forbidden_tools": ["firecrawl_check_batch_status", "firecrawl_agent_status"],
+      "name": "crawl status",
+      "task": "Poll crawl job crawl_456 and return its status."
+    },
+    {
+      "expected_args_contains": {"prompt": "price", "urls": "example.com/p1"},
+      "expected_tools": ["firecrawl_extract"],
+      "forbidden_tools": ["firecrawl_scrape", "firecrawl_batch_scrape", "firecrawl_agent"],
+      "name": "multi page structured extraction",
+      "task": "Extract name, price, and description from these product pages as a structured dataset: https://example.com/p1, https://example.com/p2, https://example.com/p3."
+    },
+    {
+      "expected_tools": ["firecrawl_agent"],
+      "forbidden_tools": ["firecrawl_search", "firecrawl_extract", "firecrawl_scrape"],
+      "name": "complex autonomous research",
+      "task": "Start a Firecrawl autonomous agent job to find the top five AI infrastructure startups founded in 2025, gather funding amounts from multiple sources, and return a structured table. I do not know the URLs."
+    },
+    {
+      "expected_args_contains": {"id": "agent_789"},
+      "expected_tools": ["firecrawl_agent_status"],
+      "forbidden_tools": ["firecrawl_check_crawl_status", "firecrawl_check_batch_status"],
+      "name": "agent status",
+      "task": "Check whether Firecrawl agent job agent_789 is complete and retrieve results if ready."
+    },
+    {
+      "expected_args_contains": {"prompt": "search", "url": "example.com/app"},
+      "expected_tools": ["firecrawl_interact"],
+      "forbidden_tools": ["firecrawl_scrape", "firecrawl_extract", "firecrawl_search"],
+      "name": "interactive page operation",
+      "task": "Open https://example.com/app, type 'wireless keyboard' into the site search box, submit the search, and extract the visible results."
+    },
+    {
+      "expected_args_contains": {"goal": "pricing", "page": "example.com/pricing"},
+      "expected_tools": ["firecrawl_monitor_create"],
+      "forbidden_tools": ["firecrawl_scrape", "firecrawl_crawl", "firecrawl_search"],
+      "name": "create pricing monitor",
+      "task": "Monitor https://example.com/pricing every day and alert when pricing, packaging, or launch messaging changes materially."
+    }
+  ]
+}

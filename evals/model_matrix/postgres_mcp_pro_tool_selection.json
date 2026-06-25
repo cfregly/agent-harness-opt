@@ -1,0 +1,336 @@
+{
+  "name": "postgres mcp pro tool-selection matrix",
+  "description": "Compare stock and tuned tool descriptions for Postgres MCP Pro schema, SQL execution, explain, workload, index tuning, and health workflows.",
+  "source": {
+    "repo": "https://github.com/crystaldba/postgres-mcp",
+    "docs": "README.md#postgres-mcp-pro-tools",
+    "tool_reference": "https://github.com/crystaldba/postgres-mcp#postgres-mcp-pro-tools"
+  },
+  "profiles": [
+    {
+      "api_key_env": "ANTHROPIC_API_KEY",
+      "harnesses": ["native_tools", "prompt_json"],
+      "model": "claude-sonnet-4-5",
+      "model_env": "ANTHROPIC_MATRIX_MODEL",
+      "name": "anthropic-sonnet",
+      "provider": "anthropic"
+    },
+    {
+      "api_key_env": "OPENAI_API_KEY",
+      "harnesses": ["native_tools", "prompt_json"],
+      "model": "gpt-4.1",
+      "model_env": "OPENAI_MATRIX_MODEL",
+      "name": "openai-default",
+      "provider": "openai"
+    },
+    {
+      "api_key_env": "GEMINI_API_KEY",
+      "harnesses": ["native_tools", "prompt_json"],
+      "max_tokens": 4096,
+      "model": "gemini-2.5-pro",
+      "model_env": "GEMINI_MATRIX_MODEL",
+      "name": "gemini-default",
+      "provider": "gemini"
+    }
+  ],
+  "instruction_variants": [
+    {
+      "instructions": "Choose the single Postgres MCP Pro tool that should be called next. Prefer schema/introspection tools before writing exploratory SQL when the user lacks table details. Use execute_sql only when the immediate next action is to run SQL. Use explain_query for execution plans, analyze_query_indexes for index recommendations on supplied SQL, analyze_workload_indexes for index recommendations from observed workload, and analyze_db_health for whole-database health checks.",
+      "name": "postgres_host_rules"
+    }
+  ],
+  "tool_variants": [
+    {
+      "name": "stock_postgres_mcp_pro",
+      "tools": [
+        {
+          "input_schema": {
+            "properties": {},
+            "type": "object"
+          },
+          "name": "list_schemas",
+          "purpose": "Lists all database schemas available in the PostgreSQL instance."
+        },
+        {
+          "input_schema": {
+            "properties": {
+              "schema_name": {"description": "Database schema to inspect", "type": "string"}
+            },
+            "required": ["schema_name"],
+            "type": "object"
+          },
+          "name": "list_objects",
+          "purpose": "Lists database objects (tables, views, sequences, extensions) within a specified schema."
+        },
+        {
+          "input_schema": {
+            "properties": {
+              "object_name": {"description": "Database object name", "type": "string"},
+              "object_type": {"description": "Database object type such as table, view, sequence, or extension", "type": "string"},
+              "schema_name": {"description": "Database schema containing the object", "type": "string"}
+            },
+            "required": ["schema_name", "object_name", "object_type"],
+            "type": "object"
+          },
+          "name": "get_object_details",
+          "purpose": "Provides information about a specific database object, for example, a table's columns, constraints, and indexes."
+        },
+        {
+          "input_schema": {
+            "properties": {
+              "sql": {"description": "SQL statement to execute", "type": "string"}
+            },
+            "required": ["sql"],
+            "type": "object"
+          },
+          "name": "execute_sql",
+          "purpose": "Executes SQL statements on the database, with read-only limitations when connected in restricted mode."
+        },
+        {
+          "input_schema": {
+            "properties": {
+              "hypothetical_indexes": {"description": "Optional hypothetical indexes to include while planning", "items": {"type": "string"}, "type": "array"},
+              "sql": {"description": "SQL query to explain", "type": "string"}
+            },
+            "required": ["sql"],
+            "type": "object"
+          },
+          "name": "explain_query",
+          "purpose": "Gets the execution plan for a SQL query describing how PostgreSQL will process it and exposing the query planner's cost model. Can be invoked with hypothetical indexes to simulate the behavior after adding indexes."
+        },
+        {
+          "input_schema": {
+            "properties": {
+              "order_by": {"description": "Metric to rank queries, such as total_time or mean_time", "type": "string"},
+              "limit": {"description": "Maximum number of queries to return", "type": "integer"}
+            },
+            "type": "object"
+          },
+          "name": "get_top_queries",
+          "purpose": "Reports the slowest SQL queries based on total execution time using pg_stat_statements data."
+        },
+        {
+          "input_schema": {
+            "properties": {
+              "max_index_count": {"description": "Optional maximum number of indexes to recommend", "type": "integer"},
+              "time_budget_seconds": {"description": "Optional tuning time budget", "type": "integer"}
+            },
+            "type": "object"
+          },
+          "name": "analyze_workload_indexes",
+          "purpose": "Analyzes the database workload to identify resource-intensive queries, then recommends optimal indexes for them."
+        },
+        {
+          "input_schema": {
+            "properties": {
+              "queries": {"description": "Specific SQL queries to analyze, up to 10", "items": {"type": "string"}, "type": "array"},
+              "time_budget_seconds": {"description": "Optional tuning time budget", "type": "integer"}
+            },
+            "required": ["queries"],
+            "type": "object"
+          },
+          "name": "analyze_query_indexes",
+          "purpose": "Analyzes a list of specific SQL queries (up to 10) and recommends optimal indexes for them."
+        },
+        {
+          "input_schema": {
+            "properties": {},
+            "type": "object"
+          },
+          "name": "analyze_db_health",
+          "purpose": "Performs comprehensive health checks including: buffer cache hit rates, connection health, constraint validation, index health (duplicate/unused/invalid), sequence limits, and vacuum health."
+        }
+      ]
+    },
+    {
+      "name": "tuned_postgres_mcp_pro_boundaries",
+      "tools": [
+        {
+          "avoid_when": "Avoid when the schema is already known or the user asks about objects inside a named schema.",
+          "input_schema": {
+            "properties": {},
+            "type": "object"
+          },
+          "name": "list_schemas",
+          "purpose": "Discover which schemas exist in the connected Postgres database.",
+          "quality_checks": ["Use before list_objects when the user does not name a schema.", "Do not use to inspect tables, columns, indexes, or run SQL."],
+          "use_when": "Use when the user asks what schemas are available or when a schema must be chosen before deeper inspection."
+        },
+        {
+          "avoid_when": "Avoid for column/index/constraint details on one object; use get_object_details. Avoid for running SQL.",
+          "input_schema": {
+            "properties": {
+              "schema_name": {"description": "Exact schema to list, for example public or analytics.", "type": "string"}
+            },
+            "required": ["schema_name"],
+            "type": "object"
+          },
+          "name": "list_objects",
+          "purpose": "List tables, views, sequences, and extensions inside one schema.",
+          "quality_checks": ["Include the requested schema_name.", "Use for object inventory, not object internals."],
+          "use_when": "Use when the user asks what database objects are in a named schema."
+        },
+        {
+          "avoid_when": "Avoid for a broad schema inventory, SQL execution, explain plans, or workload tuning.",
+          "input_schema": {
+            "properties": {
+              "object_name": {"description": "Exact object name, for example orders.", "type": "string"},
+              "object_type": {"description": "Object type such as table, view, sequence, or extension.", "type": "string"},
+              "schema_name": {"description": "Schema containing the object.", "type": "string"}
+            },
+            "required": ["schema_name", "object_name", "object_type"],
+            "type": "object"
+          },
+          "name": "get_object_details",
+          "purpose": "Inspect one database object's columns, constraints, indexes, and related metadata.",
+          "quality_checks": ["Use for table structure before generating joins or filters.", "Include schema_name, object_name, and object_type."],
+          "use_when": "Use when the user asks for details about a specific table, view, sequence, or extension."
+        },
+        {
+          "avoid_when": "Avoid for schema discovery, execution plans without running, index recommendations, top-query reports, or database health checks.",
+          "input_schema": {
+            "properties": {
+              "sql": {"description": "The SQL statement to run now.", "type": "string"}
+            },
+            "required": ["sql"],
+            "type": "object"
+          },
+          "name": "execute_sql",
+          "purpose": "Run a concrete SQL statement against the connected database.",
+          "quality_checks": ["Only use when SQL execution is the next step.", "In restricted/production contexts, prefer read-only SELECT statements."],
+          "use_when": "Use when the user asks to run, query, fetch, count, or update data and the needed SQL is ready."
+        },
+        {
+          "avoid_when": "Avoid when the user asks to actually run the query, find top workload queries, or produce index recommendations.",
+          "input_schema": {
+            "properties": {
+              "hypothetical_indexes": {"description": "Optional hypothetical indexes to simulate in the plan.", "items": {"type": "string"}, "type": "array"},
+              "sql": {"description": "SQL query to explain without executing for results.", "type": "string"}
+            },
+            "required": ["sql"],
+            "type": "object"
+          },
+          "name": "explain_query",
+          "purpose": "Get PostgreSQL's execution plan and planner cost for a specific SQL query.",
+          "quality_checks": ["Use for EXPLAIN/plan/cost questions.", "If the user wants indexes recommended, use analyze_query_indexes instead."],
+          "use_when": "Use when the user asks how Postgres will execute a supplied query or wants to compare plans with hypothetical indexes."
+        },
+        {
+          "avoid_when": "Avoid when the user already supplied specific SQL to tune; use analyze_query_indexes. Avoid for health checks.",
+          "input_schema": {
+            "properties": {
+              "order_by": {"description": "Ranking metric such as total_time or mean_time.", "type": "string"},
+              "limit": {"description": "Maximum number of queries to return.", "type": "integer"}
+            },
+            "type": "object"
+          },
+          "name": "get_top_queries",
+          "purpose": "Rank observed SQL statements from pg_stat_statements by slow or expensive execution metrics.",
+          "quality_checks": ["Use to identify workload candidates before tuning.", "Do not imply index recommendations are produced by this call."],
+          "use_when": "Use when the user asks which queries are slowest, most expensive, or consuming the most total time."
+        },
+        {
+          "avoid_when": "Avoid when the user supplied the exact SQL to tune; use analyze_query_indexes. Avoid when they only ask to list slow queries; use get_top_queries.",
+          "input_schema": {
+            "properties": {
+              "max_index_count": {"description": "Optional maximum number of indexes to recommend.", "type": "integer"},
+              "time_budget_seconds": {"description": "Optional tuning time budget.", "type": "integer"}
+            },
+            "type": "object"
+          },
+          "name": "analyze_workload_indexes",
+          "purpose": "Recommend indexes by analyzing the observed database workload as a whole.",
+          "quality_checks": ["Use for workload-wide index advice.", "Do not use for one supplied query unless the query first came from workload analysis."],
+          "use_when": "Use when the user asks for index recommendations across the live workload or asks to speed up the database without naming one SQL query."
+        },
+        {
+          "avoid_when": "Avoid for whole-workload tuning when no SQL is supplied; use analyze_workload_indexes. Avoid for plan-only questions; use explain_query.",
+          "input_schema": {
+            "properties": {
+              "queries": {"description": "Specific SQL queries to tune, up to 10.", "items": {"type": "string"}, "type": "array"},
+              "time_budget_seconds": {"description": "Optional tuning time budget.", "type": "integer"}
+            },
+            "required": ["queries"],
+            "type": "object"
+          },
+          "name": "analyze_query_indexes",
+          "purpose": "Recommend optimal indexes for one or more specific supplied SQL queries.",
+          "quality_checks": ["Use when query text is available and the user wants indexing/tuning advice.", "Pass the SQL in queries."],
+          "use_when": "Use when the user says optimize this query, suggest indexes for this SQL, or tune these provided statements."
+        },
+        {
+          "avoid_when": "Avoid for one SQL query, schema inventory, object details, or top-query ranking.",
+          "input_schema": {
+            "properties": {},
+            "type": "object"
+          },
+          "name": "analyze_db_health",
+          "purpose": "Run comprehensive deterministic Postgres health checks.",
+          "quality_checks": ["Use for database-wide operational health.", "Covers buffer cache, connections, constraints, index health, sequences, replication, and vacuum."],
+          "use_when": "Use when the user asks for a health check, operational risk scan, or database maintenance review."
+        }
+      ]
+    }
+  ],
+  "cases": [
+    {
+      "expected_tools": ["list_schemas"],
+      "forbidden_tools": ["list_objects", "execute_sql"],
+      "name": "discover schemas",
+      "task": "I just connected this Postgres MCP server. What schemas are available?"
+    },
+    {
+      "expected_args_contains": {"schema_name": "analytics"},
+      "expected_tools": ["list_objects"],
+      "forbidden_tools": ["list_schemas", "get_object_details", "execute_sql"],
+      "name": "list schema objects",
+      "task": "Show me the tables, views, sequences, and extensions inside the analytics schema."
+    },
+    {
+      "expected_args_contains": {"object_name": "orders", "schema_name": "public"},
+      "expected_tools": ["get_object_details"],
+      "forbidden_tools": ["list_objects", "execute_sql", "explain_query"],
+      "name": "inspect table structure",
+      "task": "Before writing SQL, inspect public.orders so we know its columns, constraints, and indexes."
+    },
+    {
+      "expected_args_contains": {"sql": "count"},
+      "expected_tools": ["execute_sql"],
+      "forbidden_tools": ["explain_query", "analyze_query_indexes"],
+      "name": "run ready read query",
+      "task": "Run this ready query now: SELECT count(*) FROM public.orders WHERE status = 'failed';"
+    },
+    {
+      "expected_args_contains": {"sql": "orders"},
+      "expected_tools": ["explain_query"],
+      "forbidden_tools": ["execute_sql", "analyze_query_indexes"],
+      "name": "get query plan",
+      "task": "Do not run the query for rows. Show the PostgreSQL execution plan and planner cost for SELECT * FROM orders WHERE customer_id = 42;"
+    },
+    {
+      "expected_tools": ["get_top_queries"],
+      "forbidden_tools": ["analyze_workload_indexes", "analyze_query_indexes", "analyze_db_health"],
+      "name": "rank slow workload queries",
+      "task": "Which SQL statements are consuming the most total execution time? Just list the top workload queries first; do not recommend indexes yet."
+    },
+    {
+      "expected_tools": ["analyze_workload_indexes"],
+      "forbidden_tools": ["get_top_queries", "analyze_query_indexes", "analyze_db_health"],
+      "name": "workload index tuning",
+      "task": "Analyze the observed database workload and recommend indexes that would improve the resource-intensive queries."
+    },
+    {
+      "expected_args_contains": {"queries": "orders"},
+      "expected_tools": ["analyze_query_indexes"],
+      "forbidden_tools": ["explain_query", "analyze_workload_indexes", "get_top_queries"],
+      "name": "specific query index tuning",
+      "task": "Suggest the best indexes for this specific SQL: SELECT * FROM orders JOIN customers ON orders.customer_id = customers.id WHERE orders.created_at > '2026-01-01';"
+    },
+    {
+      "expected_tools": ["analyze_db_health"],
+      "forbidden_tools": ["get_top_queries", "analyze_workload_indexes", "execute_sql"],
+      "name": "database health check",
+      "task": "Run a database-wide operational health review covering connections, vacuum, invalid constraints, duplicate or unused indexes, sequences, and buffer cache."
+    }
+  ]
+}

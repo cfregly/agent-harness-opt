@@ -25,6 +25,8 @@ REQUIRED_VALUE_PHRASE_FILES = (
     "docs/techniques.md",
     "docs/trace-review.md",
     "docs/video-coverage-audit.md",
+    "docs/public-mcp-sweep.md",
+    "docs/firecrawl-mcp-tool-tuning.md",
     "prompts/agent_system_template.md",
     ".claude/skills/agent-audit/SKILL.md",
 )

@@ -131,6 +131,53 @@ class ModelMatrixTests(unittest.TestCase):
         self.assertEqual(2, result["summary"]["total"])
         self.assertEqual("planned", result["results"][0]["status"])
 
+    def test_public_mcp_sweep_matrices_plan_selected_cells(self):
+        cases = [
+            (
+                "playwright_mcp_tool_selection.json",
+                "stock_playwright_mcp",
+                "playwright_host_rules",
+            ),
+            (
+                "slack_mcp_tool_selection.json",
+                "stock_slack_mcp",
+                "slack_host_rules",
+            ),
+            (
+                "filesystem_mcp_tool_selection.json",
+                "stock_filesystem_mcp",
+                "filesystem_host_rules",
+            ),
+            (
+                "postgres_mcp_pro_tool_selection.json",
+                "stock_postgres_mcp_pro",
+                "postgres_host_rules",
+            ),
+            (
+                "firecrawl_mcp_tool_selection.json",
+                "tuned_firecrawl_mcp_boundaries",
+                "firecrawl_host_rules",
+            ),
+        ]
+
+        for filename, variant, instruction_variant in cases:
+            with self.subTest(filename=filename):
+                result = run_model_matrix(
+                    ROOT / "evals" / "model_matrix" / filename,
+                    filters=MatrixFilters(
+                        providers={"anthropic"},
+                        harnesses={"prompt_json"},
+                        variants={variant},
+                        instruction_variants={instruction_variant},
+                    ),
+                    max_cases=2,
+                )
+
+                self.assertTrue(result["passed"])
+                self.assertFalse(result["live"])
+                self.assertEqual(2, result["summary"]["total"])
+                self.assertEqual("planned", result["results"][0]["status"])
+
 
 if __name__ == "__main__":
     unittest.main()

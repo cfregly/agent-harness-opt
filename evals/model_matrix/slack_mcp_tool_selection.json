@@ -1,0 +1,324 @@
+{
+  "name": "slack mcp tool-selection matrix",
+  "description": "Compare stock and tuned tool descriptions for common Slack MCP messaging, thread, reaction, channel, and user workflows.",
+  "source": {
+    "official_docs": "https://docs.slack.dev/ai/slack-mcp-server",
+    "help_docs": "https://slack.com/help/articles/48855576908307-Guide-to-Model-Context-Protocol-in-Slack",
+    "tool_reference": "https://hub.docker.com/r/mcp/slack"
+  },
+  "profiles": [
+    {
+      "api_key_env": "ANTHROPIC_API_KEY",
+      "harnesses": ["native_tools", "prompt_json"],
+      "model": "claude-sonnet-4-5",
+      "model_env": "ANTHROPIC_MATRIX_MODEL",
+      "name": "anthropic-sonnet",
+      "provider": "anthropic"
+    },
+    {
+      "api_key_env": "OPENAI_API_KEY",
+      "harnesses": ["native_tools", "prompt_json"],
+      "model": "gpt-4.1",
+      "model_env": "OPENAI_MATRIX_MODEL",
+      "name": "openai-default",
+      "provider": "openai"
+    },
+    {
+      "api_key_env": "GEMINI_API_KEY",
+      "harnesses": ["native_tools", "prompt_json"],
+      "max_tokens": 4096,
+      "model": "gemini-2.5-pro",
+      "model_env": "GEMINI_MATRIX_MODEL",
+      "name": "gemini-default",
+      "provider": "gemini"
+    }
+  ],
+  "instruction_variants": [
+    {
+      "instructions": "Choose the single Slack MCP tool that should be called next. Use thread tools when a thread timestamp is provided. Use top-level post only for new channel messages. Use history to read recent channel messages and thread replies to read a specific thread.",
+      "name": "slack_host_rules"
+    }
+  ],
+  "tool_variants": [
+    {
+      "name": "stock_slack_mcp",
+      "tools": [
+        {
+          "input_schema": {
+            "properties": {
+              "limit": {"description": "Maximum number of channels to return", "type": "number"},
+              "cursor": {"description": "Pagination cursor", "type": "string"}
+            },
+            "type": "object"
+          },
+          "name": "slack_list_channels",
+          "purpose": "List public or pre-defined channels in the workspace with pagination"
+        },
+        {
+          "input_schema": {
+            "properties": {
+              "channel_id": {"description": "The ID of the channel", "type": "string"},
+              "text": {"description": "The message text", "type": "string"}
+            },
+            "required": ["channel_id", "text"],
+            "type": "object"
+          },
+          "name": "slack_post_message",
+          "purpose": "Post a new message to a Slack channel"
+        },
+        {
+          "input_schema": {
+            "properties": {
+              "channel_id": {"description": "The ID of the channel containing the thread", "type": "string"},
+              "text": {"description": "The reply text", "type": "string"},
+              "thread_ts": {"description": "The timestamp of the parent message", "type": "string"}
+            },
+            "required": ["channel_id", "text", "thread_ts"],
+            "type": "object"
+          },
+          "name": "slack_reply_to_thread",
+          "purpose": "Reply to a specific message thread in Slack"
+        },
+        {
+          "input_schema": {
+            "properties": {
+              "channel_id": {"description": "The ID of the channel", "type": "string"},
+              "limit": {"description": "Number of messages to return", "type": "number"}
+            },
+            "required": ["channel_id"],
+            "type": "object"
+          },
+          "name": "slack_get_channel_history",
+          "purpose": "Get recent messages from a channel"
+        },
+        {
+          "input_schema": {
+            "properties": {
+              "channel_id": {"description": "The ID of the channel containing the thread", "type": "string"},
+              "thread_ts": {"description": "The timestamp of the parent message", "type": "string"}
+            },
+            "required": ["channel_id", "thread_ts"],
+            "type": "object"
+          },
+          "name": "slack_get_thread_replies",
+          "purpose": "Get all replies in a message thread"
+        },
+        {
+          "input_schema": {
+            "properties": {
+              "channel_id": {"description": "The ID of the channel", "type": "string"},
+              "timestamp": {"description": "The timestamp of the message to react to", "type": "string"},
+              "reaction": {"description": "The emoji reaction name without colons", "type": "string"}
+            },
+            "required": ["channel_id", "timestamp", "reaction"],
+            "type": "object"
+          },
+          "name": "slack_add_reaction",
+          "purpose": "Add a reaction emoji to a message"
+        },
+        {
+          "input_schema": {
+            "properties": {
+              "limit": {"description": "Maximum number of users to return", "type": "number"},
+              "cursor": {"description": "Pagination cursor", "type": "string"}
+            },
+            "type": "object"
+          },
+          "name": "slack_get_users",
+          "purpose": "Get a list of all users in the workspace with their basic profile information"
+        },
+        {
+          "input_schema": {
+            "properties": {
+              "user_id": {"description": "The ID of the user", "type": "string"}
+            },
+            "required": ["user_id"],
+            "type": "object"
+          },
+          "name": "slack_get_user_profile",
+          "purpose": "Get detailed profile information for a specific user"
+        }
+      ]
+    },
+    {
+      "name": "tuned_slack_mcp_boundaries",
+      "tools": [
+        {
+          "avoid_when": "Avoid when the user already has a channel id and wants messages, posting, reactions, or thread activity.",
+          "input_schema": {
+            "properties": {
+              "limit": {"description": "Maximum number of channels to return.", "type": "number"},
+              "cursor": {"description": "Pagination cursor from a prior channel list.", "type": "string"}
+            },
+            "type": "object"
+          },
+          "name": "slack_list_channels",
+          "purpose": "List available Slack channels so the agent can find channel ids.",
+          "quality_checks": ["Use when channel id is unknown.", "Do not use as a message search tool."],
+          "use_when": "Use when the user asks what channels exist or needs a channel id."
+        },
+        {
+          "avoid_when": "Avoid when a thread_ts is supplied; use slack_reply_to_thread. Avoid when the user asks to read messages.",
+          "input_schema": {
+            "properties": {
+              "channel_id": {"description": "Destination channel id.", "type": "string"},
+              "text": {"description": "Top-level message text.", "type": "string"}
+            },
+            "required": ["channel_id", "text"],
+            "type": "object"
+          },
+          "name": "slack_post_message",
+          "purpose": "Post a new top-level message to a Slack channel.",
+          "quality_checks": ["Use only when this should start a new channel message.", "Do not include thread_ts."],
+          "use_when": "Use when the user asks to send/post a new message to a channel without replying in a thread."
+        },
+        {
+          "avoid_when": "Avoid for new top-level channel messages; use slack_post_message. Avoid for reading thread replies.",
+          "input_schema": {
+            "properties": {
+              "channel_id": {"description": "Channel id containing the thread.", "type": "string"},
+              "text": {"description": "Reply text.", "type": "string"},
+              "thread_ts": {"description": "Parent message timestamp.", "type": "string"}
+            },
+            "required": ["channel_id", "text", "thread_ts"],
+            "type": "object"
+          },
+          "name": "slack_reply_to_thread",
+          "purpose": "Send a reply into an existing Slack message thread.",
+          "quality_checks": ["Require channel_id and thread_ts.", "Use when the user says reply in thread."],
+          "use_when": "Use when the user asks to reply/respond in a thread or provides a parent thread timestamp."
+        },
+        {
+          "avoid_when": "Avoid when thread_ts is provided and the user asks for that thread; use slack_get_thread_replies.",
+          "input_schema": {
+            "properties": {
+              "channel_id": {"description": "Channel id to read.", "type": "string"},
+              "limit": {"description": "Number of recent messages to return.", "type": "number"}
+            },
+            "required": ["channel_id"],
+            "type": "object"
+          },
+          "name": "slack_get_channel_history",
+          "purpose": "Read recent top-level messages from a Slack channel.",
+          "quality_checks": ["Use for channel history, not a specific thread.", "Include channel_id."],
+          "use_when": "Use when the user asks what has recently happened in a channel."
+        },
+        {
+          "avoid_when": "Avoid for recent channel history without a parent timestamp. Avoid for posting replies.",
+          "input_schema": {
+            "properties": {
+              "channel_id": {"description": "Channel id containing the thread.", "type": "string"},
+              "thread_ts": {"description": "Parent message timestamp.", "type": "string"}
+            },
+            "required": ["channel_id", "thread_ts"],
+            "type": "object"
+          },
+          "name": "slack_get_thread_replies",
+          "purpose": "Read all replies in one Slack message thread.",
+          "quality_checks": ["Require channel_id and thread_ts.", "Do not use for posting."],
+          "use_when": "Use when the user asks to read a thread or summarize replies under a parent message."
+        },
+        {
+          "avoid_when": "Avoid when the user asks to write text as a reply or top-level message.",
+          "input_schema": {
+            "properties": {
+              "channel_id": {"description": "Channel id containing the message.", "type": "string"},
+              "timestamp": {"description": "Message timestamp to react to.", "type": "string"},
+              "reaction": {"description": "Emoji reaction name without colons.", "type": "string"}
+            },
+            "required": ["channel_id", "timestamp", "reaction"],
+            "type": "object"
+          },
+          "name": "slack_add_reaction",
+          "purpose": "Add an emoji reaction to an existing Slack message.",
+          "quality_checks": ["Use timestamp for the message being reacted to.", "Strip surrounding colons from the emoji name."],
+          "use_when": "Use when the user asks to react with an emoji."
+        },
+        {
+          "avoid_when": "Avoid when a specific user id is known and detailed fields are needed; use slack_get_user_profile.",
+          "input_schema": {
+            "properties": {
+              "limit": {"description": "Maximum number of users to return.", "type": "number"},
+              "cursor": {"description": "Pagination cursor from a prior user list.", "type": "string"}
+            },
+            "type": "object"
+          },
+          "name": "slack_get_users",
+          "purpose": "List workspace users with basic profile information so the agent can find user ids.",
+          "quality_checks": ["Use when the user id is unknown.", "Do not use for detailed profile fields for a known user id."],
+          "use_when": "Use when the user asks to find a person or browse workspace users."
+        },
+        {
+          "avoid_when": "Avoid when the user id is unknown; list users first.",
+          "input_schema": {
+            "properties": {
+              "user_id": {"description": "Slack user id.", "type": "string"}
+            },
+            "required": ["user_id"],
+            "type": "object"
+          },
+          "name": "slack_get_user_profile",
+          "purpose": "Read detailed profile information for one known Slack user id.",
+          "quality_checks": ["Require user_id.", "Use for detailed profile, email, status, or custom profile fields."],
+          "use_when": "Use when the user gives a user id and asks for details about that user."
+        }
+      ]
+    }
+  ],
+  "cases": [
+    {
+      "expected_tools": ["slack_list_channels"],
+      "forbidden_tools": ["slack_post_message", "slack_reply_to_thread", "slack_get_channel_history", "slack_get_thread_replies", "slack_add_reaction", "slack_get_users", "slack_get_user_profile"],
+      "name": "list channels to find id",
+      "task": "List Slack channels so I can find the id for the engineering channel."
+    },
+    {
+      "expected_args_contains": {"channel_id": "C123", "text": "Deploy is complete"},
+      "expected_tools": ["slack_post_message"],
+      "forbidden_tools": ["slack_list_channels", "slack_reply_to_thread", "slack_get_channel_history", "slack_get_thread_replies", "slack_add_reaction", "slack_get_users", "slack_get_user_profile"],
+      "name": "post top level channel message",
+      "task": "Post a new top-level message to channel C123: Deploy is complete."
+    },
+    {
+      "expected_args_contains": {"channel_id": "C123", "text": "I will investigate", "thread_ts": "1712345678.000100"},
+      "expected_tools": ["slack_reply_to_thread"],
+      "forbidden_tools": ["slack_list_channels", "slack_post_message", "slack_get_channel_history", "slack_get_thread_replies", "slack_add_reaction", "slack_get_users", "slack_get_user_profile"],
+      "name": "reply in existing thread",
+      "task": "Reply in channel C123 under thread 1712345678.000100 with: I will investigate."
+    },
+    {
+      "expected_args_contains": {"channel_id": "C123"},
+      "expected_tools": ["slack_get_channel_history"],
+      "forbidden_tools": ["slack_list_channels", "slack_post_message", "slack_reply_to_thread", "slack_get_thread_replies", "slack_add_reaction", "slack_get_users", "slack_get_user_profile"],
+      "name": "read recent channel messages",
+      "task": "Get recent messages from channel C123."
+    },
+    {
+      "expected_args_contains": {"channel_id": "C123", "thread_ts": "1712345678.000100"},
+      "expected_tools": ["slack_get_thread_replies"],
+      "forbidden_tools": ["slack_list_channels", "slack_post_message", "slack_reply_to_thread", "slack_get_channel_history", "slack_add_reaction", "slack_get_users", "slack_get_user_profile"],
+      "name": "read thread replies",
+      "task": "Get all replies in channel C123 under thread 1712345678.000100."
+    },
+    {
+      "expected_args_contains": {"channel_id": "C123", "reaction": "eyes", "timestamp": "1712345678.000100"},
+      "expected_tools": ["slack_add_reaction"],
+      "forbidden_tools": ["slack_list_channels", "slack_post_message", "slack_reply_to_thread", "slack_get_channel_history", "slack_get_thread_replies", "slack_get_users", "slack_get_user_profile"],
+      "name": "add reaction to message",
+      "task": "Add the :eyes: reaction to message 1712345678.000100 in channel C123."
+    },
+    {
+      "expected_tools": ["slack_get_users"],
+      "forbidden_tools": ["slack_list_channels", "slack_post_message", "slack_reply_to_thread", "slack_get_channel_history", "slack_get_thread_replies", "slack_add_reaction", "slack_get_user_profile"],
+      "name": "list users to find id",
+      "task": "Find the Slack user id for Alice by listing workspace users."
+    },
+    {
+      "expected_args_contains": {"user_id": "U123"},
+      "expected_tools": ["slack_get_user_profile"],
+      "forbidden_tools": ["slack_list_channels", "slack_post_message", "slack_reply_to_thread", "slack_get_channel_history", "slack_get_thread_replies", "slack_add_reaction", "slack_get_users"],
+      "name": "get known user profile",
+      "task": "Get detailed profile information for Slack user U123."
+    }
+  ]
+}
