@@ -158,6 +158,16 @@ class ModelMatrixTests(unittest.TestCase):
                 "tuned_firecrawl_mcp_boundaries",
                 "firecrawl_host_rules",
             ),
+            (
+                "context7_mcp_tool_selection.json",
+                "readme_context7_mcp",
+                "context7_host_rules",
+            ),
+            (
+                "supabase_mcp_database_tool_selection.json",
+                "tuned_supabase_database_boundaries",
+                "supabase_database_host_rules",
+            ),
         ]
 
         for filename, variant, instruction_variant in cases:

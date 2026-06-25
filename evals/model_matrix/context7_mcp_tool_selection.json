@@ -1,0 +1,154 @@
+{
+  "name": "context7 mcp tool-selection matrix",
+  "description": "Compare README-style and tuned Context7 MCP descriptions for library resolution and documentation query workflows.",
+  "source": {
+    "repo": "https://github.com/upstash/context7",
+    "commit": "a914a8693488f1a7b37581de176ad1f19def8e64",
+    "mcp_source": "packages/mcp/src/index.ts",
+    "skill": "skills/context7-mcp/SKILL.md",
+    "rules": "rules/context7-mcp.md"
+  },
+  "profiles": [
+    {
+      "api_key_env": "ANTHROPIC_API_KEY",
+      "harnesses": ["native_tools", "prompt_json"],
+      "model": "claude-sonnet-4-5",
+      "model_env": "ANTHROPIC_MATRIX_MODEL",
+      "name": "anthropic-sonnet",
+      "provider": "anthropic"
+    },
+    {
+      "api_key_env": "OPENAI_API_KEY",
+      "harnesses": ["native_tools", "prompt_json"],
+      "model": "gpt-4.1",
+      "model_env": "OPENAI_MATRIX_MODEL",
+      "name": "openai-default",
+      "provider": "openai"
+    },
+    {
+      "api_key_env": "GEMINI_API_KEY",
+      "harnesses": ["native_tools", "prompt_json"],
+      "max_tokens": 4096,
+      "model": "gemini-2.5-pro",
+      "model_env": "GEMINI_MATRIX_MODEL",
+      "name": "gemini-default",
+      "provider": "gemini"
+    }
+  ],
+  "instruction_variants": [
+    {
+      "instructions": "Choose the single Context7 MCP tool that should be called next. If the user supplies a Context7 library ID in /org/project or /org/project/version format, query docs directly. If the user supplies only a package, product, framework, API, CLI, or cloud service name, resolve the library ID first.",
+      "name": "context7_host_rules"
+    }
+  ],
+  "tool_variants": [
+    {
+      "name": "readme_context7_mcp",
+      "tools": [
+        {
+          "input_schema": {
+            "properties": {
+              "libraryName": {"description": "Library name to search for.", "type": "string"},
+              "query": {"description": "The question or task.", "type": "string"}
+            },
+            "required": ["query", "libraryName"],
+            "type": "object"
+          },
+          "name": "resolve-library-id",
+          "purpose": "Resolves a general library name into a Context7-compatible library ID."
+        },
+        {
+          "input_schema": {
+            "properties": {
+              "libraryId": {"description": "Context7-compatible library ID.", "type": "string"},
+              "query": {"description": "The documentation question.", "type": "string"}
+            },
+            "required": ["libraryId", "query"],
+            "type": "object"
+          },
+          "name": "query-docs",
+          "purpose": "Retrieves documentation for a library using a Context7-compatible library ID."
+        }
+      ]
+    },
+    {
+      "name": "tuned_context7_mcp_boundaries",
+      "tools": [
+        {
+          "avoid_when": "Avoid when the user already supplied a Context7 ID in /org/project or /org/project/version format. In that case use query-docs directly.",
+          "input_schema": {
+            "properties": {
+              "libraryName": {"description": "Official library or product name to resolve, for example Next.js, React, Prisma, Supabase, or Customer.io.", "type": "string"},
+              "query": {"description": "The user's full documentation question, used to rank library results by relevance.", "type": "string"}
+            },
+            "required": ["query", "libraryName"],
+            "type": "object"
+          },
+          "name": "resolve-library-id",
+          "purpose": "Find the exact Context7-compatible library ID before querying documentation.",
+          "quality_checks": ["Use the user's full question as query.", "Prefer official sources, strong reputation, high benchmark score, and version-specific IDs when the user names a version."],
+          "use_when": "Use first when the user gives only a library, framework, SDK, API, CLI, or cloud service name."
+        },
+        {
+          "avoid_when": "Avoid when the user has not supplied or selected an exact Context7 library ID. Resolve the ID first.",
+          "input_schema": {
+            "properties": {
+              "libraryId": {"description": "Exact Context7 library ID, for example /vercel/next.js, /mongodb/docs, /supabase/supabase, or /vercel/next.js/v14.3.0-canary.87.", "type": "string"},
+              "query": {"description": "The user's specific documentation question, not one-word keywords.", "type": "string"}
+            },
+            "required": ["libraryId", "query"],
+            "type": "object"
+          },
+          "name": "query-docs",
+          "purpose": "Fetch current documentation and code examples for a known Context7 library ID.",
+          "quality_checks": ["Call resolve-library-id first unless the user explicitly provided /org/project or /org/project/version.", "Use the full user question as query.", "Do not call more than 3 times per question."],
+          "use_when": "Use when a valid Context7 library ID is already available from the user or a previous resolution step."
+        }
+      ]
+    }
+  ],
+  "cases": [
+    {
+      "expected_args_contains": {"libraryName": "Next.js", "query": "middleware"},
+      "expected_tools": ["resolve-library-id"],
+      "forbidden_tools": ["query-docs"],
+      "name": "generic library needs resolution",
+      "task": "Use Context7 to answer: How do I configure middleware matchers in Next.js?"
+    },
+    {
+      "expected_args_contains": {"libraryName": "React", "query": "useEffect"},
+      "expected_tools": ["resolve-library-id"],
+      "forbidden_tools": ["query-docs"],
+      "name": "well known framework still resolves",
+      "task": "Use Context7 to fetch current docs for React useEffect cleanup behavior."
+    },
+    {
+      "expected_args_contains": {"libraryId": "/vercel/next.js", "query": "middleware"},
+      "expected_tools": ["query-docs"],
+      "forbidden_tools": ["resolve-library-id"],
+      "name": "exact id bypasses resolution",
+      "task": "Use Context7 docs for /vercel/next.js to answer: how do middleware matchers work?"
+    },
+    {
+      "expected_args_contains": {"libraryId": "/vercel/next.js/v14.3.0-canary.87", "query": "app router"},
+      "expected_tools": ["query-docs"],
+      "forbidden_tools": ["resolve-library-id"],
+      "name": "versioned exact id bypasses resolution",
+      "task": "Use Context7 docs for /vercel/next.js/v14.3.0-canary.87 and show app router route segment config examples."
+    },
+    {
+      "expected_args_contains": {"libraryName": "Prisma", "query": "transaction"},
+      "expected_tools": ["resolve-library-id"],
+      "forbidden_tools": ["query-docs"],
+      "name": "package name with topic resolves first",
+      "task": "Use Context7 for Prisma transaction isolation examples."
+    },
+    {
+      "expected_args_contains": {"libraryId": "/supabase/supabase", "query": "auth"},
+      "expected_tools": ["query-docs"],
+      "forbidden_tools": ["resolve-library-id"],
+      "name": "previously resolved id queries directly",
+      "task": "I already resolved Supabase to /supabase/supabase. Use Context7 to fetch auth sign-in with OAuth docs."
+    }
+  ]
+}

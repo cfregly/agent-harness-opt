@@ -17,12 +17,14 @@ The current sweep covers:
   tuning, query-specific index tuning, and health checks.
 - Firecrawl MCP: scrape, batch scrape, map, search, crawl, extract, agent, interact, monitor, and
   status polling.
+- Context7 MCP: library ID resolution and documentation queries.
+- Supabase MCP: database metadata, migrations, SQL execution, extensions, and schema changes.
 
 ## What Cleared
 
-GitHub, Playwright, Slack, Filesystem, and Postgres MCP Pro did not produce a confirmed tuning win
-on the current slices. Their stock descriptions either passed outright or the apparent miss was an
-unfair verifier/transient issue.
+GitHub, Playwright, Slack, Filesystem, Postgres MCP Pro, and Context7 did not produce a confirmed
+tuning win on the current slices. Their stock descriptions either passed outright or the apparent
+miss was an unfair verifier/transient issue.
 
 Firecrawl produced a confirmed improvement:
 
@@ -31,6 +33,13 @@ Firecrawl produced a confirmed improvement:
 - Rationale: current Firecrawl guidance says one known page with specific fields should use
   `firecrawl_scrape` with a focused JSON format. `firecrawl_extract` is better for multi-page or
   broader structured extraction jobs.
+
+Supabase produced a confirmed improvement:
+
+- Terse description: schema-changing SQL chose `execute_sql`.
+- Tuned description: the same DDL and RLS policy tasks chose `apply_migration`.
+- Rationale: Supabase schema changes should be tracked as migrations. `execute_sql` is for regular
+  SQL that does not change schema.
 
 This is the useful pattern: do not broadly rewrite a tool catalog. Identify one ambiguous boundary,
 write a realistic prompt that isolates it, and prove the tuned wording changes the next tool call.
@@ -55,6 +64,15 @@ The current Firecrawl MCP server already contains much of this boundary guidance
 as a regression and migration test for older/terse descriptions, not as a claim that the current
 server is broken.
 
+Supabase adversarial DDL run:
+
+- Anthropic native tools: terse 0/3, tuned 3/3.
+- Anthropic prompt JSON: terse 0/3, tuned 3/3.
+- OpenAI native tools: terse 1/3, tuned 3/3.
+- OpenAI prompt JSON: terse 3/3, tuned 3/3.
+- Gemini native tools: terse 0/3, tuned 3/3.
+- Gemini prompt JSON: terse 0/3, tuned 3/3.
+
 ## Commands
 
 Dry contract checks:
@@ -66,6 +84,22 @@ python -m claude_agent_harness_optimization model-matrix evals/model_matrix/fire
   --variants legacy_firecrawl_mcp,tuned_firecrawl_mcp_boundaries \
   --instruction-variants firecrawl_host_rules \
   --max-cases 2 \
+  --markdown
+```
+
+Live Supabase DDL boundary check:
+
+```bash
+python -m claude_agent_harness_optimization model-matrix evals/model_matrix/supabase_mcp_database_tool_selection.json \
+  --env-file .env \
+  --live \
+  --require-live \
+  --providers anthropic,openai,gemini \
+  --harnesses prompt_json,native_tools \
+  --variants terse_supabase_database_mcp,tuned_supabase_database_boundaries \
+  --instruction-variants supabase_database_host_rules \
+  --cases "ddl create table uses migration,ddl create index uses migration,rls policy uses migration" \
+  --concurrency 3 \
   --markdown
 ```
 
@@ -109,3 +143,6 @@ python -m claude_agent_harness_optimization model-matrix evals/model_matrix/fire
 - `https://github.com/crystaldba/postgres-mcp`
 - `https://github.com/microsoft/playwright-mcp`
 - `https://github.com/github/github-mcp-server`
+- `https://github.com/upstash/context7`
+- `https://github.com/supabase/mcp`
+- `https://supabase.com/docs/guides/ai-tools/mcp`
