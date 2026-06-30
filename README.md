@@ -173,6 +173,10 @@ VHS-generated `demo.gif` against `demo.tape`, checks the tape's referenced files
 to stay public from the README, and makes sure committed result receipts are reachable from public
 docs or PR packet text.
 
+`scripts/check_artifact_format.py` protects generic tracked artifact formatting. It validates every
+tracked JSON file parses, every JSONL line parses, and text artifacts stay nonempty, UTF-8, LF-only,
+and newline-terminated.
+
 `scripts/check_optimize_shortcuts.py` protects the public MCP shortcut runner. It validates every
 `make optimize mcp=...` target in `scripts/optimize_mcp.py` against its stored matrix, variants,
 instruction rules, provider and harness defaults, public docs, Makefile help, and dry selected cells.
@@ -590,6 +594,7 @@ python scripts/check_docs_navigation.py
 python scripts/check_source_map.py
 python scripts/check_public_links.py
 python scripts/check_artifact_surfaces.py
+python scripts/check_artifact_format.py
 python scripts/check_optimize_shortcuts.py
 python scripts/check_cli_coverage.py
 python scripts/check_project_instructions.py

@@ -63,13 +63,13 @@ class CheckSurfaceInventoryScriptTests(unittest.TestCase):
         with tempfile.TemporaryDirectory() as temp_dir:
             root = Path(temp_dir)
             _write_minimal_repo(root)
-            _touch(root / "unowned" / "surface.txt")
+            _touch(root / "unowned" / "surface.bin")
 
             failures = check_surface_inventory(root)
 
         joined = "\n".join(failures)
         self.assertIn(
-            "unowned/surface.txt: tracked file is not covered by docs/surface-inventory.md",
+            "unowned/surface.bin: tracked file is not covered by docs/surface-inventory.md",
             joined,
         )
 

@@ -129,6 +129,12 @@ REQUIRED_SURFACES = (
         artifacts=("demo.gif", "tests/test_check_artifact_surfaces_script.py"),
     ),
     SurfaceContract(
+        name="Generic Artifact Format",
+        paths=("**/*.json", "**/*.jsonl", "**/*.md", "**/*.txt", "**/*.yml", "**/*.yaml", "**/*.toml"),
+        gates=("python scripts/check_artifact_format.py",),
+        artifacts=("tests/test_check_artifact_format_script.py",),
+    ),
+    SurfaceContract(
         name="Value Bar Ledger",
         paths=(
             "docs/confirmed-improvements.md",

@@ -76,6 +76,7 @@ python scripts/check_docs_navigation.py
 python scripts/check_source_map.py
 python scripts/check_public_links.py
 python scripts/check_artifact_surfaces.py
+python scripts/check_artifact_format.py
 python scripts/check_optimize_shortcuts.py
 python scripts/check_cli_coverage.py
 python scripts/check_project_instructions.py

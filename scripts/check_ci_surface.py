@@ -22,6 +22,7 @@ REQUIRED_SUBSTRINGS = (
     ("unit test suite", "python -m unittest discover -s tests -q"),
     ("surface inventory gate", "python scripts/check_surface_inventory.py"),
     ("regression ownership gate", "python scripts/check_regression_ownership.py"),
+    ("artifact format gate", "python scripts/check_artifact_format.py"),
     (
         "strict matrix coverage suite",
         "python -m claude_agent_harness_opt matrix-coverage-suite "
