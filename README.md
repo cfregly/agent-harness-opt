@@ -141,6 +141,10 @@ private-key blocks and provider token patterns, verifies `.env` remains ignored,
 `.env.example`, rejects duplicate sample keys, and requires credential-like sample values to stay
 blank or placeholder-only.
 
+`scripts/check_local_config.py` protects local setup and credential docs. It derives required env
+keys from E2E specs, model matrices, and probe scripts, then checks `.env.example`,
+`docs/setup.md`, and `docs/credentialed-service-probes.md` stay synchronized.
+
 `scripts/check_docs_navigation.py` protects the public navigation surface. It verifies repo-local
 GitHub links point at existing files or folders, every docs page is reachable from the README,
 README layout entries still exist, Makefile help covers public targets, and the package console
@@ -568,6 +572,7 @@ python scripts/check_skill_surfaces.py
 python scripts/check_command_surfaces.py
 python scripts/check_ci_surface.py
 python scripts/check_secret_hygiene.py
+python scripts/check_local_config.py
 python scripts/check_docs_navigation.py
 python scripts/check_source_map.py
 python scripts/check_public_links.py

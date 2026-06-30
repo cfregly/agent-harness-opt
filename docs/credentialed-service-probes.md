@@ -29,6 +29,23 @@ The probes are intentionally read-only:
 - ClickHouse Cloud: reads visible organizations through the Cloud API.
 - Stripe: reads the account attached to the secret key.
 
+## Environment Keys
+
+Keep these keys synchronized with `.env.example`:
+
+- Firecrawl: `FIRECRAWL_API_KEY`
+- GitHub: `GITHUB_TOKEN`
+- Cloudflare: `CLOUDFLARE_ACCOUNT_ID`, `CLOUDFLARE_API_TOKEN`
+- Cloudflare R2 REST API: `CLOUDFLARE_R2_API_TOKEN`
+- Cloudflare R2 S3 API: `R2_ACCESS_KEY_ID`, `R2_SECRET_ACCESS_KEY`, `R2_ENDPOINT`,
+  `R2_TEST_BUCKET`
+- ClickHouse Cloud API: `CLICKHOUSE_CLOUD_KEY_ID`, `CLICKHOUSE_CLOUD_KEY_SECRET`
+- ClickHouse database: `CLICKHOUSE_HOST`, `CLICKHOUSE_PORT`, `CLICKHOUSE_USER`,
+  `CLICKHOUSE_PASSWORD`, `CLICKHOUSE_DATABASE`, `CLICKHOUSE_SECURE`,
+  `CLICKHOUSE_ALLOW_WRITE_ACCESS`
+- Stripe: `STRIPE_SECRET_KEY`
+- Zymtrace local checks: `ZYMTRACE_LICENSE_KEY`
+
 Cloudflare R2 has two credential shapes:
 
 - `CLOUDFLARE_R2_API_TOKEN`: Cloudflare account token used by the REST API for account/R2 checks.
