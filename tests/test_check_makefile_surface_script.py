@@ -28,6 +28,18 @@ class CheckMakefileSurfaceScriptTests(unittest.TestCase):
         with tempfile.TemporaryDirectory() as temp_dir:
             root = Path(temp_dir)
             (root / "Makefile").write_text(_valid_makefile(), encoding="utf-8")
+            (root / "evals" / "results").mkdir(parents=True)
+            (root / "README.md").write_text(
+                "\n".join(
+                    [
+                        "`make help`",
+                        "make optimize mcp=sample OUT=evals/results/sample.md",
+                        "make optimize-dry mcp=sample",
+                        "make optimize-grind mcp=sample",
+                    ]
+                ),
+                encoding="utf-8",
+            )
 
             failures = check_makefile_surface(root, [_target("sample")], run_help=False)
 
@@ -52,6 +64,32 @@ class CheckMakefileSurfaceScriptTests(unittest.TestCase):
         self.assertIn("Makefile: optimize must be live and require live credentials", joined)
         self.assertIn("Makefile: help missing optimize shortcut mcp=sample", joined)
         self.assertIn("Makefile: optimize-dry must stay keyless and non-live", joined)
+
+    def test_rejects_documented_make_example_drift(self):
+        with tempfile.TemporaryDirectory() as temp_dir:
+            root = Path(temp_dir)
+            (root / "Makefile").write_text(_valid_makefile(), encoding="utf-8")
+            (root / "README.md").write_text(
+                "\n".join(
+                    [
+                        "make missing mcp=sample",
+                        "make optimize mcp=missing",
+                        "make optimize MCP=sample",
+                        "make optimize mcp=sample OUT=missing-dir/result.md",
+                        "make optimize",
+                    ]
+                ),
+                encoding="utf-8",
+            )
+
+            failures = check_makefile_surface(root, [_target("sample")], run_help=False)
+
+        joined = "\n".join(failures)
+        self.assertIn("unknown Makefile target 'missing'", joined)
+        self.assertIn("unknown mcp= selector 'missing'", joined)
+        self.assertIn("use lowercase mcp= or url= selector in make examples", joined)
+        self.assertIn("OUT path parent does not exist: 'missing-dir/result.md'", joined)
+        self.assertIn("optimize make example must include mcp= or url=", joined)
 
 
 def _target(primary: str) -> Target:

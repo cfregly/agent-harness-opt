@@ -183,7 +183,7 @@ instruction rules, provider and harness defaults, public docs, Makefile help, an
 
 `scripts/check_makefile_surface.py` protects the Makefile command contract directly. It verifies the
 public phony targets, selector guardrails, live versus dry-run flag separation, pass-through options,
-registered MCP shortcut coverage, and a real `make help` smoke run.
+registered MCP shortcut coverage, documented `make ...` examples, and a real `make help` smoke run.
 
 `scripts/check_cli_coverage.py` protects the executable CLI surface in CI. It parses the public
 subcommands from `python -m claude_agent_harness_opt --help` and requires every one to have a direct

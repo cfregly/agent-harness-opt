@@ -3,8 +3,10 @@
 
 from __future__ import annotations
 
+from dataclasses import dataclass
 from pathlib import Path
 import re
+import shlex
 import subprocess
 import sys
 from typing import Iterable
@@ -14,16 +16,30 @@ ROOT = Path(__file__).resolve().parents[1]
 if str(ROOT) not in sys.path:
     sys.path.insert(0, str(ROOT))
 
-from scripts.optimize_mcp import TARGETS, Target  # noqa: E402
+from scripts.optimize_mcp import TARGETS, Target, _normalize_target  # noqa: E402
 
 
 EXPECTED_PHONY_TARGETS = ("help", "optimize", "optimize-dry", "optimize-grind")
+DOC_MAKE_PATHS = (
+    "README.md",
+    "CLAUDE.md",
+    "docs",
+)
 PASSTHROUGH_FLAGS = (
     ('$(if $(PROVIDERS),--providers "$(PROVIDERS)",)', "PROVIDERS"),
     ('$(if $(HARNESSES),--harnesses "$(HARNESSES)",)', "HARNESSES"),
     ('$(if $(MAX_CASES),--max-cases "$(MAX_CASES)",)', "MAX_CASES"),
     ('$(if $(OUT),--out "$(OUT)",)', "OUT"),
 )
+INLINE_CODE_RE = re.compile(r"`([^`]*\bmake\s+[A-Za-z0-9_-][^`]*)`")
+
+
+@dataclass(frozen=True)
+class MakeInvocation:
+    source: Path
+    line: int
+    raw: str
+    tokens: tuple[str, ...]
 
 
 def main() -> int:
@@ -46,11 +62,13 @@ def check_makefile_surface(
         return ["Makefile: missing"]
 
     text = path.read_text(encoding="utf-8")
+    target_list = list(targets)
     failures: list[str] = []
     failures.extend(_check_phony_targets(text))
     failures.extend(_check_selector_contract(text))
     failures.extend(_check_recipe_contract(text))
-    failures.extend(_check_target_shortcuts(text, list(targets)))
+    failures.extend(_check_target_shortcuts(text, target_list))
+    failures.extend(_check_documented_make_invocations(root, text, target_list))
     if run_help:
         failures.extend(_check_help_smoke(root, text))
     return failures
@@ -75,6 +93,11 @@ def _check_phony_targets(text: str) -> list[str]:
         if f"make {target}" not in text:
             failures.append(f"Makefile: help text missing public target {target}")
     return failures
+
+
+def _phony_targets(text: str) -> tuple[str, ...]:
+    match = re.search(r"^\.PHONY:\s*(.+)$", text, flags=re.MULTILINE)
+    return tuple(match.group(1).split()) if match else ()
 
 
 def _check_selector_contract(text: str) -> list[str]:
@@ -130,6 +153,140 @@ def _check_recipe_contract(text: str) -> list[str]:
     if "--grind" not in grind:
         failures.append("Makefile: optimize-grind must enable grind mode")
     return failures
+
+
+def _check_documented_make_invocations(
+    root: Path,
+    makefile: str,
+    targets: list[Target],
+) -> list[str]:
+    phony = set(_phony_targets(makefile))
+    failures: list[str] = []
+    for invocation in _collect_make_invocations(root):
+        prefix = f"{_rel(invocation.source, root)}:{invocation.line}"
+        if len(invocation.tokens) < 2:
+            failures.append(f"{prefix}: malformed make invocation {invocation.raw!r}")
+            continue
+
+        target = invocation.tokens[1]
+        if target not in phony:
+            failures.append(f"{prefix}: unknown Makefile target {target!r}")
+            continue
+
+        if target.startswith("optimize"):
+            failures.extend(_check_optimize_invocation(root, prefix, invocation, targets))
+    return failures
+
+
+def _collect_make_invocations(root: Path) -> list[MakeInvocation]:
+    invocations: list[MakeInvocation] = []
+    for path in _doc_make_files(root):
+        text = path.read_text(encoding="utf-8")
+        for line_number, raw_line in enumerate(text.splitlines(), start=1):
+            invocations.extend(_line_make_invocations(path, line_number, raw_line))
+    return invocations
+
+
+def _doc_make_files(root: Path) -> list[Path]:
+    files: list[Path] = []
+    for entry in DOC_MAKE_PATHS:
+        path = root / entry
+        if not path.exists():
+            continue
+        if path.is_file():
+            files.append(path)
+            continue
+        files.extend(sorted(path.rglob("*.md")))
+        files.extend(sorted(path.rglob("*.yml")))
+        files.extend(sorted(path.rglob("*.yaml")))
+    return sorted(set(files))
+
+
+def _line_make_invocations(source: Path, line_number: int, raw_line: str) -> list[MakeInvocation]:
+    invocations: list[MakeInvocation] = []
+    stripped = raw_line.strip()
+    for prefix in ("make ", "$ make ", "> make "):
+        if stripped.startswith(prefix):
+            raw = stripped.removeprefix("$ ").removeprefix("> ")
+            invocation = _make_invocation(source, line_number, raw)
+            if invocation is not None:
+                invocations.append(invocation)
+            break
+
+    for match in INLINE_CODE_RE.finditer(raw_line):
+        raw = match.group(1).strip()
+        if raw.startswith("$ "):
+            raw = raw[2:].strip()
+        if not raw.startswith("make "):
+            continue
+        invocation = _make_invocation(source, line_number, raw)
+        if invocation is not None:
+            invocations.append(invocation)
+    return invocations
+
+
+def _make_invocation(source: Path, line: int, raw: str) -> MakeInvocation | None:
+    try:
+        tokens = tuple(shlex.split(raw))
+    except ValueError:
+        tokens = tuple(raw.split())
+    if not tokens or tokens[0] != "make":
+        return None
+    return MakeInvocation(source=source, line=line, raw=raw, tokens=tokens)
+
+
+def _check_optimize_invocation(
+    root: Path,
+    prefix: str,
+    invocation: MakeInvocation,
+    targets: list[Target],
+) -> list[str]:
+    failures: list[str] = []
+    selector_values: list[tuple[str, str]] = []
+    for token in invocation.tokens[2:]:
+        if token.startswith("MCP=") or token.startswith("URL="):
+            failures.append(f"{prefix}: use lowercase mcp= or url= selector in make examples")
+        if token.startswith("mcp="):
+            selector_values.append(("mcp", token.split("=", 1)[1]))
+        if token.startswith("url="):
+            selector_values.append(("url", token.split("=", 1)[1]))
+        if token.startswith("OUT="):
+            failures.extend(_check_out_path(root, prefix, token.split("=", 1)[1]))
+
+    concrete_selectors = [
+        (kind, value)
+        for kind, value in selector_values
+        if value and not _is_placeholder(value)
+    ]
+    if not selector_values:
+        failures.append(f"{prefix}: optimize make example must include mcp= or url=")
+    for kind, value in concrete_selectors:
+        if not _selector_resolves(value, targets):
+            known = ", ".join(target.inputs[0] for target in targets)
+            failures.append(f"{prefix}: unknown {kind}= selector {value!r}. Use one of: {known}")
+    return failures
+
+
+def _check_out_path(root: Path, prefix: str, value: str) -> list[str]:
+    if _is_placeholder(value) or value.startswith("/tmp/"):
+        return []
+    path = root / value
+    if path.parent.exists():
+        return []
+    return [f"{prefix}: OUT path parent does not exist: {value!r}"]
+
+
+def _is_placeholder(value: str) -> bool:
+    return any(marker in value for marker in ("...", "<", ">", "$", "{", "}"))
+
+
+def _selector_resolves(value: str, targets: list[Target]) -> bool:
+    normalized = _normalize_target(value)
+    for target in targets:
+        for selector in target.inputs:
+            if normalized == _normalize_target(selector):
+                return True
+    return False
 
 
 def _check_target_shortcuts(text: str, targets: list[Target]) -> list[str]:
@@ -197,6 +354,13 @@ def _unquote_echo(value: str) -> str:
     if len(value) >= 2 and value[0] == value[-1] == '"':
         return value[1:-1]
     return value
+
+
+def _rel(path: Path, root: Path = ROOT) -> Path:
+    try:
+        return path.relative_to(root)
+    except ValueError:
+        return path
 
 
 if __name__ == "__main__":
