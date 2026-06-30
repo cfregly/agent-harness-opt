@@ -115,6 +115,10 @@ surfaces too. It renders every recipe, lints the recipe tool boundaries, checks 
 requires the core operating-loop and value-bar sections in the rendered prompt, and fails new prompt
 templates unless they have an explicit surface contract.
 
+`scripts/check_skill_surfaces.py` applies the same fail-closed rule to project-local skills. It
+validates each `SKILL.md` frontmatter block, routing and reporting sections, referenced CLI
+commands, What-To-Look-For categories, and agent metadata under `.claude/skills/*/agents`.
+
 | Target | Result | Packet |
 |---|---|---|
 | InsForge | Confirmed improvement | [InsForge](https://github.com/cfregly/claude-agent-harness-opt/tree/main/docs/findings/insforge) |
@@ -503,6 +507,7 @@ python scripts/deslop_check.py
 python -m compileall claude_agent_harness_opt scripts
 python -m unittest discover -s tests -q
 python scripts/check_prompt_recipe_surfaces.py
+python scripts/check_skill_surfaces.py
 python -m claude_agent_harness_opt eval evals/examples/search_answer.json
 python -m claude_agent_harness_opt review-trace evals/examples/agent_trace_good.json
 python -m claude_agent_harness_opt normalize-claude evals/examples/claude_messages.json
