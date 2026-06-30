@@ -22,6 +22,10 @@ harnesses, `CLAUDE.md` style instructions, and skills across model generations.
 
 - Keep it standalone. Do not reference parent workspaces, private notes, or local-only files.
 - Keep it generic. Do not add interview framing, employer-specific context, or individual names.
+- Preserve user changes. Read local diffs before editing, keep unrelated dirty files intact, and
+  never rewrite work you did not make.
+- No destructive git cleanup. Do not use reset, checkout, clean, force push, or history rewrite
+  commands unless the user explicitly asks for that exact operation.
 - Track reasoning and tool use explicitly. Real audits must include visible reasoning summaries or
   decision notes, ordered tool calls, tool outputs, and final answers.
 - Enforce directed thinking in traces and prompts. Before the first tool, visible reasoning must
@@ -38,3 +42,38 @@ harnesses, `CLAUDE.md` style instructions, and skills across model generations.
 - Secrets never get committed. `.env` stays git-ignored.
 - Prose is deslop-clean: no em-dashes, no en-dashes, no semicolons, and no buzzwords. Run
   `python scripts/deslop_check.py` before shipping.
+
+## Coverage Workflow
+
+Use `.claude/skills/agent-audit/SKILL.md` when reviewing agent traces, tool boundaries, skills, or
+MCP surfaces. Treat skills as one input to the hill descent, not as the whole corpus. Also inventory
+MCP `tools/list`, resource lists, generated schemas, source pins, upstream docs, support reports,
+smoke-call output, existing transcripts, and README or `CLAUDE.md` host rules.
+
+Retain useful cases as eval material. Store reusable matrices under `evals/model_matrix`, imported
+or minimal transcripts under `evals/examples`, dated receipts under `evals/results`, upstream PR
+packets under `evals/pr_packets`, and promoted public findings under `docs/findings`. Run
+`matrix-coverage-suite` before claiming broad coverage, and use `grind-harness` when you need a
+bounded baseline-to-candidate climb.
+
+## Verification Gates
+
+Run the relevant focused command first, then run the full gate set before shipping broad changes:
+
+```bash
+python scripts/deslop_check.py
+python scripts/check_value_bar.py
+python scripts/check_prompt_recipe_surfaces.py
+python scripts/check_skill_surfaces.py
+python scripts/check_command_surfaces.py
+python scripts/check_secret_hygiene.py
+python scripts/check_docs_navigation.py
+python scripts/check_artifact_surfaces.py
+python scripts/check_optimize_shortcuts.py
+python scripts/check_cli_coverage.py
+python scripts/check_project_instructions.py
+python scripts/check_finding_packets.py
+python scripts/check_eval_surfaces.py
+python -m compileall claude_agent_harness_opt scripts
+python -m unittest discover -s tests -q
+```

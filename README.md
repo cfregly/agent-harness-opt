@@ -559,6 +559,7 @@ python scripts/check_docs_navigation.py
 python scripts/check_artifact_surfaces.py
 python scripts/check_optimize_shortcuts.py
 python scripts/check_cli_coverage.py
+python scripts/check_project_instructions.py
 python -m claude_agent_harness_opt judge-prompt evals/examples/search_answer.json > /tmp/judge-prompt.txt
 python -m claude_agent_harness_opt eval evals/examples/search_answer.json
 python -m claude_agent_harness_opt review-trace evals/examples/agent_trace_good.json

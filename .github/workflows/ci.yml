@@ -22,6 +22,7 @@ jobs:
       - run: python scripts/check_artifact_surfaces.py
       - run: python scripts/check_optimize_shortcuts.py
       - run: python scripts/check_cli_coverage.py
+      - run: python scripts/check_project_instructions.py
       - run: python -m claude_agent_harness_opt matrix-coverage-suite evals/model_matrix evals/targets/gstack/gstack_skill_selection_matrix.json --strict --out /tmp/model-matrix-coverage-suite.json
       - run: python scripts/check_finding_packets.py
       - run: python scripts/check_eval_surfaces.py
