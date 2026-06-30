@@ -68,6 +68,7 @@ python scripts/check_skill_surfaces.py
 python scripts/check_command_surfaces.py
 python scripts/check_secret_hygiene.py
 python scripts/check_docs_navigation.py
+python scripts/check_public_links.py
 python scripts/check_artifact_surfaces.py
 python scripts/check_optimize_shortcuts.py
 python scripts/check_cli_coverage.py

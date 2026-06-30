@@ -142,6 +142,10 @@ GitHub links point at existing files or folders, every docs page is reachable fr
 README layout entries still exist, Makefile help covers public targets, and the package console
 script target imports cleanly from `pyproject.toml`.
 
+`scripts/check_public_links.py` keeps README and docs links shareable. It rejects empty Markdown
+targets and local relative links in public docs, including image links, while ignoring examples
+inside fenced code blocks.
+
 `scripts/check_artifact_surfaces.py` protects tracked non-code artifacts. It validates the
 VHS-generated `demo.gif` against `demo.tape`, checks the tape's referenced files, requires the demo
 to stay public from the README, and makes sure committed result receipts are reachable from public
@@ -556,6 +560,7 @@ python scripts/check_skill_surfaces.py
 python scripts/check_command_surfaces.py
 python scripts/check_secret_hygiene.py
 python scripts/check_docs_navigation.py
+python scripts/check_public_links.py
 python scripts/check_artifact_surfaces.py
 python scripts/check_optimize_shortcuts.py
 python scripts/check_cli_coverage.py
