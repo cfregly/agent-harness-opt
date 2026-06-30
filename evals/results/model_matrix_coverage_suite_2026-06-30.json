@@ -482,6 +482,7 @@
         "boundary_pair_count": 42,
         "case_count": 7,
         "case_count_with_check_family": 7,
+        "case_expectation_gap_count": 0,
         "forbidden_tool_coverage": 1.0,
         "identity_gap_count": 0,
         "instruction_variant_count": 2,
@@ -633,6 +634,7 @@
         }
       ],
       "uncovered": {
+        "case_expectation_gaps": [],
         "cases_without_check_family": [],
         "cases_without_forbidden": [],
         "duplicate_tool_names": [],
@@ -914,6 +916,7 @@
         "boundary_pair_count": 6,
         "case_count": 10,
         "case_count_with_check_family": 10,
+        "case_expectation_gap_count": 0,
         "forbidden_tool_coverage": 1.0,
         "identity_gap_count": 0,
         "instruction_variant_count": 1,
@@ -1005,6 +1008,7 @@
         }
       ],
       "uncovered": {
+        "case_expectation_gaps": [],
         "cases_without_check_family": [],
         "cases_without_forbidden": [],
         "duplicate_tool_names": [],
@@ -1093,6 +1097,7 @@
         "boundary_pair_count": 2,
         "case_count": 2,
         "case_count_with_check_family": 2,
+        "case_expectation_gap_count": 0,
         "forbidden_tool_coverage": 1.0,
         "identity_gap_count": 0,
         "instruction_variant_count": 1,
@@ -1140,6 +1145,7 @@
         }
       ],
       "uncovered": {
+        "case_expectation_gaps": [],
         "cases_without_check_family": [],
         "cases_without_forbidden": [],
         "duplicate_tool_names": [],
@@ -1407,6 +1413,7 @@
         "boundary_pair_count": 12,
         "case_count": 7,
         "case_count_with_check_family": 7,
+        "case_expectation_gap_count": 0,
         "forbidden_tool_coverage": 1.0,
         "identity_gap_count": 0,
         "instruction_variant_count": 2,
@@ -1507,6 +1514,7 @@
         }
       ],
       "uncovered": {
+        "case_expectation_gaps": [],
         "cases_without_check_family": [],
         "cases_without_forbidden": [],
         "duplicate_tool_names": [],
@@ -1740,6 +1748,7 @@
         "boundary_pair_count": 2,
         "case_count": 9,
         "case_count_with_check_family": 9,
+        "case_expectation_gap_count": 0,
         "forbidden_tool_coverage": 1.0,
         "identity_gap_count": 0,
         "instruction_variant_count": 1,
@@ -1812,6 +1821,7 @@
         }
       ],
       "uncovered": {
+        "case_expectation_gaps": [],
         "cases_without_check_family": [],
         "cases_without_forbidden": [],
         "duplicate_tool_names": [],
@@ -2930,6 +2940,7 @@
         "boundary_pair_count": 110,
         "case_count": 11,
         "case_count_with_check_family": 11,
+        "case_expectation_gap_count": 0,
         "forbidden_tool_coverage": 1.0,
         "identity_gap_count": 0,
         "instruction_variant_count": 1,
@@ -3195,6 +3206,7 @@
         }
       ],
       "uncovered": {
+        "case_expectation_gaps": [],
         "cases_without_check_family": [],
         "cases_without_forbidden": [],
         "duplicate_tool_names": [],
@@ -3828,6 +3840,7 @@
         "boundary_pair_count": 38,
         "case_count": 15,
         "case_count_with_check_family": 15,
+        "case_expectation_gap_count": 0,
         "forbidden_tool_coverage": 1.0,
         "identity_gap_count": 0,
         "instruction_variant_count": 1,
@@ -4048,6 +4061,7 @@
         }
       ],
       "uncovered": {
+        "case_expectation_gaps": [],
         "cases_without_check_family": [],
         "cases_without_forbidden": [],
         "duplicate_tool_names": [],
@@ -5541,6 +5555,7 @@
         "boundary_pair_count": 132,
         "case_count": 16,
         "case_count_with_check_family": 16,
+        "case_expectation_gap_count": 0,
         "forbidden_tool_coverage": 1.0,
         "identity_gap_count": 0,
         "instruction_variant_count": 1,
@@ -5893,6 +5908,7 @@
         }
       ],
       "uncovered": {
+        "case_expectation_gaps": [],
         "cases_without_check_family": [],
         "cases_without_forbidden": [],
         "duplicate_tool_names": [],
@@ -5997,6 +6013,7 @@
         "boundary_pair_count": 3,
         "case_count": 2,
         "case_count_with_check_family": 2,
+        "case_expectation_gap_count": 0,
         "forbidden_tool_coverage": 1.0,
         "identity_gap_count": 0,
         "instruction_variant_count": 1,
@@ -6031,6 +6048,7 @@
         }
       ],
       "uncovered": {
+        "case_expectation_gaps": [],
         "cases_without_check_family": [],
         "cases_without_forbidden": [],
         "duplicate_tool_names": [],
@@ -6361,6 +6379,7 @@
         "boundary_pair_count": 20,
         "case_count": 7,
         "case_count_with_check_family": 7,
+        "case_expectation_gap_count": 0,
         "forbidden_tool_coverage": 1.0,
         "identity_gap_count": 0,
         "instruction_variant_count": 1,
@@ -6476,6 +6495,7 @@
         }
       ],
       "uncovered": {
+        "case_expectation_gaps": [],
         "cases_without_check_family": [],
         "cases_without_forbidden": [],
         "duplicate_tool_names": [],
@@ -7252,6 +7272,7 @@
         "boundary_pair_count": 49,
         "case_count": 19,
         "case_count_with_check_family": 19,
+        "case_expectation_gap_count": 0,
         "forbidden_tool_coverage": 1.0,
         "identity_gap_count": 0,
         "instruction_variant_count": 1,
@@ -7541,6 +7562,7 @@
         }
       ],
       "uncovered": {
+        "case_expectation_gaps": [],
         "cases_without_check_family": [],
         "cases_without_forbidden": [],
         "duplicate_tool_names": [],
@@ -7800,6 +7822,7 @@
         "boundary_pair_count": 12,
         "case_count": 7,
         "case_count_with_check_family": 7,
+        "case_expectation_gap_count": 0,
         "forbidden_tool_coverage": 1.0,
         "identity_gap_count": 0,
         "instruction_variant_count": 1,
@@ -7890,6 +7913,7 @@
         }
       ],
       "uncovered": {
+        "case_expectation_gaps": [],
         "cases_without_check_family": [],
         "cases_without_forbidden": [],
         "duplicate_tool_names": [],
@@ -9416,6 +9440,7 @@
         "boundary_pair_count": 156,
         "case_count": 13,
         "case_count_with_check_family": 13,
+        "case_expectation_gap_count": 0,
         "forbidden_tool_coverage": 1.0,
         "identity_gap_count": 0,
         "instruction_variant_count": 1,
@@ -9753,6 +9778,7 @@
         }
       ],
       "uncovered": {
+        "case_expectation_gaps": [],
         "cases_without_check_family": [],
         "cases_without_forbidden": [],
         "duplicate_tool_names": [],
@@ -10141,6 +10167,7 @@
         "boundary_pair_count": 24,
         "case_count": 9,
         "case_count_with_check_family": 9,
+        "case_expectation_gap_count": 0,
         "forbidden_tool_coverage": 1.0,
         "identity_gap_count": 0,
         "instruction_variant_count": 1,
@@ -10294,6 +10321,7 @@
         }
       ],
       "uncovered": {
+        "case_expectation_gaps": [],
         "cases_without_check_family": [],
         "cases_without_forbidden": [],
         "duplicate_tool_names": [],
@@ -10872,6 +10900,7 @@
         "boundary_pair_count": 42,
         "case_count": 11,
         "case_count_with_check_family": 11,
+        "case_expectation_gap_count": 0,
         "forbidden_tool_coverage": 1.0,
         "identity_gap_count": 0,
         "instruction_variant_count": 1,
@@ -11071,6 +11100,7 @@
         }
       ],
       "uncovered": {
+        "case_expectation_gaps": [],
         "cases_without_check_family": [],
         "cases_without_forbidden": [],
         "duplicate_tool_names": [],
@@ -11709,6 +11739,7 @@
         "boundary_pair_count": 56,
         "case_count": 8,
         "case_count_with_check_family": 8,
+        "case_expectation_gap_count": 0,
         "forbidden_tool_coverage": 1.0,
         "identity_gap_count": 0,
         "instruction_variant_count": 1,
@@ -11886,6 +11917,7 @@
         }
       ],
       "uncovered": {
+        "case_expectation_gaps": [],
         "cases_without_check_family": [],
         "cases_without_forbidden": [],
         "duplicate_tool_names": [],
@@ -12292,6 +12324,7 @@
         "boundary_pair_count": 14,
         "case_count": 12,
         "case_count_with_check_family": 12,
+        "case_expectation_gap_count": 0,
         "forbidden_tool_coverage": 1.0,
         "identity_gap_count": 0,
         "instruction_variant_count": 1,
@@ -12422,6 +12455,7 @@
         }
       ],
       "uncovered": {
+        "case_expectation_gaps": [],
         "cases_without_check_family": [],
         "cases_without_forbidden": [],
         "duplicate_tool_names": [],
@@ -13768,6 +13802,7 @@
         "boundary_pair_count": 85,
         "case_count": 34,
         "case_count_with_check_family": 34,
+        "case_expectation_gap_count": 0,
         "forbidden_tool_coverage": 1.0,
         "identity_gap_count": 0,
         "instruction_variant_count": 2,
@@ -14214,6 +14249,7 @@
         }
       ],
       "uncovered": {
+        "case_expectation_gaps": [],
         "cases_without_check_family": [],
         "cases_without_forbidden": [],
         "duplicate_tool_names": [],
@@ -14258,6 +14294,7 @@
     "passed_matrices": 18,
     "total_argument_cases": 180,
     "total_boundary_pairs": 805,
+    "total_case_expectation_gaps": 0,
     "total_cases": 199,
     "total_identity_gaps": 0,
     "total_instruction_variants": 21,

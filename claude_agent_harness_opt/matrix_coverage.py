@@ -32,6 +32,10 @@ def audit_matrix_coverage_suite(paths: list[str | Path]) -> dict[str, Any]:
             "passed_matrices": sum(1 for audit in audits if audit["passed"]),
             "total_argument_cases": sum(audit["summary"]["argument_case_count"] for audit in audits),
             "total_boundary_pairs": sum(audit["summary"]["boundary_pair_count"] for audit in audits),
+            "total_case_expectation_gaps": sum(
+                audit["summary"]["case_expectation_gap_count"]
+                for audit in audits
+            ),
             "total_cases": sum(audit["summary"]["case_count"] for audit in audits),
             "total_identity_gaps": sum(audit["summary"]["identity_gap_count"] for audit in audits),
             "total_instruction_variants": sum(
@@ -160,6 +164,7 @@ def audit_matrix_coverage_data(
         profiles=profiles,
         tool_variants=variants,
     )
+    case_expectation_gaps = _case_expectation_gaps(cases, variants)
     source_tool_count_mismatch = _source_tool_count_mismatch(matrix.get("source", {}), operational_tools)
     warnings = []
     if never_expected:
@@ -186,6 +191,8 @@ def audit_matrix_coverage_data(
         warnings.append("some tool variants do not expose the same tool surface")
     if identity_gaps:
         warnings.append("some matrix identities or case definitions are ambiguous")
+    if case_expectation_gaps:
+        warnings.append("some case expectations are contradictory or impossible")
     if source_tool_count_mismatch:
         warnings.append("source tool_count does not match matrix tool surface")
 
@@ -211,6 +218,7 @@ def audit_matrix_coverage_data(
         "summary": {
             "argument_case_count": sum(1 for row in case_rows if row["argument_checks"]),
             "boundary_pair_count": len(boundary_pairs),
+            "case_expectation_gap_count": len(case_expectation_gaps),
             "case_count": len(cases),
             "case_count_with_check_family": len(cases) - len(cases_without_check_family),
             "identity_gap_count": len(identity_gaps),
@@ -248,6 +256,7 @@ def audit_matrix_coverage_data(
         "uncovered": {
             "cases_without_check_family": cases_without_check_family,
             "cases_without_forbidden": cases_without_forbidden,
+            "case_expectation_gaps": case_expectation_gaps,
             "expected_without_argument_check": expected_without_argument_check,
             "duplicate_tool_names": duplicate_tool_names,
             "identity_gaps": identity_gaps,
@@ -280,6 +289,7 @@ def render_matrix_coverage_markdown(audit: dict[str, Any]) -> str:
         f"Cases with argument checks: {summary['argument_case_count']}",
         f"Boundary pairs: {summary['boundary_pair_count']}",
         f"Cases with check_family: {summary['case_count_with_check_family']}",
+        f"Case expectation gaps: {summary['case_expectation_gap_count']}",
         f"Identity gaps: {summary['identity_gap_count']}",
         f"Required check-family coverage: {summary['required_check_family_coverage']:.3f}",
         f"Variant surface parity: {summary['variant_surface_parity']:.3f}",
@@ -290,6 +300,7 @@ def render_matrix_coverage_markdown(audit: dict[str, Any]) -> str:
     for label, key in (
         ("Never expected", "never_expected"),
         ("Never forbidden", "never_forbidden"),
+        ("Case expectation gaps", "case_expectation_gaps"),
         ("Expected without argument checks", "expected_without_argument_check"),
         ("Duplicate tool names", "duplicate_tool_names"),
         ("Identity gaps", "identity_gaps"),
@@ -357,6 +368,7 @@ def render_matrix_coverage_suite_markdown(suite: dict[str, Any]) -> str:
         f"Total instruction variants: {summary['total_instruction_variants']}",
         f"Total argument cases: {summary['total_argument_cases']}",
         f"Total boundary pairs: {summary['total_boundary_pairs']}",
+        f"Total case expectation gaps: {summary['total_case_expectation_gaps']}",
         f"Total identity gaps: {summary['total_identity_gaps']}",
         "",
         "## Matrix Summary",
@@ -391,6 +403,7 @@ def render_matrix_coverage_suite_markdown(suite: dict[str, Any]) -> str:
             for label, key in (
                 ("Never expected", "never_expected"),
                 ("Never forbidden", "never_forbidden"),
+                ("Case expectation gaps", "case_expectation_gaps"),
                 ("Expected without argument checks", "expected_without_argument_check"),
                 ("Duplicate tool names", "duplicate_tool_names"),
                 ("Identity gaps", "identity_gaps"),
@@ -581,6 +594,90 @@ def _identity_gaps(
     return gaps
 
 
+def _case_expectation_gaps(
+    cases: list[dict[str, Any]],
+    variants: list[dict[str, Any]],
+) -> list[dict[str, Any]]:
+    gaps: list[dict[str, Any]] = []
+    for index, case in enumerate(cases, start=1):
+        label = _case_label(case, index)
+        expected = case.get("expected_tools", [])
+        forbidden = case.get("forbidden_tools", [])
+        arg_checks = case.get("expected_args_contains", {}) or {}
+        if not isinstance(expected, list) or not isinstance(forbidden, list):
+            continue
+        expected_names = [str(tool) for tool in expected if str(tool)]
+        forbidden_names = [str(tool) for tool in forbidden if str(tool)]
+
+        duplicate_expected = _duplicates(expected_names)
+        if duplicate_expected:
+            gaps.append(
+                {
+                    "case": label,
+                    "field": "cases.expected_tools",
+                    "problem": "duplicate",
+                    "values": duplicate_expected,
+                }
+            )
+        duplicate_forbidden = _duplicates(forbidden_names)
+        if duplicate_forbidden:
+            gaps.append(
+                {
+                    "case": label,
+                    "field": "cases.forbidden_tools",
+                    "problem": "duplicate",
+                    "values": duplicate_forbidden,
+                }
+            )
+
+        overlap = sorted(set(expected_names) & set(forbidden_names))
+        if overlap:
+            gaps.append(
+                {
+                    "case": label,
+                    "field": "cases.expected_tools/cases.forbidden_tools",
+                    "problem": "overlap",
+                    "values": overlap,
+                }
+            )
+        if case.get("allow_no_tool", False) and expected_names:
+            gaps.append(
+                {
+                    "case": label,
+                    "field": "cases.allow_no_tool",
+                    "problem": "expected_tools_present",
+                    "values": expected_names,
+                }
+            )
+        if case.get("allow_no_tool", False) and arg_checks:
+            gaps.append(
+                {
+                    "case": label,
+                    "field": "cases.expected_args_contains",
+                    "problem": "no_tool_case_has_argument_checks",
+                    "values": sorted(str(key) for key in arg_checks),
+                }
+            )
+        if isinstance(arg_checks, dict) and arg_checks and expected_names:
+            available_args = {
+                argument
+                for tool in expected_names
+                for argument in _tool_argument_names(variants, tool)
+            }
+            unknown_args = sorted(str(key) for key in arg_checks if str(key) not in available_args)
+            if unknown_args:
+                gaps.append(
+                    {
+                        "available_arguments": sorted(available_args),
+                        "case": label,
+                        "field": "cases.expected_args_contains",
+                        "problem": "argument_not_in_expected_tool_schema",
+                        "values": unknown_args,
+                    }
+                )
+    return gaps
+
+
 def _append_missing_or_duplicate_name_gaps(
     gaps: list[dict[str, Any]],
     field: str,
@@ -609,6 +706,22 @@ def _duplicates(values: list[str]) -> list[str]:
 def _case_label(case: dict[str, Any], index: int) -> str:
     name = str(case.get("name", "")).strip()
     return name or f"#{index}"
+
+
+def _tool_argument_names(variants: list[dict[str, Any]], name: str) -> set[str]:
+    arguments: set[str] = set()
+    for variant in variants:
+        for tool in variant.get("tools", []):
+            if tool.get("name") != name:
+                continue
+            schema = tool.get("input_schema", {})
+            properties = schema.get("properties", {})
+            if isinstance(properties, dict):
+                arguments.update(str(key) for key in properties)
+            required = schema.get("required", [])
+            if isinstance(required, list):
+                arguments.update(str(key) for key in required)
+    return arguments
 
 
 def _expand_matrix_paths(paths: list[str | Path]) -> list[Path]:

@@ -391,6 +391,66 @@ class MatrixCoverageTests(unittest.TestCase):
         self.assertIn("profiles.harnesses", fields)
         self.assertGreater(audit["summary"]["identity_gap_count"], 0)
 
+    def test_audit_reports_case_expectation_contradictions(self):
+        audit = audit_matrix_coverage_data(
+            {
+                "cases": [
+                    {
+                        "allow_no_tool": True,
+                        "check_family": "no_tool",
+                        "expected_args_contains": {"id": "123"},
+                        "expected_tools": ["lookup"],
+                        "forbidden_tools": ["lookup", "lookup"],
+                        "name": "contradictory case",
+                        "task": "Do not call a tool, but also lookup id 123.",
+                    },
+                    {
+                        "check_family": "schema",
+                        "expected_args_contains": {"missing_arg": "x"},
+                        "expected_tools": ["lookup"],
+                        "forbidden_tools": ["fallback"],
+                        "name": "schema mismatch case",
+                        "task": "Lookup a value with the wrong argument.",
+                    },
+                ],
+                "coverage": {"required_check_families": ["no_tool", "schema"]},
+                "name": "case expectation gap matrix",
+                "profiles": [{"harnesses": ["prompt_json"], "provider": "trace_fixture"}],
+                "tool_variants": [
+                    {
+                        "name": "sample",
+                        "tools": [
+                            {
+                                "input_schema": {
+                                    "properties": {"id": "Lookup id"},
+                                    "required": ["id"],
+                                    "type": "object",
+                                },
+                                "name": "lookup",
+                                "purpose": "Lookup.",
+                                "quality_checks": ["Check ids."],
+                            },
+                            {
+                                "name": "fallback",
+                                "purpose": "Fallback.",
+                                "quality_checks": ["Check fallback."],
+                            },
+                        ],
+                    }
+                ],
+            }
+        )
+
+        self.assertFalse(audit["passed"])
+        self.assertIn("some case expectations are contradictory or impossible", audit["warnings"])
+        problems = {gap["problem"] for gap in audit["uncovered"]["case_expectation_gaps"]}
+        self.assertIn("duplicate", problems)
+        self.assertIn("overlap", problems)
+        self.assertIn("expected_tools_present", problems)
+        self.assertIn("no_tool_case_has_argument_checks", problems)
+        self.assertIn("argument_not_in_expected_tool_schema", problems)
+        self.assertGreater(audit["summary"]["case_expectation_gap_count"], 0)
+
     def test_suite_audit_summarizes_multiple_matrices(self):
         suite = audit_matrix_coverage_suite(
             [
@@ -476,6 +536,7 @@ class MatrixCoverageTests(unittest.TestCase):
                 "passed_matrices": 1,
                 "total_argument_cases": 0,
                 "total_boundary_pairs": 2,
+                "total_case_expectation_gaps": 0,
                 "total_cases": 3,
                 "total_identity_gaps": 0,
                 "total_instruction_variants": 2,
