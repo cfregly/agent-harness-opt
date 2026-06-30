@@ -23,6 +23,7 @@ REQUIRED_SUBSTRINGS = (
     ("surface inventory gate", "python scripts/check_surface_inventory.py"),
     ("regression ownership gate", "python scripts/check_regression_ownership.py"),
     ("artifact format gate", "python scripts/check_artifact_format.py"),
+    ("Makefile surface gate", "python scripts/check_makefile_surface.py"),
     (
         "strict matrix coverage suite",
         "python -m claude_agent_harness_opt matrix-coverage-suite "

@@ -181,6 +181,10 @@ and newline-terminated.
 `make optimize mcp=...` target in `scripts/optimize_mcp.py` against its stored matrix, variants,
 instruction rules, provider and harness defaults, public docs, Makefile help, and dry selected cells.
 
+`scripts/check_makefile_surface.py` protects the Makefile command contract directly. It verifies the
+public phony targets, selector guardrails, live versus dry-run flag separation, pass-through options,
+registered MCP shortcut coverage, and a real `make help` smoke run.
+
 `scripts/check_cli_coverage.py` protects the executable CLI surface in CI. It parses the public
 subcommands from `python -m claude_agent_harness_opt --help` and requires every one to have a direct
 smoke invocation in `.github/workflows/ci.yml`.
@@ -311,6 +315,13 @@ Skills are one input, not the whole descent. They are useful because they encode
 rules, but the descent also uses live MCP inventories, generated schemas, resource lists, upstream
 docs, source pins, trace failures, support reports, smoke-call output, and existing result
 receipts. A case is stronger when at least two of those sources agree that a boundary matters.
+
+Completeness comes from forcing every retained boundary through the same loop: it needs a source
+reference, a matrix or fixture case, a deterministic gate, and a retained result or packet. Skills
+seed workflow rules. MCP schemas seed argument coverage. Docs and source pins seed intended use.
+Traces and support reports seed known failure modes. CI and Makefile commands seed executable
+entrypoints. If a surface cannot be represented in one of those durable forms, treat it as an
+unproven observation rather than coverage.
 
 The coverage target is the product of those inputs, not a single list of skills. For completeness,
 build cases across these axes:
@@ -595,6 +606,7 @@ python scripts/check_source_map.py
 python scripts/check_public_links.py
 python scripts/check_artifact_surfaces.py
 python scripts/check_artifact_format.py
+python scripts/check_makefile_surface.py
 python scripts/check_optimize_shortcuts.py
 python scripts/check_cli_coverage.py
 python scripts/check_project_instructions.py

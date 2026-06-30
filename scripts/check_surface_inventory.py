@@ -113,8 +113,16 @@ REQUIRED_SURFACES = (
     SurfaceContract(
         name="Shortcut Runner And Make Targets",
         paths=("scripts/optimize_mcp.py", "Makefile"),
-        gates=("python scripts/check_optimize_shortcuts.py", "python scripts/check_docs_navigation.py"),
-        artifacts=("evals/model_matrix/zymtrace_mcp_tool_selection.json", "tests/test_optimize_mcp_script.py"),
+        gates=(
+            "python scripts/check_makefile_surface.py",
+            "python scripts/check_optimize_shortcuts.py",
+            "python scripts/check_docs_navigation.py",
+        ),
+        artifacts=(
+            "evals/model_matrix/zymtrace_mcp_tool_selection.json",
+            "tests/test_check_makefile_surface_script.py",
+            "tests/test_optimize_mcp_script.py",
+        ),
     ),
     SurfaceContract(
         name="CI Workflow",

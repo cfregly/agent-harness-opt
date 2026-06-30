@@ -96,6 +96,7 @@ def _valid_ci() -> str:
               - run: python scripts/check_surface_inventory.py
               - run: python scripts/check_regression_ownership.py
               - run: python scripts/check_artifact_format.py
+              - run: python scripts/check_makefile_surface.py
               - run: python -m compileall claude_agent_harness_opt scripts
               - run: python -m unittest discover -s tests -q
               - run: python -m claude_agent_harness_opt matrix-coverage-suite evals/model_matrix evals/targets/gstack/gstack_skill_selection_matrix.json --strict --out /tmp/model-matrix-coverage-suite.json
