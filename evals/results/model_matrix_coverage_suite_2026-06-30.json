@@ -488,7 +488,8 @@
         "required_check_family_coverage": 1.0,
         "tool_count": 7,
         "tool_expected_coverage": 1.0,
-        "tool_variant_count": 2
+        "tool_variant_count": 2,
+        "variant_surface_parity": 1.0
       },
       "tool_variants": [
         {
@@ -631,13 +632,16 @@
       "uncovered": {
         "cases_without_check_family": [],
         "cases_without_forbidden": [],
+        "duplicate_tool_names": [],
         "expected_without_argument_check": [],
         "missing_quality_checks": [],
         "missing_required_check_families": [],
         "never_expected": [],
         "never_forbidden": [],
+        "source_tool_count_mismatch": [],
         "unknown_expected_tools": [],
-        "unknown_forbidden_tools": []
+        "unknown_forbidden_tools": [],
+        "variant_surface_mismatches": []
       },
       "warnings": []
     },
@@ -912,7 +916,8 @@
         "required_check_family_coverage": 1.0,
         "tool_count": 3,
         "tool_expected_coverage": 1.0,
-        "tool_variant_count": 2
+        "tool_variant_count": 2,
+        "variant_surface_parity": 1.0
       },
       "tool_variants": [
         {
@@ -995,13 +1000,16 @@
       "uncovered": {
         "cases_without_check_family": [],
         "cases_without_forbidden": [],
+        "duplicate_tool_names": [],
         "expected_without_argument_check": [],
         "missing_quality_checks": [],
         "missing_required_check_families": [],
         "never_expected": [],
         "never_forbidden": [],
+        "source_tool_count_mismatch": [],
         "unknown_expected_tools": [],
-        "unknown_forbidden_tools": []
+        "unknown_forbidden_tools": [],
+        "variant_surface_mismatches": []
       },
       "warnings": []
     },
@@ -1083,7 +1091,8 @@
         "required_check_family_coverage": 1.0,
         "tool_count": 2,
         "tool_expected_coverage": 1.0,
-        "tool_variant_count": 1
+        "tool_variant_count": 1,
+        "variant_surface_parity": 1.0
       },
       "tool_variants": [
         {
@@ -1122,13 +1131,16 @@
       "uncovered": {
         "cases_without_check_family": [],
         "cases_without_forbidden": [],
+        "duplicate_tool_names": [],
         "expected_without_argument_check": [],
         "missing_quality_checks": [],
         "missing_required_check_families": [],
         "never_expected": [],
         "never_forbidden": [],
+        "source_tool_count_mismatch": [],
         "unknown_expected_tools": [],
-        "unknown_forbidden_tools": []
+        "unknown_forbidden_tools": [],
+        "variant_surface_mismatches": []
       },
       "warnings": []
     },
@@ -1389,7 +1401,8 @@
         "required_check_family_coverage": 1.0,
         "tool_count": 4,
         "tool_expected_coverage": 1.0,
-        "tool_variant_count": 2
+        "tool_variant_count": 2,
+        "variant_surface_parity": 1.0
       },
       "tool_variants": [
         {
@@ -1481,13 +1494,16 @@
       "uncovered": {
         "cases_without_check_family": [],
         "cases_without_forbidden": [],
+        "duplicate_tool_names": [],
         "expected_without_argument_check": [],
         "missing_quality_checks": [],
         "missing_required_check_families": [],
         "never_expected": [],
         "never_forbidden": [],
+        "source_tool_count_mismatch": [],
         "unknown_expected_tools": [],
-        "unknown_forbidden_tools": []
+        "unknown_forbidden_tools": [],
+        "variant_surface_mismatches": []
       },
       "warnings": []
     },
@@ -1714,7 +1730,8 @@
         "required_check_family_coverage": 1.0,
         "tool_count": 2,
         "tool_expected_coverage": 1.0,
-        "tool_variant_count": 2
+        "tool_variant_count": 2,
+        "variant_surface_parity": 1.0
       },
       "tool_variants": [
         {
@@ -1778,13 +1795,16 @@
       "uncovered": {
         "cases_without_check_family": [],
         "cases_without_forbidden": [],
+        "duplicate_tool_names": [],
         "expected_without_argument_check": [],
         "missing_quality_checks": [],
         "missing_required_check_families": [],
         "never_expected": [],
         "never_forbidden": [],
+        "source_tool_count_mismatch": [],
         "unknown_expected_tools": [],
-        "unknown_forbidden_tools": []
+        "unknown_forbidden_tools": [],
+        "variant_surface_mismatches": []
       },
       "warnings": []
     },
@@ -2896,7 +2916,8 @@
         "required_check_family_coverage": 1.0,
         "tool_count": 11,
         "tool_expected_coverage": 1.0,
-        "tool_variant_count": 2
+        "tool_variant_count": 2,
+        "variant_surface_parity": 1.0
       },
       "tool_variants": [
         {
@@ -3153,13 +3174,16 @@
       "uncovered": {
         "cases_without_check_family": [],
         "cases_without_forbidden": [],
+        "duplicate_tool_names": [],
         "expected_without_argument_check": [],
         "missing_quality_checks": [],
         "missing_required_check_families": [],
         "never_expected": [],
         "never_forbidden": [],
+        "source_tool_count_mismatch": [],
         "unknown_expected_tools": [],
-        "unknown_forbidden_tools": []
+        "unknown_forbidden_tools": [],
+        "variant_surface_mismatches": []
       },
       "warnings": []
     },
@@ -3786,7 +3810,8 @@
         "required_check_family_coverage": 1.0,
         "tool_count": 12,
         "tool_expected_coverage": 1.0,
-        "tool_variant_count": 2
+        "tool_variant_count": 2,
+        "variant_surface_parity": 1.0
       },
       "tool_variants": [
         {
@@ -3998,13 +4023,16 @@
       "uncovered": {
         "cases_without_check_family": [],
         "cases_without_forbidden": [],
+        "duplicate_tool_names": [],
         "expected_without_argument_check": [],
         "missing_quality_checks": [],
         "missing_required_check_families": [],
         "never_expected": [],
         "never_forbidden": [],
+        "source_tool_count_mismatch": [],
         "unknown_expected_tools": [],
-        "unknown_forbidden_tools": []
+        "unknown_forbidden_tools": [],
+        "variant_surface_mismatches": []
       },
       "warnings": []
     },
@@ -5491,7 +5519,8 @@
         "required_check_family_coverage": 1.0,
         "tool_count": 12,
         "tool_expected_coverage": 1.0,
-        "tool_variant_count": 2
+        "tool_variant_count": 2,
+        "variant_surface_parity": 1.0
       },
       "tool_variants": [
         {
@@ -5835,13 +5864,16 @@
       "uncovered": {
         "cases_without_check_family": [],
         "cases_without_forbidden": [],
+        "duplicate_tool_names": [],
         "expected_without_argument_check": [],
         "missing_quality_checks": [],
         "missing_required_check_families": [],
         "never_expected": [],
         "never_forbidden": [],
+        "source_tool_count_mismatch": [],
         "unknown_expected_tools": [],
-        "unknown_forbidden_tools": []
+        "unknown_forbidden_tools": [],
+        "variant_surface_mismatches": []
       },
       "warnings": []
     },
@@ -5939,7 +5971,8 @@
         "required_check_family_coverage": 1.0,
         "tool_count": 1,
         "tool_expected_coverage": 1.0,
-        "tool_variant_count": 1
+        "tool_variant_count": 1,
+        "variant_surface_parity": 1.0
       },
       "tool_variants": [
         {
@@ -5965,13 +5998,16 @@
       "uncovered": {
         "cases_without_check_family": [],
         "cases_without_forbidden": [],
+        "duplicate_tool_names": [],
         "expected_without_argument_check": [],
         "missing_quality_checks": [],
         "missing_required_check_families": [],
         "never_expected": [],
         "never_forbidden": [],
+        "source_tool_count_mismatch": [],
         "unknown_expected_tools": [],
-        "unknown_forbidden_tools": []
+        "unknown_forbidden_tools": [],
+        "variant_surface_mismatches": []
       },
       "warnings": []
     },
@@ -6295,7 +6331,8 @@
         "required_check_family_coverage": 1.0,
         "tool_count": 5,
         "tool_expected_coverage": 1.0,
-        "tool_variant_count": 2
+        "tool_variant_count": 2,
+        "variant_surface_parity": 1.0
       },
       "tool_variants": [
         {
@@ -6402,13 +6439,16 @@
       "uncovered": {
         "cases_without_check_family": [],
         "cases_without_forbidden": [],
+        "duplicate_tool_names": [],
         "expected_without_argument_check": [],
         "missing_quality_checks": [],
         "missing_required_check_families": [],
         "never_expected": [],
         "never_forbidden": [],
+        "source_tool_count_mismatch": [],
         "unknown_expected_tools": [],
-        "unknown_forbidden_tools": []
+        "unknown_forbidden_tools": [],
+        "variant_surface_mismatches": []
       },
       "warnings": []
     },
@@ -7178,7 +7218,8 @@
         "required_check_family_coverage": 1.0,
         "tool_count": 18,
         "tool_expected_coverage": 1.0,
-        "tool_variant_count": 2
+        "tool_variant_count": 2,
+        "variant_surface_parity": 1.0
       },
       "tool_variants": [
         {
@@ -7459,13 +7500,16 @@
       "uncovered": {
         "cases_without_check_family": [],
         "cases_without_forbidden": [],
+        "duplicate_tool_names": [],
         "expected_without_argument_check": [],
         "missing_quality_checks": [],
         "missing_required_check_families": [],
         "never_expected": [],
         "never_forbidden": [],
+        "source_tool_count_mismatch": [],
         "unknown_expected_tools": [],
-        "unknown_forbidden_tools": []
+        "unknown_forbidden_tools": [],
+        "variant_surface_mismatches": []
       },
       "warnings": []
     },
@@ -7718,7 +7762,8 @@
         "required_check_family_coverage": 1.0,
         "tool_count": 4,
         "tool_expected_coverage": 1.0,
-        "tool_variant_count": 2
+        "tool_variant_count": 2,
+        "variant_surface_parity": 1.0
       },
       "tool_variants": [
         {
@@ -7800,13 +7845,16 @@
       "uncovered": {
         "cases_without_check_family": [],
         "cases_without_forbidden": [],
+        "duplicate_tool_names": [],
         "expected_without_argument_check": [],
         "missing_quality_checks": [],
         "missing_required_check_families": [],
         "never_expected": [],
         "never_forbidden": [],
+        "source_tool_count_mismatch": [],
         "unknown_expected_tools": [],
-        "unknown_forbidden_tools": []
+        "unknown_forbidden_tools": [],
+        "variant_surface_mismatches": []
       },
       "warnings": []
     },
@@ -9326,7 +9374,8 @@
         "required_check_family_coverage": 1.0,
         "tool_count": 13,
         "tool_expected_coverage": 1.0,
-        "tool_variant_count": 2
+        "tool_variant_count": 2,
+        "variant_surface_parity": 1.0
       },
       "tool_variants": [
         {
@@ -9655,13 +9704,16 @@
       "uncovered": {
         "cases_without_check_family": [],
         "cases_without_forbidden": [],
+        "duplicate_tool_names": [],
         "expected_without_argument_check": [],
         "missing_quality_checks": [],
         "missing_required_check_families": [],
         "never_expected": [],
         "never_forbidden": [],
+        "source_tool_count_mismatch": [],
         "unknown_expected_tools": [],
-        "unknown_forbidden_tools": []
+        "unknown_forbidden_tools": [],
+        "variant_surface_mismatches": []
       },
       "warnings": []
     },
@@ -10043,7 +10095,8 @@
         "required_check_family_coverage": 1.0,
         "tool_count": 9,
         "tool_expected_coverage": 1.0,
-        "tool_variant_count": 2
+        "tool_variant_count": 2,
+        "variant_surface_parity": 1.0
       },
       "tool_variants": [
         {
@@ -10188,13 +10241,16 @@
       "uncovered": {
         "cases_without_check_family": [],
         "cases_without_forbidden": [],
+        "duplicate_tool_names": [],
         "expected_without_argument_check": [],
         "missing_quality_checks": [],
         "missing_required_check_families": [],
         "never_expected": [],
         "never_forbidden": [],
+        "source_tool_count_mismatch": [],
         "unknown_expected_tools": [],
-        "unknown_forbidden_tools": []
+        "unknown_forbidden_tools": [],
+        "variant_surface_mismatches": []
       },
       "warnings": []
     },
@@ -10766,7 +10822,8 @@
         "required_check_family_coverage": 1.0,
         "tool_count": 11,
         "tool_expected_coverage": 1.0,
-        "tool_variant_count": 2
+        "tool_variant_count": 2,
+        "variant_surface_parity": 1.0
       },
       "tool_variants": [
         {
@@ -10957,13 +11014,16 @@
       "uncovered": {
         "cases_without_check_family": [],
         "cases_without_forbidden": [],
+        "duplicate_tool_names": [],
         "expected_without_argument_check": [],
         "missing_quality_checks": [],
         "missing_required_check_families": [],
         "never_expected": [],
         "never_forbidden": [],
+        "source_tool_count_mismatch": [],
         "unknown_expected_tools": [],
-        "unknown_forbidden_tools": []
+        "unknown_forbidden_tools": [],
+        "variant_surface_mismatches": []
       },
       "warnings": []
     },
@@ -11595,7 +11655,8 @@
         "required_check_family_coverage": 1.0,
         "tool_count": 8,
         "tool_expected_coverage": 1.0,
-        "tool_variant_count": 2
+        "tool_variant_count": 2,
+        "variant_surface_parity": 1.0
       },
       "tool_variants": [
         {
@@ -11764,13 +11825,16 @@
       "uncovered": {
         "cases_without_check_family": [],
         "cases_without_forbidden": [],
+        "duplicate_tool_names": [],
         "expected_without_argument_check": [],
         "missing_quality_checks": [],
         "missing_required_check_families": [],
         "never_expected": [],
         "never_forbidden": [],
+        "source_tool_count_mismatch": [],
         "unknown_expected_tools": [],
-        "unknown_forbidden_tools": []
+        "unknown_forbidden_tools": [],
+        "variant_surface_mismatches": []
       },
       "warnings": []
     },
@@ -12170,7 +12234,8 @@
         "required_check_family_coverage": 1.0,
         "tool_count": 5,
         "tool_expected_coverage": 1.0,
-        "tool_variant_count": 2
+        "tool_variant_count": 2,
+        "variant_surface_parity": 1.0
       },
       "tool_variants": [
         {
@@ -12292,13 +12357,16 @@
       "uncovered": {
         "cases_without_check_family": [],
         "cases_without_forbidden": [],
+        "duplicate_tool_names": [],
         "expected_without_argument_check": [],
         "missing_quality_checks": [],
         "missing_required_check_families": [],
         "never_expected": [],
         "never_forbidden": [],
+        "source_tool_count_mismatch": [],
         "unknown_expected_tools": [],
-        "unknown_forbidden_tools": []
+        "unknown_forbidden_tools": [],
+        "variant_surface_mismatches": []
       },
       "warnings": []
     },
@@ -13638,7 +13706,8 @@
         "required_check_family_coverage": 1.0,
         "tool_count": 25,
         "tool_expected_coverage": 1.0,
-        "tool_variant_count": 2
+        "tool_variant_count": 2,
+        "variant_surface_parity": 1.0
       },
       "tool_variants": [
         {
@@ -14076,13 +14145,16 @@
       "uncovered": {
         "cases_without_check_family": [],
         "cases_without_forbidden": [],
+        "duplicate_tool_names": [],
         "expected_without_argument_check": [],
         "missing_quality_checks": [],
         "missing_required_check_families": [],
         "never_expected": [],
         "never_forbidden": [],
+        "source_tool_count_mismatch": [],
         "unknown_expected_tools": [],
-        "unknown_forbidden_tools": []
+        "unknown_forbidden_tools": [],
+        "variant_surface_mismatches": []
       },
       "warnings": []
     }

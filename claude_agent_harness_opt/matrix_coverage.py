@@ -47,6 +47,7 @@ def audit_matrix_coverage_data(
     tools = _tool_names(variants)
     coverage = matrix.get("coverage", {})
     external_forbidden = set(coverage.get("external_forbidden_tools", []))
+    allow_variant_tool_delta = bool(coverage.get("allow_variant_tool_delta", False))
     required_check_families = {
         str(family)
         for family in coverage.get("required_check_families", [])
@@ -139,6 +140,13 @@ def audit_matrix_coverage_data(
         if not row["check_family"]
     ]
     missing_required_check_families = sorted(required_check_families - set(check_families))
+    duplicate_tool_names = _duplicate_tool_names(variants)
+    variant_surface_mismatches = (
+        []
+        if allow_variant_tool_delta
+        else _variant_surface_mismatches(variants)
+    )
+    source_tool_count_mismatch = _source_tool_count_mismatch(matrix.get("source", {}), operational_tools)
     warnings = []
     if never_expected:
         warnings.append("some catalog tools are never expected by a case")
@@ -154,6 +162,12 @@ def audit_matrix_coverage_data(
         warnings.append("some cases do not name a check_family")
     if missing_required_check_families:
         warnings.append("some required check families are not covered")
+    if duplicate_tool_names:
+        warnings.append("some tool variants contain duplicate tool names")
+    if variant_surface_mismatches:
+        warnings.append("some tool variants do not expose the same tool surface")
+    if source_tool_count_mismatch:
+        warnings.append("source tool_count does not match matrix tool surface")
 
     return {
         "boundary_pairs": [
@@ -184,6 +198,10 @@ def audit_matrix_coverage_data(
                 len(required_check_families) - len(missing_required_check_families),
                 len(required_check_families),
             ),
+            "variant_surface_parity": _ratio(
+                len(variants) - len(variant_surface_mismatches),
+                len(variants),
+            ),
             "forbidden_tool_coverage": _ratio(
                 len(operational_tools) - len(never_forbidden),
                 len(operational_tools),
@@ -208,12 +226,15 @@ def audit_matrix_coverage_data(
             "cases_without_check_family": cases_without_check_family,
             "cases_without_forbidden": cases_without_forbidden,
             "expected_without_argument_check": expected_without_argument_check,
+            "duplicate_tool_names": duplicate_tool_names,
             "missing_quality_checks": missing_quality_checks,
             "missing_required_check_families": missing_required_check_families,
             "never_expected": never_expected,
             "never_forbidden": never_forbidden,
+            "source_tool_count_mismatch": source_tool_count_mismatch,
             "unknown_expected_tools": sorted(unknown_expected),
             "unknown_forbidden_tools": sorted(unknown_forbidden),
+            "variant_surface_mismatches": variant_surface_mismatches,
         },
         "warnings": warnings,
     }
@@ -234,6 +255,7 @@ def render_matrix_coverage_markdown(audit: dict[str, Any]) -> str:
         f"Boundary pairs: {summary['boundary_pair_count']}",
         f"Cases with check_family: {summary['case_count_with_check_family']}",
         f"Required check-family coverage: {summary['required_check_family_coverage']:.3f}",
+        f"Variant surface parity: {summary['variant_surface_parity']:.3f}",
         "",
         "## Gaps",
         "",
@@ -242,15 +264,18 @@ def render_matrix_coverage_markdown(audit: dict[str, Any]) -> str:
         ("Never expected", "never_expected"),
         ("Never forbidden", "never_forbidden"),
         ("Expected without argument checks", "expected_without_argument_check"),
+        ("Duplicate tool names", "duplicate_tool_names"),
         ("Missing quality checks", "missing_quality_checks"),
         ("Missing required check families", "missing_required_check_families"),
+        ("Variant surface mismatches", "variant_surface_mismatches"),
+        ("Source tool count mismatch", "source_tool_count_mismatch"),
         ("Cases without forbidden tools", "cases_without_forbidden"),
         ("Cases without check_family", "cases_without_check_family"),
         ("Unknown expected tools", "unknown_expected_tools"),
         ("Unknown forbidden tools", "unknown_forbidden_tools"),
     ):
         values = uncovered.get(key, [])
-        rendered = ", ".join(values) if values else "none"
+        rendered = _render_gap_values(values) if values else "none"
         lines.append(f"- {label}: {rendered}")
 
     lines.extend(
@@ -305,14 +330,14 @@ def render_matrix_coverage_suite_markdown(suite: dict[str, Any]) -> str:
         "",
         "## Matrix Summary",
         "",
-        "| Matrix | Passed | Tools | Cases | Expected | Forbidden | Arg Cases | Check Families | Required Families | Boundary Pairs |",
-        "|---|---|---:|---:|---:|---:|---:|---:|---:|---:|",
+        "| Matrix | Passed | Tools | Cases | Expected | Forbidden | Arg Cases | Check Families | Required Families | Variant Parity | Boundary Pairs |",
+        "|---|---|---:|---:|---:|---:|---:|---:|---:|---:|---:|",
     ]
     for audit in suite["audits"]:
         item = audit["summary"]
         lines.append(
             "| {matrix} | {passed} | {tools} | {cases} | {expected:.3f} | {forbidden:.3f} | "
-            "{args} | {families} | {required:.3f} | {pairs} |".format(
+            "{args} | {families} | {required:.3f} | {variant_parity:.3f} | {pairs} |".format(
                 args=item["argument_case_count"],
                 cases=item["case_count"],
                 expected=item["tool_expected_coverage"],
@@ -323,6 +348,7 @@ def render_matrix_coverage_suite_markdown(suite: dict[str, Any]) -> str:
                 passed="yes" if audit["passed"] else "no",
                 required=item["required_check_family_coverage"],
                 tools=item["tool_count"],
+                variant_parity=item["variant_surface_parity"],
             )
         )
 
@@ -335,8 +361,11 @@ def render_matrix_coverage_suite_markdown(suite: dict[str, Any]) -> str:
                 ("Never expected", "never_expected"),
                 ("Never forbidden", "never_forbidden"),
                 ("Expected without argument checks", "expected_without_argument_check"),
+                ("Duplicate tool names", "duplicate_tool_names"),
                 ("Missing quality checks", "missing_quality_checks"),
                 ("Missing required check families", "missing_required_check_families"),
+                ("Variant surface mismatches", "variant_surface_mismatches"),
+                ("Source tool count mismatch", "source_tool_count_mismatch"),
                 ("Cases without forbidden tools", "cases_without_forbidden"),
                 ("Cases without check_family", "cases_without_check_family"),
                 ("Unknown expected tools", "unknown_expected_tools"),
@@ -344,7 +373,7 @@ def render_matrix_coverage_suite_markdown(suite: dict[str, Any]) -> str:
             ):
                 values = audit["uncovered"].get(key, [])
                 if values:
-                    rendered = ", ".join(values[:20])
+                    rendered = _render_gap_values(values[:20])
                     suffix = f", plus {len(values) - 20} more" if len(values) > 20 else ""
                     lines.append(f"- {label}: {rendered}{suffix}")
             lines.append("")
@@ -383,6 +412,65 @@ def _tool_accepts_arguments(variants: list[dict[str, Any]], name: str) -> bool:
     return bool(properties or required)
 
 
+def _duplicate_tool_names(variants: list[dict[str, Any]]) -> list[dict[str, Any]]:
+    duplicates = []
+    for variant in variants:
+        seen = set()
+        repeated = set()
+        for tool in variant.get("tools", []):
+            name = str(tool.get("name", ""))
+            if not name:
+                continue
+            if name in seen:
+                repeated.add(name)
+            seen.add(name)
+        if repeated:
+            duplicates.append(
+                {
+                    "duplicate_tools": sorted(repeated),
+                    "variant": str(variant.get("name", "")),
+                }
+            )
+    return duplicates
+
+
+def _variant_surface_mismatches(variants: list[dict[str, Any]]) -> list[dict[str, Any]]:
+    if not variants:
+        return []
+    canonical = {str(tool.get("name", "")) for tool in variants[0].get("tools", []) if tool.get("name")}
+    mismatches = []
+    for variant in variants[1:]:
+        names = {str(tool.get("name", "")) for tool in variant.get("tools", []) if tool.get("name")}
+        missing = sorted(canonical - names)
+        extra = sorted(names - canonical)
+        if missing or extra:
+            mismatches.append(
+                {
+                    "extra_tools": extra,
+                    "missing_tools": missing,
+                    "variant": str(variant.get("name", "")),
+                }
+            )
+    return mismatches
+
+
+def _source_tool_count_mismatch(
+    source: dict[str, Any],
+    operational_tools: list[str],
+) -> list[dict[str, Any]]:
+    if "tool_count" not in source:
+        return []
+    actual = len(operational_tools)
+    raw_expected = source.get("tool_count", 0)
+    try:
+        expected = int(raw_expected)
+    except (TypeError, ValueError):
+        return [{"actual": actual, "expected": raw_expected}]
+    if expected == actual:
+        return []
+    return [{"actual": actual, "expected": expected}]
+
+
 def _expand_matrix_paths(paths: list[str | Path]) -> list[Path]:
     expanded: list[Path] = []
     seen = set()
@@ -395,6 +483,16 @@ def _expand_matrix_paths(paths: list[str | Path]) -> list[Path]:
                 seen.add(key)
                 expanded.append(candidate)
     return expanded
+
+
+def _render_gap_values(values: list[Any]) -> str:
+    rendered = []
+    for value in values:
+        if isinstance(value, dict):
+            rendered.append(json.dumps(value, sort_keys=True))
+        else:
+            rendered.append(str(value))
+    return ", ".join(rendered)
 
 
 def _ratio(numerator: int, denominator: int) -> float:

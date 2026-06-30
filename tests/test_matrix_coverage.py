@@ -152,6 +152,139 @@ class MatrixCoverageTests(unittest.TestCase):
         self.assertEqual(["no_tool_safety"], audit["uncovered"]["missing_required_check_families"])
         self.assertEqual(0.667, audit["summary"]["required_check_family_coverage"])
 
+    def test_audit_reports_variant_surface_and_source_count_drift(self):
+        audit = audit_matrix_coverage_data(
+            {
+                "cases": [
+                    {
+                        "check_family": "lookup",
+                        "expected_tools": ["lookup"],
+                        "forbidden_tools": ["fallback"],
+                        "name": "lookup case",
+                        "task": "Lookup a value.",
+                    },
+                    {
+                        "check_family": "fallback",
+                        "expected_tools": ["fallback"],
+                        "forbidden_tools": ["lookup"],
+                        "name": "fallback case",
+                        "task": "Fallback.",
+                    },
+                ],
+                "coverage": {"required_check_families": ["lookup", "fallback"]},
+                "name": "variant drift matrix",
+                "profiles": [{"harnesses": ["prompt_json"], "provider": "trace_fixture"}],
+                "source": {"tool_count": 4},
+                "tool_variants": [
+                    {
+                        "name": "baseline",
+                        "tools": [
+                            {"name": "lookup", "purpose": "Lookup.", "quality_checks": ["Check ids."]},
+                            {"name": "fallback", "purpose": "Fallback.", "quality_checks": ["Check fallback."]},
+                            {"name": "fallback", "purpose": "Fallback duplicate.", "quality_checks": ["Check fallback."]},
+                        ],
+                    },
+                    {
+                        "name": "candidate",
+                        "tools": [
+                            {"name": "lookup", "purpose": "Lookup.", "quality_checks": ["Check ids."]},
+                            {"name": "extra", "purpose": "Extra.", "quality_checks": ["Check extra."]},
+                        ],
+                    },
+                ],
+            }
+        )
+
+        self.assertFalse(audit["passed"])
+        self.assertEqual(
+            [{"duplicate_tools": ["fallback"], "variant": "baseline"}],
+            audit["uncovered"]["duplicate_tool_names"],
+        )
+        self.assertEqual(
+            [{"extra_tools": ["extra"], "missing_tools": ["fallback"], "variant": "candidate"}],
+            audit["uncovered"]["variant_surface_mismatches"],
+        )
+        self.assertEqual([{"actual": 3, "expected": 4}], audit["uncovered"]["source_tool_count_mismatch"])
+        self.assertEqual(0.5, audit["summary"]["variant_surface_parity"])
+
+    def test_audit_allows_intentional_variant_surface_delta(self):
+        audit = audit_matrix_coverage_data(
+            {
+                "cases": [
+                    {
+                        "check_family": "lookup",
+                        "expected_tools": ["lookup"],
+                        "forbidden_tools": ["extra"],
+                        "name": "lookup case",
+                        "task": "Lookup a value.",
+                    },
+                    {
+                        "check_family": "extra",
+                        "expected_tools": ["extra"],
+                        "forbidden_tools": ["lookup"],
+                        "name": "extra case",
+                        "task": "Use the extra tool.",
+                    },
+                ],
+                "coverage": {
+                    "allow_variant_tool_delta": True,
+                    "required_check_families": ["lookup", "extra"],
+                },
+                "name": "intentional delta matrix",
+                "profiles": [{"harnesses": ["prompt_json"], "provider": "trace_fixture"}],
+                "tool_variants": [
+                    {
+                        "name": "baseline",
+                        "tools": [
+                            {"name": "lookup", "purpose": "Lookup.", "quality_checks": ["Check ids."]},
+                        ],
+                    },
+                    {
+                        "name": "candidate",
+                        "tools": [
+                            {"name": "extra", "purpose": "Extra.", "quality_checks": ["Check extra."]},
+                        ],
+                    },
+                ],
+            }
+        )
+
+        self.assertTrue(audit["passed"])
+        self.assertEqual([], audit["uncovered"]["variant_surface_mismatches"])
+        self.assertEqual(1.0, audit["summary"]["variant_surface_parity"])
+
+    def test_audit_reports_malformed_source_tool_count_without_crashing(self):
+        audit = audit_matrix_coverage_data(
+            {
+                "cases": [
+                    {
+                        "check_family": "lookup",
+                        "expected_tools": ["lookup"],
+                        "forbidden_tools": ["NO_TOOL"],
+                        "name": "lookup case",
+                        "task": "Lookup a value.",
+                    },
+                ],
+                "name": "malformed source count matrix",
+                "profiles": [{"harnesses": ["prompt_json"], "provider": "trace_fixture"}],
+                "source": {"tool_count": "many"},
+                "tool_variants": [
+                    {
+                        "name": "sample",
+                        "tools": [
+                            {"name": "lookup", "purpose": "Lookup.", "quality_checks": ["Check ids."]},
+                        ],
+                    }
+                ],
+            }
+        )
+
+        self.assertFalse(audit["passed"])
+        self.assertEqual(
+            [{"actual": 1, "expected": "many"}],
+            audit["uncovered"]["source_tool_count_mismatch"],
+        )
+
     def test_suite_audit_summarizes_multiple_matrices(self):
         suite = audit_matrix_coverage_suite(
             [

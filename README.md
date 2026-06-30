@@ -215,6 +215,17 @@ rules, but the descent also uses live MCP inventories, generated schemas, resour
 docs, source pins, trace failures, support reports, and smoke-call output. A case is stronger when
 at least two of those sources agree that a boundary matters.
 
+The coverage target is the product of those inputs, not a single list of skills. For completeness,
+build cases across these axes:
+
+- skill workflow rules and `CLAUDE.md` style host rules
+- live MCP tool names, descriptions, and argument schemas
+- MCP resources and the resource-first versus direct-tool fallback path
+- generated REST helpers and low-level tools that the model may overuse
+- exact lookup, broad search, metadata, drilldown, write, and no-tool safety families
+- provider and harness variants, including native tools and prompt-JSON wrappers
+- known trace failures, support reports, and smoke-call observations
+
 That is the "hill descent" part. We deliberately walk toward likely failure valleys by writing
 adversarial prompts that make one boundary measurable. Each case names the expected tool,
 confusable alternatives, a `check_family`, and any required argument checks. The point is to find a
@@ -235,20 +246,25 @@ python -m claude_agent_harness_opt matrix-coverage-suite evals/model_matrix --ma
 - every tuned tool has quality checks
 - every case has forbidden tools and a `check_family`
 - every required `check_family` declared by the matrix is covered
+- every tool-description variant exposes the same tool surface unless the matrix explicitly opts out
+- duplicate tool names inside a variant are surfaced
+- `source.tool_count` matches the effective tool surface when it is declared
 - unknown expected or forbidden tool names are surfaced
 
 This does not replace live scoring. It prevents a clean live run from hiding an untested tool,
-untested negative, missing argument boundary, or forgotten family. The `coverage.required_check_families`
-field is the edge-family contract for a matrix. Store the matrix, coverage report, live result, and
-PR packet together so the same cases can be rerun later as evals.
+untested negative, missing argument boundary, forgotten family, or accidental tool-surface drift.
+The `coverage.required_check_families` field is the edge-family contract for a matrix.
+`coverage.allow_variant_tool_delta` is reserved for matrices that intentionally compare different
+tool catalogs. Store the matrix, coverage report, live result, and PR packet together so the same
+cases can be rerun later as evals.
 
 For the full repository, the current ledger is stored at
 `evals/results/model_matrix_coverage_suite_2026-06-30.md`: it audits 18 matrices, 152 tools, 199
 cases, and 805 boundary pairs. All stored matrices now pass the strict structural coverage contract.
 That proves catalog coverage, negative coverage, argument assertions, quality checks, and family
-labels are present, and that each matrix's required family contract is covered. It does not prove
-every live model will choose correctly, so promoted behavioral claims still need live `model-matrix`
-results.
+labels are present, that each matrix's required family contract is covered, and that variant tool
+surfaces have parity. It does not prove every live model will choose correctly, so promoted
+behavioral claims still need live `model-matrix` results.
 
 After baseline failures repeat, the "hill climb" part starts:
 
