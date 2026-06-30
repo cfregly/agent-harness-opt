@@ -694,7 +694,7 @@ def _downside_lines(result: dict[str, Any], comparison: dict[str, Any], options:
     if "safety" in focus:
         lines.append("Safety ambiguity can escalate warning-only or directory-only requests into full guard mode, adding constraints the user did not ask for.")
     if "retrieval" in focus:
-        lines.append("Retrieval ambiguity can make single-page extraction use a broader multi-page workflow, increasing cost and reducing precision.")
+        lines.append("Routing ambiguity can make agents choose broader or higher-cost tool paths instead of the narrow workflow the user asked for.")
     if "database" in focus:
         lines.append("Database ambiguity can route schema-changing work through ordinary SQL instead of migration-safe workflows.")
     return lines

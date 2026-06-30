@@ -201,8 +201,17 @@ the installed Zymtrace optimization skills:
   explicitly requested.
 - The inspected profiler is CPU/eBPF-ready. GPU profiling is not treated as available until the
   Zymtrace license reports GPU support.
-- The held-out live run promoted the tuned Zymtrace wording as a confirmed provider win across
-  Anthropic, OpenAI, and Gemini prompt JSON cells.
+- The 2026-06-30 rerun enabled the commercial Zymtrace license in the local Docker Compose install.
+  The profiler changed from `SupportsGpu:false` to `SupportsGpu:true`, detected an NVIDIA B200, and
+  exported hardware GPU metrics through the MCP.
+- The expanded held-out live run promoted the tuned Zymtrace wording as a confirmed provider win:
+  stock passed 14/24 cells, while tuned passed 24/24 across Anthropic, OpenAI, and Gemini prompt
+  JSON cells. Evidence lives in
+  `evals/results/zymtrace_mcp_matrix_live_2026-06-30.json` and
+  `evals/pr_packets/zymtrace_mcp_tool_tuning_2026-06-30/`.
+- Additional live findings are captured in `docs/findings/zymtrace/README.md`: unfiltered
+  `hot_traces` can rank idle first, `topentities` can expose `zymtrace-profiler` as self-noise, and
+  GPU readiness would benefit from a single MCP status path.
 
 ## Commands
 
@@ -291,7 +300,7 @@ python -m claude_agent_harness_opt model-matrix evals/model_matrix/zymtrace_mcp_
   --harnesses prompt_json \
   --variants tuned_zymtrace_mcp_boundaries \
   --instruction-variants zymtrace_host_and_skill_rules \
-  --cases "default project metrics discovery skips search,cpu rank first containerized apps,gpu inference workflow starts with metrics,gpu call tree uses hot traces,selected trace drilldown is bounded" \
+  --cases "default project metrics discovery skips search,cpu rank first containerized apps,gpu inference workflow starts with metrics,gpu call tree uses hot traces,selected trace drilldown is bounded,full trace error recovers to discovery,hot trace discovery is bounded,resource fallback hot functions" \
   --markdown
 ```
 
@@ -306,7 +315,7 @@ python -m claude_agent_harness_opt model-matrix evals/model_matrix/zymtrace_mcp_
   --harnesses prompt_json \
   --variants stock_zymtrace_mcp,tuned_zymtrace_mcp_boundaries \
   --instruction-variants zymtrace_host_and_skill_rules \
-  --cases "default project metrics discovery skips search,cpu rank first containerized apps,gpu inference workflow starts with metrics,gpu call tree uses hot traces,selected trace drilldown is bounded" \
+  --cases "default project metrics discovery skips search,cpu rank first containerized apps,gpu inference workflow starts with metrics,gpu call tree uses hot traces,selected trace drilldown is bounded,full trace error recovers to discovery,hot trace discovery is bounded,resource fallback hot functions" \
   --concurrency 3 \
   --markdown
 ```
@@ -323,7 +332,7 @@ python -m claude_agent_harness_opt model-matrix evals/model_matrix/zymtrace_mcp_
   --harnesses prompt_json \
   --variants tuned_zymtrace_mcp_boundaries \
   --instruction-variants zymtrace_host_and_skill_rules \
-  --cases "default project metrics discovery skips search,cpu rank first containerized apps,gpu inference workflow starts with metrics,gpu call tree uses hot traces,selected trace drilldown is bounded" \
+  --cases "default project metrics discovery skips search,cpu rank first containerized apps,gpu inference workflow starts with metrics,gpu call tree uses hot traces,selected trace drilldown is bounded,full trace error recovers to discovery,hot trace discovery is bounded,resource fallback hot functions" \
   --concurrency 3 \
   --markdown
 ```

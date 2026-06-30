@@ -44,7 +44,7 @@ class PrPacketTests(unittest.TestCase):
             self.assertIn("Treat this packet as historical or compatibility evidence", body)
             self.assertIn("## Downside If Not Changed", body)
             self.assertIn("same tasks, providers, harnesses, and instruction variants", body)
-            self.assertIn("Retrieval ambiguity can make single-page extraction use a broader multi-page workflow", body)
+            self.assertIn("Routing ambiguity can make agents choose broader or higher-cost tool paths", body)
             self.assertIn("commit: abc123", body)
             self.assertIn("baseline score: 0.000", body)
             self.assertIn("candidate score: 1.000", body)
