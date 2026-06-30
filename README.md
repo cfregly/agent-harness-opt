@@ -33,6 +33,14 @@ Those commands are keyless except for live Claude judging and cross-provider swe
 surface, start with [Setup](https://github.com/cfregly/claude-agent-harness-opt/blob/main/docs/setup.md)
 and [Techniques](https://github.com/cfregly/claude-agent-harness-opt/blob/main/docs/techniques.md).
 
+## Demo
+
+![Tool tuning demo](https://github.com/cfregly/claude-agent-harness-opt/blob/main/demo.gif)
+
+The demo is generated from [demo.tape](https://github.com/cfregly/claude-agent-harness-opt/blob/main/demo.tape)
+with VHS. The tape replays [docs/tool_tuning_demo_sample.txt](https://github.com/cfregly/claude-agent-harness-opt/blob/main/docs/tool_tuning_demo_sample.txt)
+so the checked-in GIF can be regenerated deterministically.
+
 ## What it implements
 
 The kit covers four jobs:
@@ -133,6 +141,11 @@ blank or placeholder-only.
 GitHub links point at existing files or folders, every docs page is reachable from the README,
 README layout entries still exist, Makefile help covers public targets, and the package console
 script target imports cleanly from `pyproject.toml`.
+
+`scripts/check_artifact_surfaces.py` protects tracked non-code artifacts. It validates the
+VHS-generated `demo.gif` against `demo.tape`, checks the tape's referenced files, requires the demo
+to stay public from the README, and makes sure committed result receipts are reachable from public
+docs or PR packet text.
 
 | Target | Result | Packet |
 |---|---|---|
@@ -529,6 +542,7 @@ python scripts/check_skill_surfaces.py
 python scripts/check_command_surfaces.py
 python scripts/check_secret_hygiene.py
 python scripts/check_docs_navigation.py
+python scripts/check_artifact_surfaces.py
 python -m claude_agent_harness_opt judge-prompt evals/examples/search_answer.json > /tmp/judge-prompt.txt
 python -m claude_agent_harness_opt eval evals/examples/search_answer.json
 python -m claude_agent_harness_opt review-trace evals/examples/agent_trace_good.json
