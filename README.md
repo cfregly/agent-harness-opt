@@ -124,6 +124,11 @@ It verifies every check gate is run in CI and listed below, every check gate has
 every documented `claude_agent_harness_opt` command names a real CLI subcommand, and command
 examples that point at repo fixtures still point at existing files.
 
+`scripts/check_secret_hygiene.py` protects the public artifact set. It scans tracked files for
+private-key blocks and provider token patterns, verifies `.env` remains ignored, requires the masked
+`.env.example`, rejects duplicate sample keys, and requires credential-like sample values to stay
+blank or placeholder-only.
+
 | Target | Result | Packet |
 |---|---|---|
 | InsForge | Confirmed improvement | [InsForge](https://github.com/cfregly/claude-agent-harness-opt/tree/main/docs/findings/insforge) |
@@ -514,6 +519,7 @@ python -m unittest discover -s tests -q
 python scripts/check_prompt_recipe_surfaces.py
 python scripts/check_skill_surfaces.py
 python scripts/check_command_surfaces.py
+python scripts/check_secret_hygiene.py
 python -m claude_agent_harness_opt judge-prompt evals/examples/search_answer.json > /tmp/judge-prompt.txt
 python -m claude_agent_harness_opt eval evals/examples/search_answer.json
 python -m claude_agent_harness_opt review-trace evals/examples/agent_trace_good.json
