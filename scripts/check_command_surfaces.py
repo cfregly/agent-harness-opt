@@ -72,6 +72,7 @@ class ScriptContract:
     options: frozenset[str]
     required_options: frozenset[str]
     required_positionals: int
+    value_options: frozenset[str] = frozenset()
 
 
 def main() -> int:
@@ -158,7 +159,6 @@ def _load_script_options(root: Path) -> dict[str, set[str]]:
 
 
 def _load_script_contracts(root: Path) -> dict[str, ScriptContract]:
-    options: dict[str, set[str]] = {}
     contracts: dict[str, ScriptContract] = {}
     for path in sorted((root / "scripts").glob("*.py")):
         rel = path.relative_to(root).as_posix()
@@ -174,10 +174,11 @@ def _extract_script_contract(path: Path) -> ScriptContract:
     try:
         tree = ast.parse(path.read_text(encoding="utf-8"), filename=str(path))
     except SyntaxError:
-        return ScriptContract(frozenset(), frozenset(), 0)
+        return ScriptContract(frozenset(), frozenset(), 0, frozenset())
     options: set[str] = set()
     required_options: set[str] = set()
     required_positionals = 0
+    value_options: set[str] = set()
     for node in ast.walk(tree):
         if not isinstance(node, ast.Call):
             continue
@@ -200,11 +201,18 @@ def _extract_script_contract(path: Path) -> ScriptContract:
             if isinstance(arg, ast.Constant) and isinstance(arg.value, str):
                 if re.fullmatch(r"--[a-z0-9][a-z0-9-]*", arg.value):
                     options.add(arg.value)
+        if long_options and _option_consumes_value(node):
+            value_options.update(long_options)
         if long_options and _keyword_bool(node, "required"):
             required_options.update(long_options)
         if not option_strings and _positional_is_required(node):
             required_positionals += 1
-    return ScriptContract(frozenset(options), frozenset(required_options), required_positionals)
+    return ScriptContract(
+        frozenset(options),
+        frozenset(required_options),
+        required_positionals,
+        frozenset(value_options),
+    )
 
 
 def _normalize_script_contracts(
@@ -215,7 +223,7 @@ def _normalize_script_contracts(
         if isinstance(contract, ScriptContract):
             contracts[script] = contract
             continue
-        contracts[script] = ScriptContract(frozenset(contract), frozenset(), 0)
+        contracts[script] = ScriptContract(frozenset(contract), frozenset(), 0, frozenset(contract))
     return contracts
 
 
@@ -234,9 +242,24 @@ def _keyword_string(node: ast.Call, name: str) -> str | None:
     return None
 
 
+def _keyword_value(node: ast.Call, name: str) -> object:
+    for keyword in node.keywords:
+        if keyword.arg == name and isinstance(keyword.value, ast.Constant):
+            return keyword.value.value
+    return None
+
+
 def _positional_is_required(node: ast.Call) -> bool:
     nargs = _keyword_string(node, "nargs")
     return nargs not in {"?", "*"}
+
+
+def _option_consumes_value(node: ast.Call) -> bool:
+    action = _keyword_string(node, "action")
+    if action in {"append_const", "count", "help", "store_const", "store_false", "store_true", "version"}:
+        return False
+    nargs = _keyword_value(node, "nargs")
+    return nargs != 0
 
 
 def _check_gate_scripts(root: Path, readme: str, ci: str) -> list[str]:
@@ -440,7 +463,10 @@ def _check_script_invocations(
         if not script_path.is_file():
             failures.append(f"{prefix}: documented script missing: {invocation.command}")
         else:
-            contract = script_contracts.get(invocation.command, ScriptContract(frozenset(), frozenset(), 0))
+            contract = script_contracts.get(
+                invocation.command,
+                ScriptContract(frozenset(), frozenset(), 0, frozenset()),
+            )
             failures.extend(
                 _check_known_options(
                     prefix,
@@ -466,7 +492,13 @@ def _check_script_required_args(
     for option in missing_options:
         failures.append(f"{prefix}: script {invocation.command!r} missing required option {option!r}")
 
-    positional_count = len(_present_positionals(invocation.tokens, argument_start=2, options=set(contract.options)))
+    positional_count = len(
+        _present_positionals(
+            invocation.tokens,
+            argument_start=2,
+            value_options=set(contract.value_options),
+        )
+    )
     if positional_count < contract.required_positionals:
         failures.append(
             f"{prefix}: script {invocation.command!r} has {positional_count} positional "
@@ -485,7 +517,12 @@ def _present_long_options(tokens: tuple[str, ...], *, argument_start: int) -> se
     return options
 
 
-def _present_positionals(tokens: tuple[str, ...], *, argument_start: int, options: set[str]) -> list[str]:
+def _present_positionals(
+    tokens: tuple[str, ...],
+    *,
+    argument_start: int,
+    value_options: set[str],
+) -> list[str]:
     positionals: list[str] = []
     args = list(tokens[argument_start:])
     index = 0
@@ -498,7 +535,12 @@ def _present_positionals(tokens: tuple[str, ...], *, argument_start: int, option
             break
         if token.startswith("--"):
             option = token.split("=", 1)[0]
-            if "=" not in token and option in options and index + 1 < len(args) and not args[index + 1].startswith("-"):
+            if (
+                "=" not in token
+                and option in value_options
+                and index + 1 < len(args)
+                and not args[index + 1].startswith("-")
+            ):
                 index += 2
                 continue
             index += 1

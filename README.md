@@ -136,7 +136,9 @@ valid flags from `--help`, so documented options cannot drift from the executabl
 CLI examples are parse-checked against the real argparse parser, so required arguments and required
 options cannot silently disappear from docs. It also
 validates documented `python scripts/...` helper invocations so utility-script examples cannot point
-at missing scripts, stale helper options, missing required helper arguments, or stale repo paths.
+at missing scripts, stale helper options, missing required helper arguments, or stale repo paths. The
+helper check distinguishes boolean flags from value-consuming flags when counting required
+positionals.
 
 `scripts/check_ci_surface.py` protects the GitHub Actions contract. It requires push and PR
 triggers, read-only permissions, pinned actions, Python 3.11, compile and unit-test smoke checks,

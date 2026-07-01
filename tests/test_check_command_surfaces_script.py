@@ -183,6 +183,7 @@ class CheckCommandSurfacesScriptTests(unittest.TestCase):
                 "parser.add_argument('target')\n"
                 "parser.add_argument('--required-flag', required=True)\n"
                 "parser.add_argument('--known-flag')\n"
+                "parser.add_argument('--boolean-flag', action='store_true')\n"
                 "parser.add_argument('-s', '--second-flag')\n",
                 encoding="utf-8",
             )
@@ -190,9 +191,16 @@ class CheckCommandSurfacesScriptTests(unittest.TestCase):
             options = _extract_script_options(path)
             contract = _extract_script_contract(path)
 
-        self.assertEqual({"--known-flag", "--required-flag", "--second-flag"}, options)
+        self.assertEqual(
+            {"--boolean-flag", "--known-flag", "--required-flag", "--second-flag"},
+            options,
+        )
         self.assertEqual(1, contract.required_positionals)
         self.assertEqual(frozenset({"--required-flag"}), contract.required_options)
+        self.assertEqual(
+            frozenset({"--known-flag", "--required-flag", "--second-flag"}),
+            contract.value_options,
+        )
 
     def test_script_required_args_rejects_missing_positionals_and_options(self):
         invocation = Invocation(
@@ -213,6 +221,23 @@ class CheckCommandSurfacesScriptTests(unittest.TestCase):
         joined = "\n".join(failures)
         self.assertIn("missing required option '--required-flag'", joined)
         self.assertIn("has 0 positional argument(s), expected at least 1", joined)
+
+    def test_script_required_args_keeps_positionals_after_boolean_flags(self):
+        invocation = Invocation(
+            source=Path("README.md"),
+            line=4,
+            raw="python scripts/known_helper.py --boolean-flag target-name",
+            command="scripts/known_helper.py",
+            tokens=("python", "scripts/known_helper.py", "--boolean-flag", "target-name"),
+        )
+        contract = ScriptContract(
+            options=frozenset({"--boolean-flag"}),
+            required_options=frozenset(),
+            required_positionals=1,
+            value_options=frozenset(),
+        )
+
+        self.assertEqual([], _check_script_required_args("README.md:4", invocation, contract))
 
     def test_extract_cli_invocations_stops_at_inline_code_span(self):
         invocations = _extract_cli_invocations(
