@@ -822,6 +822,8 @@ def _check_matrix_coverage_receipt(path: Path, payload: dict[str, Any]) -> list[
         _check_summary_count(rel, summary, "tool_count", tools, failures)
         _check_summary_count(rel, summary, "case_count", cases, failures)
         _check_summary_count(rel, summary, "boundary_pair_count", boundary_pairs, failures)
+    if tools or cases or boundary_pairs:
+        failures.extend(_check_matrix_coverage_receipt_items(rel, tools, cases, boundary_pairs))
     uncovered = payload.get("uncovered")
     if isinstance(uncovered, dict):
         for name, entries in sorted(uncovered.items()):
@@ -845,6 +847,70 @@ def _check_matrix_coverage_receipt(path: Path, payload: dict[str, Any]) -> list[
             )
     else:
         failures.append(f"{rel}: matrix_path must be present")
+    return failures
+
+
+def _check_matrix_coverage_receipt_items(
+    rel: Path,
+    tools: list[Any],
+    cases: list[Any],
+    boundary_pairs: list[Any],
+) -> list[str]:
+    failures: list[str] = []
+    seen_tools: set[str] = set()
+    for idx, tool in enumerate(tools):
+        if not isinstance(tool, dict):
+            failures.append(f"{rel}: tools[{idx}] must be an object")
+            continue
+        name = str(tool.get("name", "")).strip()
+        if not name:
+            failures.append(f"{rel}: tools[{idx}] missing name")
+            continue
+        if name in seen_tools:
+            failures.append(f"{rel}: duplicate coverage receipt tool {name!r}")
+        seen_tools.add(name)
+
+    seen_cases: set[str] = set()
+    for idx, case in enumerate(cases):
+        if not isinstance(case, dict):
+            failures.append(f"{rel}: cases[{idx}] must be an object")
+            continue
+        name = str(case.get("name", "")).strip()
+        if not name:
+            failures.append(f"{rel}: cases[{idx}] missing name")
+            continue
+        if name in seen_cases:
+            failures.append(f"{rel}: duplicate coverage receipt case {name!r}")
+        seen_cases.add(name)
+
+    seen_pairs: set[tuple[str, str, tuple[str, ...]]] = set()
+    for idx, pair in enumerate(boundary_pairs):
+        if not isinstance(pair, dict):
+            failures.append(f"{rel}: boundary_pairs[{idx}] must be an object")
+            continue
+        expected_tool = str(pair.get("expected_tool", "")).strip()
+        forbidden_tool = str(pair.get("forbidden_tool", "")).strip()
+        if not expected_tool:
+            failures.append(f"{rel}: boundary_pairs[{idx}] missing expected_tool")
+        if not forbidden_tool:
+            failures.append(f"{rel}: boundary_pairs[{idx}] missing forbidden_tool")
+        case_values = pair.get("cases")
+        case_names: list[str] = []
+        if not isinstance(case_values, list) or not case_values:
+            failures.append(f"{rel}: boundary_pairs[{idx}].cases must be a nonempty list")
+        else:
+            for case_idx, case_name in enumerate(case_values):
+                if not isinstance(case_name, str) or not case_name.strip():
+                    failures.append(f"{rel}: boundary_pairs[{idx}].cases[{case_idx}] must be a nonempty string")
+                    continue
+                case_names.append(case_name.strip())
+        key = (expected_tool, forbidden_tool, tuple(sorted(case_names)))
+        if expected_tool and forbidden_tool and case_names:
+            if key in seen_pairs:
+                failures.append(
+                    f"{rel}: duplicate coverage receipt boundary pair {expected_tool!r}/{forbidden_tool!r}"
+                )
+            seen_pairs.add(key)
     return failures
 
 

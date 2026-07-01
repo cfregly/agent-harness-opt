@@ -849,6 +849,78 @@ class CheckFindingPacketsScriptTests(unittest.TestCase):
 
         self.assertIn("summary.tool_count must be an integer", "\n".join(failures))
 
+    def test_matrix_coverage_receipt_items_must_be_structured(self):
+        path = ROOT / "evals" / "results" / "bad_matrix_coverage_items.json"
+        path.write_text(
+            """
+{
+  "passed": true,
+  "matrix_path": "evals/model_matrix/zymtrace_mcp_tool_selection.json",
+  "tools": [
+    {"name": "flamegraph"},
+    {"name": "flamegraph"},
+    "not an object",
+    {"description": "missing name"}
+  ],
+  "cases": [
+    {"name": "default project metrics discovery skips search"},
+    {"name": "default project metrics discovery skips search"},
+    7,
+    {"name": ""}
+  ],
+  "boundary_pairs": [
+    {
+      "expected_tool": "project_metrics_activity_aggr",
+      "forbidden_tool": "search",
+      "cases": ["default project metrics discovery skips search"]
+    },
+    {
+      "expected_tool": "project_metrics_activity_aggr",
+      "forbidden_tool": "search",
+      "cases": ["default project metrics discovery skips search"]
+    },
+    "not an object",
+    {
+      "expected_tool": "",
+      "forbidden_tool": "search",
+      "cases": []
+    },
+    {
+      "expected_tool": "flamegraph",
+      "forbidden_tool": "",
+      "cases": [42, ""]
+    }
+  ],
+  "summary": {
+    "tool_count": 4,
+    "case_count": 4,
+    "boundary_pair_count": 5
+  },
+  "uncovered": {}
+}
+""",
+            encoding="utf-8",
+        )
+        try:
+            failures = _check_result_json(path)
+        finally:
+            path.unlink()
+
+        joined = "\n".join(failures)
+        self.assertIn("duplicate coverage receipt tool 'flamegraph'", joined)
+        self.assertIn("tools[2] must be an object", joined)
+        self.assertIn("tools[3] missing name", joined)
+        self.assertIn("duplicate coverage receipt case 'default project metrics discovery skips search'", joined)
+        self.assertIn("cases[2] must be an object", joined)
+        self.assertIn("cases[3] missing name", joined)
+        self.assertIn("duplicate coverage receipt boundary pair 'project_metrics_activity_aggr'/'search'", joined)
+        self.assertIn("boundary_pairs[2] must be an object", joined)
+        self.assertIn("boundary_pairs[3] missing expected_tool", joined)
+        self.assertIn("boundary_pairs[3].cases must be a nonempty list", joined)
+        self.assertIn("boundary_pairs[4] missing forbidden_tool", joined)
+        self.assertIn("boundary_pairs[4].cases[0] must be a nonempty string", joined)
+        self.assertIn("boundary_pairs[4].cases[1] must be a nonempty string", joined)
+
     def test_result_markdown_requires_summary_and_review_section(self):
         path = ROOT / "evals" / "results" / "bad_receipt.md"
         path.write_text("# Receipt\n\nNo structured result here.\n", encoding="utf-8")
