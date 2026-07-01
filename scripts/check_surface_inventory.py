@@ -49,6 +49,7 @@ REQUIRED_SURFACES = (
             "CLAUDE.md",
             "AGENTS.md",
             "docs/**/*.md",
+            "evals/pr_packets/**/*.md",
             ".github/workflows/ci.yml",
         ),
         gates=("python scripts/check_command_surfaces.py", "python scripts/check_cli_coverage.py"),

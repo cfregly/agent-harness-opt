@@ -129,7 +129,7 @@ validates each `SKILL.md` frontmatter block, routing and reporting sections, ref
 commands, What-To-Look-For categories, and agent metadata under `.claude/skills/*/agents`.
 
 `scripts/check_command_surfaces.py` keeps the executable surface synchronized with the docs, project
-instructions, and CI.
+instructions, retained PR packet reproduction commands, and CI.
 It verifies every check gate is run in CI and listed below, every check gate has a unit-test file,
 every documented `claude_agent_harness_opt` command names a real CLI subcommand, and command
 examples that point at repo fixtures still point at existing files. It derives each subcommand's
