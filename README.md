@@ -131,7 +131,9 @@ commands, What-To-Look-For categories, and agent metadata under `.claude/skills/
 `scripts/check_command_surfaces.py` keeps the executable surface synchronized with the docs and CI.
 It verifies every check gate is run in CI and listed below, every check gate has a unit-test file,
 every documented `claude_agent_harness_opt` command names a real CLI subcommand, and command
-examples that point at repo fixtures still point at existing files.
+examples that point at repo fixtures still point at existing files. It also validates documented
+`python scripts/...` helper invocations so utility-script examples cannot point at missing scripts
+or stale repo paths.
 
 `scripts/check_ci_surface.py` protects the GitHub Actions contract. It requires push and PR
 triggers, read-only permissions, pinned actions, Python 3.11, compile and unit-test smoke checks,

@@ -6,6 +6,7 @@ import unittest
 
 from scripts.check_command_surfaces import (
     _extract_cli_invocations,
+    _extract_script_invocations,
     check_command_surfaces,
 )
 
@@ -34,11 +35,16 @@ class CheckCommandSurfacesScriptTests(unittest.TestCase):
             (root / "fixtures").mkdir()
             (root / "fixtures" / "known.json").write_text("{}", encoding="utf-8")
             (root / "scripts" / "check_example.py").write_text("print('ok')\n", encoding="utf-8")
+            (root / "scripts" / "known_helper.py").write_text("print('ok')\n", encoding="utf-8")
             (root / "README.md").write_text(
                 "\n".join(
                     [
                         "python -m claude_agent_harness_opt known-command fixtures/known.json",
                         "python -m claude_agent_harness_opt stale-command fixtures/missing.json",
+                        "python scripts/known_helper.py fixtures/known.json",
+                        "python scripts/known_helper.py > fixtures/result_$(date +%F).json",
+                        "python scripts/missing_helper.py fixtures/known.json",
+                        "python scripts/known_helper.py fixtures/missing.json",
                     ]
                 ),
                 encoding="utf-8",
@@ -55,6 +61,7 @@ class CheckCommandSurfacesScriptTests(unittest.TestCase):
         self.assertIn("scripts/check_example.py: missing test file", joined)
         self.assertIn("unknown CLI command 'stale-command'", joined)
         self.assertIn("missing local path 'fixtures/missing.json'", joined)
+        self.assertIn("documented script missing: scripts/missing_helper.py", joined)
 
     def test_extract_cli_invocations_handles_multiline_commands(self):
         invocations = _extract_cli_invocations(
@@ -68,6 +75,19 @@ class CheckCommandSurfacesScriptTests(unittest.TestCase):
         self.assertEqual(1, len(invocations))
         self.assertEqual("model-matrix", invocations[0].command)
         self.assertIn("evals/model_matrix/coding_tool_selection.json", invocations[0].tokens)
+
+    def test_extract_script_invocations_handles_multiline_commands(self):
+        invocations = _extract_script_invocations(
+            Path("docs/example.md"),
+            """python scripts/known_helper.py \\
+  fixtures/known.json \\
+  --out /tmp/result.json
+""",
+        )
+
+        self.assertEqual(1, len(invocations))
+        self.assertEqual("scripts/known_helper.py", invocations[0].command)
+        self.assertIn("fixtures/known.json", invocations[0].tokens)
 
     def test_extract_cli_invocations_stops_at_inline_code_span(self):
         invocations = _extract_cli_invocations(
