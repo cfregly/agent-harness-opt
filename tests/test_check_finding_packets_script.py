@@ -504,6 +504,71 @@ class CheckFindingPacketsScriptTests(unittest.TestCase):
         self.assertIn("Passed summary does not match sibling JSON receipt", joined)
         self.assertIn("Tools summary does not match sibling JSON receipt", joined)
 
+    def test_coverage_markdown_tables_must_match_sibling_json(self):
+        path = ROOT / "evals" / "results" / "bad_coverage_table_receipt.md"
+        json_path = path.with_suffix(".json")
+        path.write_text(
+            "# Matrix Coverage\n\n"
+            "Passed: yes\n"
+            "Tools: 1\n"
+            "Cases: 2\n"
+            "Expected tool coverage: 0.000\n"
+            "Forbidden tool coverage: 0.000\n\n"
+            "## Tool Coverage\n\n"
+            "| Tool | Expected Cases | Forbidden Cases | Argument Cases | Quality Checks |\n"
+            "|---|---:|---:|---:|---|\n"
+            "| lookup | 1 | 0 | 0 | no |\n"
+            "| stale | 0 | 0 | 0 | no |\n\n"
+            "## Check Families\n\n"
+            "| Family | Cases |\n"
+            "|---|---:|\n"
+            "| lookup | 1 |\n"
+            "| stale_family | 1 |\n",
+            encoding="utf-8",
+        )
+        json_path.write_text(
+            """
+{
+  "passed": true,
+  "summary": {
+    "tool_count": 1,
+    "case_count": 2,
+    "tool_expected_coverage": 1.0,
+    "forbidden_tool_coverage": 1.0
+  },
+  "tools": [
+    {
+      "name": "lookup",
+      "expected_cases": ["first", "second"],
+      "forbidden_cases": ["second"],
+      "argument_cases": ["first"],
+      "has_quality_checks": true
+    }
+  ],
+  "check_families": {
+    "lookup": ["first", "second"]
+  }
+}
+""",
+            encoding="utf-8",
+        )
+        try:
+            failures = _check_result_markdown(path)
+        finally:
+            path.unlink()
+            json_path.unlink()
+
+        joined = "\n".join(failures)
+        self.assertIn("Expected tool coverage summary does not match sibling JSON receipt", joined)
+        self.assertIn("Forbidden tool coverage summary does not match sibling JSON receipt", joined)
+        self.assertIn("Tool Coverage 'lookup' Expected Cases does not match sibling JSON receipt", joined)
+        self.assertIn("Tool Coverage 'lookup' Forbidden Cases does not match sibling JSON receipt", joined)
+        self.assertIn("Tool Coverage 'lookup' Argument Cases does not match sibling JSON receipt", joined)
+        self.assertIn("Tool Coverage 'lookup' Quality Checks does not match sibling JSON receipt", joined)
+        self.assertIn("Tool Coverage table has stale tool 'stale'", joined)
+        self.assertIn("Check Families 'lookup' count does not match sibling JSON receipt", joined)
+        self.assertIn("Check Families table has stale family 'stale_family'", joined)
+
     def test_raw_matrix_markdown_counts_must_match_results_table(self):
         path = ROOT / "evals" / "results" / "bad_matrix_report.md"
         path.write_text(

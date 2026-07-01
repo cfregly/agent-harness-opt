@@ -1326,9 +1326,15 @@ def _check_coverage_markdown_json_pair(path: Path, text: str) -> list[str]:
         "Total value-bar gaps": "total_value_bar_gaps",
         "Tools": "tool_count",
         "Cases": "case_count",
+        "Profiles": "profile_count",
+        "Instruction variants": "instruction_variant_count",
         "Cases with argument checks": "argument_case_count",
         "Boundary pairs": "boundary_pair_count",
         "Cases with check_family": "case_count_with_check_family",
+        "Case expectation gaps": "case_expectation_gap_count",
+        "Identity gaps": "identity_gap_count",
+        "Value bars": "value_bar_count",
+        "Value-bar gaps": "value_bar_gap_count",
     }
     for label, field in count_fields.items():
         markdown_value = _markdown_summary_value(text, label)
@@ -1341,6 +1347,25 @@ def _check_coverage_markdown_json_pair(path: Path, text: str) -> list[str]:
             continue
         if summary.get(field) != parsed:
             failures.append(f"{rel}: {label} summary does not match sibling JSON receipt")
+    float_fields = {
+        "Expected tool coverage": "tool_expected_coverage",
+        "Forbidden tool coverage": "forbidden_tool_coverage",
+        "Required check-family coverage": "required_check_family_coverage",
+        "Variant surface parity": "variant_surface_parity",
+    }
+    for label, field in float_fields.items():
+        markdown_value = _markdown_summary_value(text, label)
+        if not markdown_value or field not in summary:
+            continue
+        try:
+            parsed = float(markdown_value)
+        except ValueError:
+            failures.append(f"{rel}: {label} summary is not numeric")
+            continue
+        if round(float(summary.get(field, 0.0)), 3) != round(parsed, 3):
+            failures.append(f"{rel}: {label} summary does not match sibling JSON receipt")
+    failures.extend(_check_coverage_markdown_tool_table(path, text, payload))
+    failures.extend(_check_coverage_markdown_check_family_table(path, text, payload))
     return failures
 
 
@@ -1362,6 +1387,114 @@ def _markdown_section_text(text: str, title: str) -> str:
         if in_section:
             lines.append(line)
     return "\n".join(lines)
+
+
+def _markdown_table_rows(section_text: str) -> list[list[str]]:
+    rows: list[list[str]] = []
+    for line in section_text.splitlines():
+        stripped = line.strip()
+        if not stripped.startswith("|"):
+            continue
+        cells = [cell.strip() for cell in stripped.strip("|").split("|")]
+        if not cells or set(cells[0]) <= {"-", ":"}:
+            continue
+        rows.append(cells)
+    return rows[1:] if rows else []
+
+
+def _check_coverage_markdown_tool_table(
+    path: Path,
+    text: str,
+    payload: dict[str, Any],
+) -> list[str]:
+    section_text = _markdown_section_text(text, "Tool Coverage")
+    if not section_text:
+        return []
+    failures: list[str] = []
+    rel = path.relative_to(ROOT)
+    tools = payload.get("tools")
+    if not isinstance(tools, list):
+        return [f"{rel}: Tool Coverage table present but sibling JSON receipt has no tools list"]
+    expected = {
+        str(tool.get("name", "")).strip(): tool
+        for tool in tools
+        if isinstance(tool, dict) and str(tool.get("name", "")).strip()
+    }
+    rows = _markdown_table_rows(section_text)
+    if not rows:
+        return [f"{rel}: Tool Coverage table has no tool rows"]
+    seen: set[str] = set()
+    for row in rows:
+        if len(row) < 5:
+            failures.append(f"{rel}: Tool Coverage row has too few columns")
+            continue
+        name = row[0]
+        tool = expected.get(name)
+        if tool is None:
+            failures.append(f"{rel}: Tool Coverage table has stale tool {name!r}")
+            continue
+        seen.add(name)
+        expected_counts = {
+            "Expected Cases": len(tool.get("expected_cases", [])) if isinstance(tool.get("expected_cases"), list) else 0,
+            "Forbidden Cases": len(tool.get("forbidden_cases", [])) if isinstance(tool.get("forbidden_cases"), list) else 0,
+            "Argument Cases": len(tool.get("argument_cases", [])) if isinstance(tool.get("argument_cases"), list) else 0,
+        }
+        for offset, (label, expected_count) in enumerate(expected_counts.items(), start=1):
+            try:
+                parsed = int(row[offset])
+            except ValueError:
+                failures.append(f"{rel}: Tool Coverage {name!r} {label} is not an integer")
+                continue
+            if parsed != expected_count:
+                failures.append(f"{rel}: Tool Coverage {name!r} {label} does not match sibling JSON receipt")
+        expected_checks = "yes" if tool.get("has_quality_checks") is True else "no"
+        if row[4].casefold() != expected_checks:
+            failures.append(f"{rel}: Tool Coverage {name!r} Quality Checks does not match sibling JSON receipt")
+    for name in sorted(set(expected) - seen):
+        failures.append(f"{rel}: Tool Coverage table missing current tool {name!r}")
+    return failures
+
+
+def _check_coverage_markdown_check_family_table(
+    path: Path,
+    text: str,
+    payload: dict[str, Any],
+) -> list[str]:
+    section_text = _markdown_section_text(text, "Check Families")
+    if not section_text:
+        return []
+    failures: list[str] = []
+    rel = path.relative_to(ROOT)
+    check_families = payload.get("check_families")
+    if not isinstance(check_families, dict):
+        return [f"{rel}: Check Families table present but sibling JSON receipt has no check_families object"]
+    expected = {
+        str(family): len(names) if isinstance(names, list) else 0
+        for family, names in check_families.items()
+    }
+    rows = _markdown_table_rows(section_text)
+    if not rows:
+        return [f"{rel}: Check Families table has no family rows"]
+    seen: set[str] = set()
+    for row in rows:
+        if len(row) < 2:
+            failures.append(f"{rel}: Check Families row has too few columns")
+            continue
+        family = row[0]
+        if family not in expected:
+            failures.append(f"{rel}: Check Families table has stale family {family!r}")
+            continue
+        seen.add(family)
+        try:
+            parsed = int(row[1])
+        except ValueError:
+            failures.append(f"{rel}: Check Families {family!r} count is not an integer")
+            continue
+        if parsed != expected[family]:
+            failures.append(f"{rel}: Check Families {family!r} count does not match sibling JSON receipt")
+    for family in sorted(set(expected) - seen):
+        failures.append(f"{rel}: Check Families table missing current family {family!r}")
+    return failures
 
 
 def _require_bool(
