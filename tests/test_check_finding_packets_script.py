@@ -1120,6 +1120,70 @@ class CheckFindingPacketsScriptTests(unittest.TestCase):
         self.assertIn("Gaps 'Missing quality checks' does not match sibling JSON receipt", joined)
         self.assertIn("Gaps 'Duplicate tool names' does not match sibling JSON receipt", joined)
 
+    def test_coverage_markdown_gaps_must_have_complete_label_set(self):
+        missing_path = ROOT / "evals" / "results" / "bad_coverage_missing_gaps.md"
+        missing_json_path = missing_path.with_suffix(".json")
+        missing_path.write_text(
+            "# Matrix Coverage\n\n"
+            "Passed: yes\n"
+            "Tools: 1\n"
+            "Cases: 1\n\n"
+            "## Tool Coverage\n\n"
+            "| Tool | Expected Cases | Forbidden Cases | Argument Cases | Quality Checks |\n"
+            "|---|---:|---:|---:|---|\n",
+            encoding="utf-8",
+        )
+        missing_json_path.write_text(
+            """
+{
+  "passed": true,
+  "summary": {"tool_count": 1, "case_count": 1},
+  "uncovered": {}
+}
+""",
+            encoding="utf-8",
+        )
+        try:
+            missing_failures = _check_result_markdown(missing_path)
+        finally:
+            missing_path.unlink()
+            missing_json_path.unlink()
+
+        path = ROOT / "evals" / "results" / "bad_coverage_gap_labels.md"
+        json_path = path.with_suffix(".json")
+        path.write_text(
+            "# Matrix Coverage\n\n"
+            "Passed: yes\n"
+            "Tools: 1\n"
+            "Cases: 1\n\n"
+            "## Gaps\n\n"
+            "- Never expected: none\n"
+            "- Never expected: none\n"
+            "- Typo gap: none\n",
+            encoding="utf-8",
+        )
+        json_path.write_text(
+            """
+{
+  "passed": true,
+  "summary": {"tool_count": 1, "case_count": 1},
+  "uncovered": {}
+}
+""",
+            encoding="utf-8",
+        )
+        try:
+            failures = _check_result_markdown(path)
+        finally:
+            path.unlink()
+            json_path.unlink()
+
+        joined = "\n".join(missing_failures + failures)
+        self.assertIn("missing Gaps section", joined)
+        self.assertIn("Gaps has duplicate label 'Never expected'", joined)
+        self.assertIn("Gaps has unknown label 'Typo gap'", joined)
+        self.assertIn("Gaps missing label 'Never forbidden'", joined)
+
     def test_coverage_suite_markdown_matrix_summary_must_match_sibling_json(self):
         path = ROOT / "evals" / "results" / "bad_coverage_suite_table_receipt.md"
         json_path = path.with_suffix(".json")

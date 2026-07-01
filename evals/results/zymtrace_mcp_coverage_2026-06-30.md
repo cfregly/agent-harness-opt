@@ -3,22 +3,37 @@
 Passed: yes
 Tools: 25
 Cases: 34
+Profiles: 3
+Instruction variants: 2
 Expected tool coverage: 1.000
 Forbidden tool coverage: 1.000
 Cases with argument checks: 33
 Boundary pairs: 85
 Cases with check_family: 34
+Case expectation gaps: 0
+Identity gaps: 0
+Value bars: 0
+Value-bar gaps: 0
+Required check-family coverage: 1.000
+Variant surface parity: 1.000
 
 ## Gaps
 
 - Never expected: none
 - Never forbidden: none
+- Case expectation gaps: none
 - Expected without argument checks: none
+- Duplicate tool names: none
+- Identity gaps: none
 - Missing quality checks: none
+- Missing required check families: none
+- Variant surface mismatches: none
+- Source tool count mismatch: none
 - Cases without forbidden tools: none
 - Cases without check_family: none
 - Unknown expected tools: none
 - Unknown forbidden tools: none
+- Value-bar gaps: none
 
 ## Tool Coverage
 

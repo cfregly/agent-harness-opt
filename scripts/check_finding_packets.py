@@ -1725,11 +1725,13 @@ def _check_coverage_markdown_gaps(
     payload: dict[str, Any],
 ) -> list[str]:
     section_text = _markdown_section_text(text, "Gaps")
-    if not section_text:
-        return []
     failures: list[str] = []
     rel = path.relative_to(ROOT)
     uncovered = payload.get("uncovered")
+    if not section_text:
+        if isinstance(uncovered, dict):
+            return [f"{rel}: missing Gaps section"]
+        return []
     if not isinstance(uncovered, dict):
         return [f"{rel}: Gaps section present but sibling JSON receipt has no uncovered object"]
     label_map = {
@@ -1749,18 +1751,26 @@ def _check_coverage_markdown_gaps(
         "Unknown forbidden tools": "unknown_forbidden_tools",
         "Value-bar gaps": "value_bar_gaps",
     }
+    seen: set[str] = set()
     for line in section_text.splitlines():
         stripped = line.strip()
         if not stripped.startswith("- ") or ":" not in stripped:
             continue
         label, value = stripped[2:].split(":", 1)
-        key = label_map.get(label.strip())
+        normalized_label = label.strip()
+        key = label_map.get(normalized_label)
         if not key:
+            failures.append(f"{rel}: Gaps has unknown label {normalized_label!r}")
             continue
+        if normalized_label in seen:
+            failures.append(f"{rel}: Gaps has duplicate label {normalized_label!r}")
+        seen.add(normalized_label)
         values = uncovered.get(key, [])
         expected = _coverage_gap_values(values) if isinstance(values, list) and values else "none"
         if value.strip() != expected:
-            failures.append(f"{rel}: Gaps {label.strip()!r} does not match sibling JSON receipt")
+            failures.append(f"{rel}: Gaps {normalized_label!r} does not match sibling JSON receipt")
+    for label in sorted(set(label_map) - seen):
+        failures.append(f"{rel}: Gaps missing label {label!r}")
     return failures
 
 

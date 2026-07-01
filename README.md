@@ -114,7 +114,7 @@ points only at local evidence artifacts that still exist, and validates committe
 `evals/results` receipts so JSON and Markdown evidence stays structured enough to rerun as eval
 fixtures later, reconciles Markdown live-matrix result tables with raw-matrix and optimization-gate
 pass/fail, failure, error, skipped, score, result-row identity, and cell-summary tables, checks
-coverage Markdown summaries against sibling JSON receipts, reconciles retained coverage gap bullets
+coverage Markdown summaries against sibling JSON receipts, reconciles complete retained coverage gap bullets
 plus tool and check-family tables with their JSON evidence, checks matrix-coverage receipt structure,
 gap buckets, and counts, verifies model-matrix receipt rows and strict integer cell summaries plus top-level result summaries against their retained
 result rows and source matrices, verifies bounded result-row statuses and status/pass consistency,
@@ -396,7 +396,7 @@ cases can be rerun later as evals. These artifacts are not scratch notes: the re
 validate result receipt shape, matrix paths, coverage summaries, baseline failure rows, promoted
 candidate evidence, model-matrix result and cell summaries, optimization-gate pass/fail,
 skipped/error counts, JSON result-row status vocabulary and status/pass consistency, Markdown
-result-row shape and identity, Markdown cell summaries, matrix-coverage receipt item and gap-bucket structure, coverage gaps and tables, coverage-suite
+result-row shape and identity, Markdown cell summaries, matrix-coverage receipt item and gap-bucket structure, complete coverage gap labels and tables, coverage-suite
 matrix rows and strict integer aggregate counts, live-harness cell fields and strict integer status summaries, and Markdown review sections so future agents can use
 them as regression fixtures.
 
