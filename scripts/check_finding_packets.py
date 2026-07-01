@@ -567,6 +567,82 @@ def _check_coverage_suite_receipt(path: Path, payload: dict[str, Any]) -> list[s
             failures.extend(_check_local_ref(rel, matrix_path))
         else:
             failures.append(f"{rel}: matrix_paths entries must be strings")
+    if audits and matrix_paths and summary:
+        failures.extend(_check_coverage_suite_audits(rel, audits, matrix_paths, summary))
+    return failures
+
+
+def _check_coverage_suite_audits(
+    rel: Path,
+    audits: list[Any],
+    matrix_paths: list[Any],
+    summary: dict[str, Any],
+) -> list[str]:
+    failures: list[str] = []
+    listed_paths = [path for path in matrix_paths if isinstance(path, str)]
+    duplicate_paths = sorted({path for path in listed_paths if listed_paths.count(path) > 1})
+    for matrix_path in duplicate_paths:
+        failures.append(f"{rel}: duplicate matrix_paths entry {matrix_path!r}")
+    audit_paths: list[str] = []
+    passed_count = 0
+    failed_count = 0
+    for idx, audit in enumerate(audits):
+        if not isinstance(audit, dict):
+            failures.append(f"{rel}: audits[{idx}] must be an object")
+            continue
+        matrix_path = str(audit.get("matrix_path", "")).strip()
+        if not matrix_path:
+            failures.append(f"{rel}: audits[{idx}] missing matrix_path")
+        else:
+            audit_paths.append(matrix_path)
+            if matrix_path not in listed_paths:
+                failures.append(f"{rel}: audits[{idx}] matrix_path {matrix_path!r} missing from matrix_paths")
+            failures.extend(_check_local_ref(rel, matrix_path))
+        if audit.get("passed") is True:
+            passed_count += 1
+        elif audit.get("passed") is False:
+            failed_count += 1
+            failures.append(f"{rel}: audits[{idx}] must pass")
+        else:
+            failures.append(f"{rel}: audits[{idx}].passed must be boolean")
+        audit_summary = audit.get("summary")
+        if not isinstance(audit_summary, dict):
+            failures.append(f"{rel}: audits[{idx}].summary must be an object")
+    duplicate_audit_paths = sorted({path for path in audit_paths if audit_paths.count(path) > 1})
+    for matrix_path in duplicate_audit_paths:
+        failures.append(f"{rel}: duplicate audit matrix_path {matrix_path!r}")
+    missing_audits = sorted(set(listed_paths) - set(audit_paths))
+    for matrix_path in missing_audits:
+        failures.append(f"{rel}: matrix_paths entry missing audit {matrix_path!r}")
+    extra_audits = sorted(set(audit_paths) - set(listed_paths))
+    for matrix_path in extra_audits:
+        failures.append(f"{rel}: audit matrix_path missing from matrix_paths {matrix_path!r}")
+    if summary.get("passed_matrices") != passed_count:
+        failures.append(f"{rel}: summary.passed_matrices must equal passing audit count")
+    if summary.get("failed_matrices") != failed_count:
+        failures.append(f"{rel}: summary.failed_matrices must equal failed audit count")
+    aggregate_fields = {
+        "total_argument_cases": "argument_case_count",
+        "total_boundary_pairs": "boundary_pair_count",
+        "total_case_expectation_gaps": "case_expectation_gap_count",
+        "total_cases": "case_count",
+        "total_identity_gaps": "identity_gap_count",
+        "total_instruction_variants": "instruction_variant_count",
+        "total_profiles": "profile_count",
+        "total_tools": "tool_count",
+        "total_value_bar_gaps": "value_bar_gap_count",
+        "total_value_bars": "value_bar_count",
+    }
+    for suite_field, audit_field in aggregate_fields.items():
+        if suite_field not in summary:
+            continue
+        total = sum(
+            int(audit.get("summary", {}).get(audit_field, 0))
+            for audit in audits
+            if isinstance(audit, dict) and isinstance(audit.get("summary"), dict)
+        )
+        if summary.get(suite_field) != total:
+            failures.append(f"{rel}: summary.{suite_field} must equal audit {audit_field} sum")
     return failures
 
 

@@ -224,6 +224,55 @@ class CheckFindingPacketsScriptTests(unittest.TestCase):
         self.assertIn("results[0] unknown matrix case 'missing case'", joined)
         self.assertIn("results[0] has no matching planned cell", joined)
 
+    def test_coverage_suite_receipt_audits_must_match_summary_and_paths(self):
+        path = ROOT / "evals" / "results" / "bad_coverage_suite_receipt.json"
+        path.write_text(
+            """
+{
+  "passed": true,
+  "matrix_paths": [
+    "evals/model_matrix/zymtrace_mcp_tool_selection.json",
+    "evals/model_matrix/zymtrace_mcp_tool_selection.json",
+    "evals/model_matrix/coding_tool_selection.json"
+  ],
+  "audits": [
+    {
+      "matrix_path": "evals/model_matrix/zymtrace_mcp_tool_selection.json",
+      "passed": false,
+      "summary": {"case_count": 2, "tool_count": 3}
+    },
+    {
+      "matrix_path": "evals/model_matrix/missing.json",
+      "passed": "yes",
+      "summary": {"case_count": 5, "tool_count": 7}
+    }
+  ],
+  "summary": {
+    "failed_matrices": 0,
+    "matrix_count": 3,
+    "passed_matrices": 2,
+    "total_cases": 999,
+    "total_tools": 10
+  }
+}
+""",
+            encoding="utf-8",
+        )
+        try:
+            failures = _check_result_json(path)
+        finally:
+            path.unlink()
+
+        joined = "\n".join(failures)
+        self.assertIn("duplicate matrix_paths entry 'evals/model_matrix/zymtrace_mcp_tool_selection.json'", joined)
+        self.assertIn("audits[0] must pass", joined)
+        self.assertIn("audits[1].passed must be boolean", joined)
+        self.assertIn("matrix_paths entry missing audit 'evals/model_matrix/coding_tool_selection.json'", joined)
+        self.assertIn("audit matrix_path missing from matrix_paths 'evals/model_matrix/missing.json'", joined)
+        self.assertIn("summary.passed_matrices must equal passing audit count", joined)
+        self.assertIn("summary.failed_matrices must equal failed audit count", joined)
+        self.assertIn("summary.total_cases must equal audit case_count sum", joined)
+
     def test_result_markdown_requires_summary_and_review_section(self):
         path = ROOT / "evals" / "results" / "bad_receipt.md"
         path.write_text("# Receipt\n\nNo structured result here.\n", encoding="utf-8")
