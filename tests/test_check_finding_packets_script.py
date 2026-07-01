@@ -224,6 +224,64 @@ class CheckFindingPacketsScriptTests(unittest.TestCase):
         self.assertIn("results[0] unknown matrix case 'missing case'", joined)
         self.assertIn("results[0] has no matching planned cell", joined)
 
+    def test_model_matrix_receipt_result_passed_must_match_status(self):
+        path = ROOT / "evals" / "results" / "bad_model_matrix_status_receipt.json"
+        path.write_text(
+            """
+{
+  "live": true,
+  "passed": true,
+  "results": [
+    {
+      "case": "default project metrics discovery skips search",
+      "provider": "anthropic",
+      "harness": "prompt_json",
+      "tool_variant": "tuned_zymtrace_mcp_boundaries",
+      "instruction_variant": "zymtrace_host_and_skill_rules",
+      "status": "failed",
+      "passed": true,
+      "chosen_tools": ["project_metrics_activity_aggr"]
+    }
+  ],
+  "cells": [
+    {
+      "provider": "anthropic",
+      "harness": "prompt_json",
+      "tool_variant": "tuned_zymtrace_mcp_boundaries",
+      "instruction_variant": "zymtrace_host_and_skill_rules",
+      "passed": 0,
+      "failed": 1,
+      "errors": 0,
+      "skipped": 0,
+      "score": 0.0
+    }
+  ],
+  "case_definitions": [
+    {"name": "default project metrics discovery skips search"}
+  ],
+  "summary": {
+    "errors": 0,
+    "failed_cases": 1,
+    "passed_cases": 0,
+    "planned": 1,
+    "score": 0.0,
+    "skipped": 0,
+    "total": 1
+  },
+  "matrix_path": "evals/model_matrix/zymtrace_mcp_tool_selection.json",
+  "matrix": "zymtrace mcp tool-selection matrix",
+  "source": {"commit": "sample"}
+}
+""",
+            encoding="utf-8",
+        )
+        try:
+            failures = _check_result_json(path)
+        finally:
+            path.unlink()
+
+        self.assertIn("results[0].passed must match status", "\n".join(failures))
+
     def test_model_matrix_receipt_cell_summaries_must_match_rows(self):
         path = ROOT / "evals" / "results" / "bad_model_matrix_cell_receipt.json"
         path.write_text(
