@@ -283,6 +283,8 @@ def _check_matrix_surface_coverage() -> list[str]:
         rel = path.relative_to(ROOT)
         try:
             audit = audit_matrix_coverage(path)
+        except FileNotFoundError:
+            continue
         except Exception as exc:  # noqa: BLE001 - surface gates should report all malformed matrices.
             failures.append(f"{rel}: matrix coverage audit crashed: {exc}")
             continue
@@ -311,6 +313,8 @@ def _matrix_surface_paths() -> list[Path]:
 def _looks_like_matrix(path: Path) -> bool:
     try:
         payload = json.loads(path.read_text(encoding="utf-8"))
+    except FileNotFoundError:
+        return False
     except json.JSONDecodeError:
         return False
     return isinstance(payload, dict) and {"cases", "profiles", "tool_variants"}.issubset(payload)
@@ -398,6 +402,16 @@ def _check_model_matrix_receipt(path: Path, payload: dict[str, Any]) -> list[str
         failures.append(f"{rel}: matrix_path must be present")
     else:
         failures.extend(_check_local_ref(rel, matrix_path))
+    if matrix_path and results and cells:
+        failures.extend(
+            _check_model_matrix_receipt_against_matrix(
+                rel,
+                matrix_path,
+                results,
+                cells,
+                case_definitions,
+            )
+        )
     matrix = payload.get("matrix")
     if "matrix" in payload and not (
         isinstance(matrix, dict) or str(matrix or "").strip()
@@ -405,6 +419,130 @@ def _check_model_matrix_receipt(path: Path, payload: dict[str, Any]) -> list[str
         failures.append(f"{rel}: matrix must be an object or display name")
     if not isinstance(payload.get("source"), dict) or not payload.get("source"):
         failures.append(f"{rel}: source must be a nonempty object")
+    return failures
+
+
+def _check_model_matrix_receipt_against_matrix(
+    rel: Path,
+    matrix_path: str,
+    results: list[Any],
+    cells: list[Any],
+    case_definitions: list[Any],
+) -> list[str]:
+    failures: list[str] = []
+    try:
+        matrix = json.loads((ROOT / matrix_path).read_text(encoding="utf-8"))
+    except (FileNotFoundError, json.JSONDecodeError):
+        return failures
+    if not isinstance(matrix, dict):
+        return failures
+    matrix_cases = _named_items(matrix.get("cases", []))
+    matrix_tool_variants = _named_items(matrix.get("tool_variants", []))
+    matrix_instruction_variants = _named_items(matrix.get("instruction_variants", []))
+    matrix_providers = {
+        str(profile.get("provider", "")).strip()
+        for profile in matrix.get("profiles", [])
+        if isinstance(profile, dict) and str(profile.get("provider", "")).strip()
+    }
+    matrix_harnesses = {
+        str(harness).strip()
+        for profile in matrix.get("profiles", [])
+        if isinstance(profile, dict)
+        for harness in profile.get("harnesses", [])
+        if str(harness).strip()
+    }
+    for idx, case in enumerate(case_definitions):
+        if not isinstance(case, dict):
+            continue
+        name = str(case.get("name", "")).strip()
+        if name and matrix_cases and name not in matrix_cases:
+            failures.append(f"{rel}: case_definitions[{idx}] unknown matrix case {name!r}")
+    cell_keys: set[tuple[str, str, str, str]] = set()
+    for idx, cell in enumerate(cells):
+        if not isinstance(cell, dict):
+            continue
+        provider = str(cell.get("provider", "")).strip()
+        harness = str(cell.get("harness", "")).strip()
+        tool_variant = str(cell.get("tool_variant", "")).strip()
+        instruction_variant = str(cell.get("instruction_variant", "")).strip()
+        cell_keys.add((provider, harness, tool_variant, instruction_variant))
+        failures.extend(
+            _check_matrix_dimensions(
+                rel,
+                f"cells[{idx}]",
+                provider,
+                harness,
+                tool_variant,
+                instruction_variant,
+                matrix_providers,
+                matrix_harnesses,
+                matrix_tool_variants,
+                matrix_instruction_variants,
+            )
+        )
+    seen_results: set[tuple[str, str, str, str, str]] = set()
+    for idx, result in enumerate(results):
+        if not isinstance(result, dict):
+            continue
+        case_name = str(result.get("case", "")).strip()
+        provider = str(result.get("provider", "")).strip()
+        harness = str(result.get("harness", "")).strip()
+        tool_variant = str(result.get("tool_variant", "")).strip()
+        instruction_variant = str(result.get("instruction_variant", "")).strip()
+        if matrix_cases and case_name and case_name not in matrix_cases:
+            failures.append(f"{rel}: results[{idx}] unknown matrix case {case_name!r}")
+        failures.extend(
+            _check_matrix_dimensions(
+                rel,
+                f"results[{idx}]",
+                provider,
+                harness,
+                tool_variant,
+                instruction_variant,
+                matrix_providers,
+                matrix_harnesses,
+                matrix_tool_variants,
+                matrix_instruction_variants,
+            )
+        )
+        if cell_keys and (provider, harness, tool_variant, instruction_variant) not in cell_keys:
+            failures.append(f"{rel}: results[{idx}] has no matching planned cell")
+        result_key = (case_name, provider, harness, tool_variant, instruction_variant)
+        if result_key in seen_results:
+            failures.append(f"{rel}: duplicate matrix result row {case_name!r}/{provider!r}/{harness!r}/{tool_variant!r}/{instruction_variant!r}")
+        seen_results.add(result_key)
+    return failures
+
+
+def _named_items(items: Any) -> set[str]:
+    return {
+        str(item.get("name", "")).strip()
+        for item in items
+        if isinstance(item, dict) and str(item.get("name", "")).strip()
+    }
+
+
+def _check_matrix_dimensions(
+    rel: Path,
+    label: str,
+    provider: str,
+    harness: str,
+    tool_variant: str,
+    instruction_variant: str,
+    matrix_providers: set[str],
+    matrix_harnesses: set[str],
+    matrix_tool_variants: set[str],
+    matrix_instruction_variants: set[str],
+) -> list[str]:
+    failures: list[str] = []
+    if matrix_providers and provider and provider not in matrix_providers:
+        failures.append(f"{rel}: {label} unknown matrix provider {provider!r}")
+    if matrix_harnesses and harness and harness not in matrix_harnesses:
+        failures.append(f"{rel}: {label} unknown matrix harness {harness!r}")
+    if matrix_tool_variants and tool_variant and tool_variant not in matrix_tool_variants:
+        failures.append(f"{rel}: {label} unknown matrix tool_variant {tool_variant!r}")
+    if matrix_instruction_variants and instruction_variant and instruction_variant not in matrix_instruction_variants:
+        failures.append(f"{rel}: {label} unknown matrix instruction_variant {instruction_variant!r}")
     return failures
 
 

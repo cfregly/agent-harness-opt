@@ -2,6 +2,7 @@ from pathlib import Path
 import subprocess
 import sys
 import unittest
+from unittest.mock import patch
 
 from scripts.check_finding_packets import (
     ROOT,
@@ -171,6 +172,58 @@ class CheckFindingPacketsScriptTests(unittest.TestCase):
         self.assertIn("local evidence link missing: evals/model_matrix/missing.json", joined)
         self.assertIn("source must be a nonempty object", joined)
 
+    def test_model_matrix_receipt_rows_must_match_matrix_surface(self):
+        path = ROOT / "evals" / "results" / "bad_model_matrix_surface_receipt.json"
+        path.write_text(
+            """
+{
+  "live": true,
+  "passed": true,
+  "results": [
+    {
+      "case": "missing case",
+      "provider": "anthropic",
+      "harness": "prompt_json",
+      "tool_variant": "stock_zymtrace_mcp",
+      "instruction_variant": "zymtrace_host_and_skill_rules",
+      "status": "passed",
+      "passed": true,
+      "chosen_tools": []
+    }
+  ],
+  "cells": [
+    {
+      "provider": "missing_provider",
+      "harness": "missing_harness",
+      "tool_variant": "missing_variant",
+      "instruction_variant": "missing_instruction"
+    }
+  ],
+  "case_definitions": [
+    {"name": "missing case"}
+  ],
+  "summary": {"total": 1, "planned": 1},
+  "matrix_path": "evals/model_matrix/zymtrace_mcp_tool_selection.json",
+  "matrix": {},
+  "source": {"commit": "sample"}
+}
+""",
+            encoding="utf-8",
+        )
+        try:
+            failures = _check_result_json(path)
+        finally:
+            path.unlink()
+
+        joined = "\n".join(failures)
+        self.assertIn("case_definitions[0] unknown matrix case 'missing case'", joined)
+        self.assertIn("cells[0] unknown matrix provider 'missing_provider'", joined)
+        self.assertIn("cells[0] unknown matrix harness 'missing_harness'", joined)
+        self.assertIn("cells[0] unknown matrix tool_variant 'missing_variant'", joined)
+        self.assertIn("cells[0] unknown matrix instruction_variant 'missing_instruction'", joined)
+        self.assertIn("results[0] unknown matrix case 'missing case'", joined)
+        self.assertIn("results[0] has no matching planned cell", joined)
+
     def test_result_markdown_requires_summary_and_review_section(self):
         path = ROOT / "evals" / "results" / "bad_receipt.md"
         path.write_text("# Receipt\n\nNo structured result here.\n", encoding="utf-8")
@@ -221,6 +274,16 @@ class CheckFindingPacketsScriptTests(unittest.TestCase):
         joined = "\n".join(failures)
         self.assertIn("evals/targets/temporary_bad_matrix/bad_matrix.json", joined)
         self.assertIn("matrix coverage failed", joined)
+
+    def test_matrix_surface_coverage_skips_disappearing_paths(self):
+        gone = ROOT / "evals" / "targets" / "temporary_bad_matrix" / "gone.json"
+        with (
+            patch("scripts.check_finding_packets._matrix_surface_paths", return_value=[gone]),
+            patch("scripts.check_finding_packets.audit_matrix_coverage", side_effect=FileNotFoundError("gone")),
+        ):
+            failures = _check_matrix_surface_coverage()
+
+        self.assertEqual([], failures)
 
 
 if __name__ == "__main__":
