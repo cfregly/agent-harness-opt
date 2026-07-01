@@ -1011,6 +1011,62 @@ class CheckFindingPacketsScriptTests(unittest.TestCase):
         self.assertIn("Passed summary does not match sibling JSON receipt", joined)
         self.assertIn("Tools summary does not match sibling JSON receipt", joined)
 
+    def test_coverage_markdown_requires_summary_fields_backed_by_sibling_json(self):
+        path = ROOT / "evals" / "results" / "bad_coverage_missing_summary_fields.md"
+        json_path = path.with_suffix(".json")
+        gap_lines = "\n".join(
+            [
+                "- Never expected: none",
+                "- Never forbidden: none",
+                "- Case expectation gaps: none",
+                "- Expected without argument checks: none",
+                "- Duplicate tool names: none",
+                "- Identity gaps: none",
+                "- Missing quality checks: none",
+                "- Missing required check families: none",
+                "- Variant surface mismatches: none",
+                "- Source tool count mismatch: none",
+                "- Cases without forbidden tools: none",
+                "- Cases without check_family: none",
+                "- Unknown expected tools: none",
+                "- Unknown forbidden tools: none",
+                "- Value-bar gaps: none",
+            ]
+        )
+        path.write_text(
+            "# Matrix Coverage\n\n"
+            "Passed: yes\n"
+            "Tools: 1\n"
+            "Cases: 1\n\n"
+            "## Gaps\n\n"
+            f"{gap_lines}\n",
+            encoding="utf-8",
+        )
+        json_path.write_text(
+            """
+{
+  "passed": true,
+  "summary": {
+    "tool_count": 1,
+    "case_count": 1,
+    "argument_case_count": 1,
+    "tool_expected_coverage": 1.0
+  },
+  "uncovered": {}
+}
+""",
+            encoding="utf-8",
+        )
+        try:
+            failures = _check_result_markdown(path)
+        finally:
+            path.unlink()
+            json_path.unlink()
+
+        joined = "\n".join(failures)
+        self.assertIn("missing Cases with argument checks summary", joined)
+        self.assertIn("missing Expected tool coverage summary", joined)
+
     def test_coverage_markdown_tables_must_match_sibling_json(self):
         path = ROOT / "evals" / "results" / "bad_coverage_table_receipt.md"
         json_path = path.with_suffix(".json")

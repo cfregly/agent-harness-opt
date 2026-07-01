@@ -1652,8 +1652,11 @@ def _check_coverage_markdown_json_pair(path: Path, text: str) -> list[str]:
         "Value-bar gaps": "value_bar_gap_count",
     }
     for label, field in count_fields.items():
+        if field not in summary:
+            continue
         markdown_value = _markdown_summary_value(text, label)
-        if not markdown_value or field not in summary:
+        if not markdown_value:
+            failures.append(f"{rel}: missing {label} summary")
             continue
         try:
             parsed = int(markdown_value)
@@ -1669,8 +1672,11 @@ def _check_coverage_markdown_json_pair(path: Path, text: str) -> list[str]:
         "Variant surface parity": "variant_surface_parity",
     }
     for label, field in float_fields.items():
+        if field not in summary:
+            continue
         markdown_value = _markdown_summary_value(text, label)
-        if not markdown_value or field not in summary:
+        if not markdown_value:
+            failures.append(f"{rel}: missing {label} summary")
             continue
         try:
             parsed = float(markdown_value)
