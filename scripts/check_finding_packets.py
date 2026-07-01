@@ -1365,6 +1365,7 @@ def _check_coverage_markdown_json_pair(path: Path, text: str) -> list[str]:
         if round(float(summary.get(field, 0.0)), 3) != round(parsed, 3):
             failures.append(f"{rel}: {label} summary does not match sibling JSON receipt")
     failures.extend(_check_coverage_markdown_gaps(path, text, payload))
+    failures.extend(_check_coverage_markdown_matrix_summary_table(path, text, payload))
     failures.extend(_check_coverage_markdown_tool_table(path, text, payload))
     failures.extend(_check_coverage_markdown_check_family_table(path, text, payload))
     return failures
@@ -1456,6 +1457,87 @@ def _coverage_gap_values(values: list[Any]) -> str:
         else:
             rendered.append(str(value))
     return ", ".join(rendered)
+
+
+def _check_coverage_markdown_matrix_summary_table(
+    path: Path,
+    text: str,
+    payload: dict[str, Any],
+) -> list[str]:
+    section_text = _markdown_section_text(text, "Matrix Summary")
+    if not section_text:
+        return []
+    failures: list[str] = []
+    rel = path.relative_to(ROOT)
+    audits = payload.get("audits")
+    if not isinstance(audits, list):
+        return [f"{rel}: Matrix Summary table present but sibling JSON receipt has no audits list"]
+    expected = {
+        _coverage_audit_label(audit): audit
+        for audit in audits
+        if isinstance(audit, dict) and _coverage_audit_label(audit)
+    }
+    rows = _markdown_table_rows(section_text)
+    if not rows:
+        return [f"{rel}: Matrix Summary table has no matrix rows"]
+    seen: set[str] = set()
+    for row in rows:
+        if len(row) < 11:
+            failures.append(f"{rel}: Matrix Summary row has too few columns")
+            continue
+        label = row[0]
+        audit = expected.get(label)
+        if audit is None:
+            failures.append(f"{rel}: Matrix Summary table has stale matrix {label!r}")
+            continue
+        seen.add(label)
+        summary = audit.get("summary")
+        if not isinstance(summary, dict):
+            failures.append(f"{rel}: Matrix Summary {label!r} sibling audit missing summary")
+            continue
+        expected_passed = "yes" if audit.get("passed") is True else "no" if audit.get("passed") is False else ""
+        if row[1].casefold() != expected_passed:
+            failures.append(f"{rel}: Matrix Summary {label!r} Passed does not match sibling JSON receipt")
+        int_fields = {
+            "Tools": (2, "tool_count"),
+            "Cases": (3, "case_count"),
+            "Arg Cases": (6, "argument_case_count"),
+            "Check Families": (7, "case_count_with_check_family"),
+            "Boundary Pairs": (10, "boundary_pair_count"),
+        }
+        for column, (offset, field) in int_fields.items():
+            if field not in summary:
+                continue
+            try:
+                parsed = int(row[offset])
+            except ValueError:
+                failures.append(f"{rel}: Matrix Summary {label!r} {column} is not an integer")
+                continue
+            if parsed != summary[field]:
+                failures.append(f"{rel}: Matrix Summary {label!r} {column} does not match sibling JSON receipt")
+        float_fields = {
+            "Expected": (4, "tool_expected_coverage"),
+            "Forbidden": (5, "forbidden_tool_coverage"),
+            "Required Families": (8, "required_check_family_coverage"),
+            "Variant Parity": (9, "variant_surface_parity"),
+        }
+        for column, (offset, field) in float_fields.items():
+            if field not in summary:
+                continue
+            try:
+                parsed = float(row[offset])
+            except ValueError:
+                failures.append(f"{rel}: Matrix Summary {label!r} {column} is not numeric")
+                continue
+            if round(parsed, 3) != round(float(summary[field]), 3):
+                failures.append(f"{rel}: Matrix Summary {label!r} {column} does not match sibling JSON receipt")
+    for label in sorted(set(expected) - seen):
+        failures.append(f"{rel}: Matrix Summary table missing current matrix {label!r}")
+    return failures
+
+
+def _coverage_audit_label(audit: dict[str, Any]) -> str:
+    return str(audit.get("matrix") or audit.get("matrix_path") or "").strip()
 
 
 def _check_coverage_markdown_tool_table(

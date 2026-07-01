@@ -613,6 +613,89 @@ class CheckFindingPacketsScriptTests(unittest.TestCase):
         self.assertIn("Gaps 'Missing quality checks' does not match sibling JSON receipt", joined)
         self.assertIn("Gaps 'Duplicate tool names' does not match sibling JSON receipt", joined)
 
+    def test_coverage_suite_markdown_matrix_summary_must_match_sibling_json(self):
+        path = ROOT / "evals" / "results" / "bad_coverage_suite_table_receipt.md"
+        json_path = path.with_suffix(".json")
+        path.write_text(
+            "# Matrix Coverage Suite\n\n"
+            "Passed: yes\n"
+            "Matrices: 2\n"
+            "Passed matrices: 2\n"
+            "Failed matrices: 0\n"
+            "Total tools: 3\n"
+            "Total cases: 3\n\n"
+            "## Matrix Summary\n\n"
+            "| Matrix | Passed | Tools | Cases | Expected | Forbidden | Arg Cases | Check Families | Required Families | Variant Parity | Boundary Pairs |\n"
+            "|---|---|---:|---:|---:|---:|---:|---:|---:|---:|---:|\n"
+            "| first matrix | no | 99 | 1 | 0.000 | 1.000 | 0 | 1 | 1.000 | 0.500 | 9 |\n"
+            "| stale matrix | yes | 1 | 1 | 1.000 | 1.000 | 1 | 1 | 1.000 | 1.000 | 1 |\n",
+            encoding="utf-8",
+        )
+        json_path.write_text(
+            """
+{
+  "passed": true,
+  "summary": {
+    "matrix_count": 2,
+    "passed_matrices": 2,
+    "failed_matrices": 0,
+    "total_tools": 3,
+    "total_cases": 3
+  },
+  "audits": [
+    {
+      "matrix": "first matrix",
+      "matrix_path": "evals/model_matrix/first.json",
+      "passed": true,
+      "summary": {
+        "tool_count": 2,
+        "case_count": 1,
+        "tool_expected_coverage": 1.0,
+        "forbidden_tool_coverage": 1.0,
+        "argument_case_count": 1,
+        "case_count_with_check_family": 1,
+        "required_check_family_coverage": 1.0,
+        "variant_surface_parity": 1.0,
+        "boundary_pair_count": 2
+      }
+    },
+    {
+      "matrix": "second matrix",
+      "matrix_path": "evals/model_matrix/second.json",
+      "passed": true,
+      "summary": {
+        "tool_count": 1,
+        "case_count": 2,
+        "tool_expected_coverage": 1.0,
+        "forbidden_tool_coverage": 1.0,
+        "argument_case_count": 2,
+        "case_count_with_check_family": 2,
+        "required_check_family_coverage": 1.0,
+        "variant_surface_parity": 1.0,
+        "boundary_pair_count": 3
+      }
+    }
+  ]
+}
+""",
+            encoding="utf-8",
+        )
+        try:
+            failures = _check_result_markdown(path)
+        finally:
+            path.unlink()
+            json_path.unlink()
+
+        joined = "\n".join(failures)
+        self.assertIn("Matrix Summary 'first matrix' Passed does not match sibling JSON receipt", joined)
+        self.assertIn("Matrix Summary 'first matrix' Tools does not match sibling JSON receipt", joined)
+        self.assertIn("Matrix Summary 'first matrix' Expected does not match sibling JSON receipt", joined)
+        self.assertIn("Matrix Summary 'first matrix' Arg Cases does not match sibling JSON receipt", joined)
+        self.assertIn("Matrix Summary 'first matrix' Variant Parity does not match sibling JSON receipt", joined)
+        self.assertIn("Matrix Summary 'first matrix' Boundary Pairs does not match sibling JSON receipt", joined)
+        self.assertIn("Matrix Summary table has stale matrix 'stale matrix'", joined)
+        self.assertIn("Matrix Summary table missing current matrix 'second matrix'", joined)
+
     def test_raw_matrix_markdown_counts_must_match_results_table(self):
         path = ROOT / "evals" / "results" / "bad_matrix_report.md"
         path.write_text(

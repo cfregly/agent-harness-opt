@@ -117,10 +117,11 @@ pass/fail, failure, error, skipped, and score summaries, checks coverage Markdow
 sibling JSON receipts, reconciles retained coverage gap bullets plus tool and check-family tables
 with their JSON evidence, checks matrix-coverage receipts, checks model-matrix receipt rows and cell
 summaries plus top-level result summaries against their retained result rows and source matrices,
-checks aggregate coverage-suite audits against their retained source matrices, checks retained
-live-harness receipt reproduction commands against their claimed source specs, verifies live-harness
-receipt cells still match the retained source spec, and audits every retained matrix surface under
-`evals/model_matrix` plus matrix-shaped targets under `evals/targets`.
+checks aggregate coverage-suite audits and per-matrix summary tables against their retained source
+matrices, checks retained live-harness receipt reproduction commands against their claimed source
+specs, verifies live-harness receipt cells still match the retained source spec, and audits every
+retained matrix surface under `evals/model_matrix` plus matrix-shaped targets under
+`evals/targets`.
 
 `scripts/check_eval_surfaces.py` keeps the other eval fixtures honest. It validates every retained
 example fixture, dry-runs every read-only E2E spec, dry-runs every live harness spec without
@@ -393,8 +394,8 @@ tool catalogs. Store the matrix, coverage report, live result, and PR packet tog
 cases can be rerun later as evals. These artifacts are not scratch notes: the repository checks
 validate result receipt shape, matrix paths, coverage summaries, baseline failure rows, promoted
 candidate evidence, model-matrix result and cell summaries, optimization-gate pass/fail,
-skipped/error counts, coverage gaps and tables, and Markdown review sections so future agents can
-use them as regression fixtures.
+skipped/error counts, coverage gaps and tables, coverage-suite matrix rows, and Markdown review
+sections so future agents can use them as regression fixtures.
 
 For the full repository, the current ledger is stored at
 `evals/results/model_matrix_coverage_suite_2026-06-30.md`: it audits 19 matrices, 182 tools, 230
