@@ -206,6 +206,8 @@ def _check_pr_packet_dirs() -> list[str]:
 def _check_pr_packet_dir(packet_dir: Path) -> list[str]:
     failures: list[str] = []
     rel_dir = packet_dir.relative_to(ROOT)
+    readme_text = ""
+    pr_body_text = ""
     for filename in REQUIRED_PR_PACKET_FILES:
         path = packet_dir / filename
         if not path.exists():
@@ -213,9 +215,13 @@ def _check_pr_packet_dir(packet_dir: Path) -> list[str]:
             continue
         if not path.read_text(encoding="utf-8").strip():
             failures.append(f"{path.relative_to(ROOT)}: empty")
+    pr_body = packet_dir / "PR_BODY.md"
+    if pr_body.exists():
+        pr_body_text = pr_body.read_text(encoding="utf-8")
     readme = packet_dir / "README.md"
     if readme.exists():
         text = readme.read_text(encoding="utf-8")
+        readme_text = text
         rel_readme = readme.relative_to(ROOT)
         if "Share link:" not in text:
             failures.append(f"{rel_readme}: missing share link")
@@ -242,7 +248,62 @@ def _check_pr_packet_dir(packet_dir: Path) -> list[str]:
         failures.append(f"{evidence_path.relative_to(ROOT)}: evidence must be an object")
         return failures
     failures.extend(_check_pr_packet_evidence(evidence_path, evidence))
+    failures.extend(_check_pr_packet_text(packet_dir, evidence, readme_text, pr_body_text))
     return failures
+
+
+def _check_pr_packet_text(
+    packet_dir: Path,
+    evidence: dict[str, Any],
+    readme_text: str,
+    pr_body_text: str,
+) -> list[str]:
+    failures: list[str] = []
+    packet_name = packet_dir.name
+    packet_type = str(evidence.get("packet_type", "improvement")).strip() or "improvement"
+    result = evidence.get("result")
+    matrix_path = ""
+    if isinstance(result, dict):
+        matrix_path = str(result.get("matrix_path", "")).strip()
+    evidence_ref = f"evals/pr_packets/{packet_name}/evidence.json"
+    required_refs = [
+        ("evidence JSON", evidence_ref),
+        ("matrix", matrix_path),
+    ]
+
+    for filename, text in (("README.md", readme_text), ("PR_BODY.md", pr_body_text)):
+        if not text.strip():
+            continue
+        rel = (packet_dir / filename).relative_to(ROOT)
+        repo_refs = {match.group(1) for match in REPO_LINK_RE.finditer(text)}
+        for label, ref in required_refs:
+            if ref and ref not in repo_refs:
+                failures.append(f"{rel}: missing public {label} link to {ref}")
+        if not any(ref.startswith("evals/results/") for ref in repo_refs):
+            failures.append(f"{rel}: missing public result artifact link")
+        failures.extend(_check_packet_type_language(rel, text, packet_type))
+    return failures
+
+
+def _check_packet_type_language(rel: Path, text: str, packet_type: str) -> list[str]:
+    normalized = text.casefold()
+    if packet_type == "guardrail":
+        failures = []
+        if "guardrail" not in normalized:
+            failures.append(f"{rel}: guardrail packet must use guardrail language")
+        if "no upstream" not in normalized:
+            failures.append(f"{rel}: guardrail packet must say no upstream change is promoted")
+        return failures
+    if packet_type == "improvement":
+        improvement_markers = (
+            "confirmed improvement",
+            "promoted by value bar: yes",
+            "clears the adversarially-confirmed to add value bar",
+            "clears the adversarially-confirmed value bar",
+        )
+        if not any(marker in normalized for marker in improvement_markers):
+            return [f"{rel}: improvement packet must state it cleared the value bar"]
+    return []
 
 
 def _check_pr_packet_evidence(path: Path, evidence: dict[str, Any]) -> list[str]:

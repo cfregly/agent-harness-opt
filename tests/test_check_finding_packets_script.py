@@ -8,6 +8,7 @@ from scripts.check_finding_packets import (
     ROOT,
     _check_matrix_surface_coverage,
     _check_pr_packet_evidence,
+    _check_pr_packet_text,
     _check_result_json,
     _check_result_markdown,
 )
@@ -125,6 +126,56 @@ class CheckFindingPacketsScriptTests(unittest.TestCase):
         )
 
         self.assertEqual([], failures)
+
+    def test_pr_packet_text_requires_public_evidence_links(self):
+        failures = _check_pr_packet_text(
+            ROOT / "evals" / "pr_packets" / "sample_packet",
+            {
+                "packet_type": "improvement",
+                "result": {
+                    "matrix_path": "evals/model_matrix/sample_matrix.json",
+                },
+            },
+            "Confirmed improvement. This clears the adversarially-confirmed to add value bar.",
+            "The result was promoted by value bar: yes.",
+        )
+
+        joined = "\n".join(failures)
+        self.assertIn(
+            "sample_packet/README.md: missing public evidence JSON link to "
+            "evals/pr_packets/sample_packet/evidence.json",
+            joined,
+        )
+        self.assertIn(
+            "sample_packet/README.md: missing public matrix link to "
+            "evals/model_matrix/sample_matrix.json",
+            joined,
+        )
+        self.assertIn("sample_packet/README.md: missing public result artifact link", joined)
+        self.assertIn("sample_packet/PR_BODY.md: missing public result artifact link", joined)
+
+    def test_pr_packet_text_requires_packet_type_language(self):
+        public_links = """
+- Evidence JSON: [evidence.json](https://github.com/cfregly/claude-agent-harness-opt/blob/main/evals/pr_packets/sample_guardrail/evidence.json)
+- Matrix: [sample_matrix.json](https://github.com/cfregly/claude-agent-harness-opt/blob/main/evals/model_matrix/sample_matrix.json)
+- Result artifact: [sample_result.md](https://github.com/cfregly/claude-agent-harness-opt/blob/main/evals/results/sample_result.md)
+"""
+        failures = _check_pr_packet_text(
+            ROOT / "evals" / "pr_packets" / "sample_guardrail",
+            {
+                "packet_type": "guardrail",
+                "result": {
+                    "matrix_path": "evals/model_matrix/sample_matrix.json",
+                },
+            },
+            f"Guardrail packet.\n{public_links}",
+            f"Guardrail coverage retained.\n{public_links}",
+        )
+
+        self.assertIn(
+            "sample_guardrail/README.md: guardrail packet must say no upstream change is promoted",
+            "\n".join(failures),
+        )
 
     def test_result_json_rejects_unknown_receipt_shape(self):
         path = ROOT / "evals" / "results" / "unknown_shape.json"

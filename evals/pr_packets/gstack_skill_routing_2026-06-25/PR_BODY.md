@@ -150,9 +150,10 @@ python -m claude_agent_harness_opt model-matrix evals/targets/gstack/gstack_skil
 
 ## Evidence
 
-- public harness repo: https://github.com/cfregly/claude-agent-harness-opt
-- `REPRODUCTION.md` contains the full local reproduction path.
-- `evidence.json` contains the matrix result, selected cases, comparison, and source pins.
-- reproducible result artifact: https://github.com/cfregly/claude-agent-harness-opt/tree/main/evals/results/gstack_skill_matrix_live_2026-06-25.json
+- Public harness repo: [claude-agent-harness-opt](https://github.com/cfregly/claude-agent-harness-opt)
+- Reproduction doc: [REPRODUCTION.md](https://github.com/cfregly/claude-agent-harness-opt/blob/main/evals/pr_packets/gstack_skill_routing_2026-06-25/REPRODUCTION.md)
+- Evidence JSON: [evidence.json](https://github.com/cfregly/claude-agent-harness-opt/blob/main/evals/pr_packets/gstack_skill_routing_2026-06-25/evidence.json)
+- Matrix: [gstack_skill_selection_matrix.json](https://github.com/cfregly/claude-agent-harness-opt/blob/main/evals/targets/gstack/gstack_skill_selection_matrix.json)
+- Result artifact: [gstack_skill_matrix_live_2026-06-25.json](https://github.com/cfregly/claude-agent-harness-opt/blob/main/evals/results/gstack_skill_matrix_live_2026-06-25.json)
 
 </details>
