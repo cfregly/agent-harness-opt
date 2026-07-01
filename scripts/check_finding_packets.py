@@ -1618,7 +1618,7 @@ def _check_coverage_markdown_json_pair(path: Path, text: str) -> list[str]:
         failures.append(f"{rel}: sibling JSON receipt must be an object")
         return failures
     expected_passed = "yes" if payload.get("passed") is True else "no" if payload.get("passed") is False else ""
-    markdown_passed = _markdown_summary_value(text, "Passed")
+    markdown_passed = _coverage_markdown_summary_value(rel, text, "Passed", failures)
     if expected_passed and markdown_passed and markdown_passed.casefold() != expected_passed:
         failures.append(f"{rel}: Passed summary does not match sibling JSON receipt")
     summary = payload.get("summary")
@@ -1654,7 +1654,7 @@ def _check_coverage_markdown_json_pair(path: Path, text: str) -> list[str]:
     for label, field in count_fields.items():
         if field not in summary:
             continue
-        markdown_value = _markdown_summary_value(text, label)
+        markdown_value = _coverage_markdown_summary_value(rel, text, label, failures)
         if not markdown_value:
             failures.append(f"{rel}: missing {label} summary")
             continue
@@ -1674,7 +1674,7 @@ def _check_coverage_markdown_json_pair(path: Path, text: str) -> list[str]:
     for label, field in float_fields.items():
         if field not in summary:
             continue
-        markdown_value = _markdown_summary_value(text, label)
+        markdown_value = _coverage_markdown_summary_value(rel, text, label, failures)
         if not markdown_value:
             failures.append(f"{rel}: missing {label} summary")
             continue
@@ -1693,8 +1693,22 @@ def _check_coverage_markdown_json_pair(path: Path, text: str) -> list[str]:
 
 
 def _markdown_summary_value(text: str, label: str) -> str:
-    match = re.search(rf"^{re.escape(label)}:\s*(.+?)\s*$", text, flags=re.MULTILINE)
-    return match.group(1).strip() if match else ""
+    values = _markdown_summary_values(text, label)
+    return values[0] if values else ""
+
+
+def _markdown_summary_values(text: str, label: str) -> list[str]:
+    return [
+        match.group(1).strip()
+        for match in re.finditer(rf"^{re.escape(label)}:\s*(.+?)\s*$", text, flags=re.MULTILINE)
+    ]
+
+
+def _coverage_markdown_summary_value(rel: Path, text: str, label: str, failures: list[str]) -> str:
+    values = _markdown_summary_values(text, label)
+    if len(values) > 1:
+        failures.append(f"{rel}: duplicate {label} summary")
+    return values[0] if values else ""
 
 
 def _markdown_section_text(text: str, title: str) -> str:
