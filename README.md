@@ -120,8 +120,8 @@ model-matrix receipt rows and cell summaries plus top-level result summaries aga
 result rows and source matrices, verifies bounded result-row statuses and status/pass consistency,
 checks aggregate coverage-suite audits and per-matrix summary tables against their retained source
 matrices, checks retained live-harness receipt reproduction commands against their claimed source
-specs, verifies live-harness receipt cells and status summaries still match the retained source
-spec, and audits every retained matrix surface under `evals/model_matrix` plus matrix-shaped targets
+specs, verifies live-harness receipt cells, typed evidence fields, and status summaries still match
+the retained source spec, and audits every retained matrix surface under `evals/model_matrix` plus matrix-shaped targets
 under `evals/targets`.
 
 `scripts/check_eval_surfaces.py` keeps the other eval fixtures honest. It validates every retained
@@ -397,7 +397,7 @@ validate result receipt shape, matrix paths, coverage summaries, baseline failur
 candidate evidence, model-matrix result and cell summaries, optimization-gate pass/fail,
 skipped/error counts, JSON result-row status vocabulary and status/pass consistency, Markdown
 result-row shape and identity, Markdown cell summaries, coverage gaps and tables, coverage-suite
-matrix rows, live-harness status summaries, and Markdown review sections so future agents can use
+matrix rows, live-harness cell fields and status summaries, and Markdown review sections so future agents can use
 them as regression fixtures.
 
 For the full repository, the current ledger is stored at

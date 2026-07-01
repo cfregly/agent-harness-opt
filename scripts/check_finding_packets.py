@@ -961,8 +961,43 @@ def _check_live_harness_receipt(path: Path, payload: dict[str, Any]) -> list[str
             "planned",
         }:
             failures.append(f"{rel}: cells[{idx}].status is not a known live-harness status")
+        failures.extend(_check_live_harness_cell_fields(rel, idx, cell))
     if cells and source_spec and command_args is not None:
         failures.extend(_check_live_harness_receipt_cells(rel, cells, source_spec, command_args))
+    return failures
+
+
+def _check_live_harness_cell_fields(rel: Path, idx: int, cell: dict[str, Any]) -> list[str]:
+    failures: list[str] = []
+    status = str(cell.get("status", "")).strip()
+    exit_code = cell.get("exit_code")
+    tool_use_passed = cell.get("tool_use_passed")
+    directed_thinking_passed = cell.get("directed_thinking_passed")
+    tool_call_count = cell.get("tool_call_count")
+
+    if "exit_code" in cell and exit_code is not None and (
+        not isinstance(exit_code, int) or isinstance(exit_code, bool)
+    ):
+        failures.append(f"{rel}: cells[{idx}].exit_code must be an integer or null")
+    if "tool_use_passed" in cell and not isinstance(tool_use_passed, bool):
+        failures.append(f"{rel}: cells[{idx}].tool_use_passed must be boolean")
+    if "directed_thinking_passed" in cell and not isinstance(directed_thinking_passed, bool):
+        failures.append(f"{rel}: cells[{idx}].directed_thinking_passed must be boolean")
+    if "tool_call_count" in cell and (
+        not isinstance(tool_call_count, int) or isinstance(tool_call_count, bool) or tool_call_count < 0
+    ):
+        failures.append(f"{rel}: cells[{idx}].tool_call_count must be a nonnegative integer")
+
+    if status == "passed":
+        if "exit_code" in cell and exit_code != 0:
+            failures.append(f"{rel}: cells[{idx}].passed status must have exit_code 0")
+        if "tool_use_passed" in cell and tool_use_passed is not True:
+            failures.append(f"{rel}: cells[{idx}].passed status must have tool_use_passed true")
+    if status == "auth_failed":
+        if "exit_code" in cell and exit_code == 0:
+            failures.append(f"{rel}: cells[{idx}].auth_failed status must have nonzero exit_code")
+        if "tool_use_passed" in cell and tool_use_passed is not False:
+            failures.append(f"{rel}: cells[{idx}].auth_failed status must have tool_use_passed false")
     return failures
 
 

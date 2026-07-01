@@ -175,6 +175,61 @@ class CheckFindingPacketsScriptTests(unittest.TestCase):
         self.assertIn("summary.planned must match live-harness cells", joined)
         self.assertIn("cells[1].status is not a known live-harness status", joined)
 
+    def test_live_harness_receipt_cell_fields_must_be_coherent(self):
+        path = ROOT / "evals" / "results" / "bad_live_harness_cell_fields.json"
+        path.write_text(
+            """
+{
+  "passed": false,
+  "cells": [
+    {
+      "harness": "claude_agent_sdk_python_latest",
+      "case": "sdk custom pwd tool directed smoke",
+      "status": "passed",
+      "exit_code": "1",
+      "tool_use_passed": "no",
+      "directed_thinking_passed": "yes",
+      "tool_call_count": -1
+    },
+    {
+      "harness": "openai_agents_sdk_python_latest",
+      "case": "sdk custom pwd tool directed smoke",
+      "status": "auth_failed",
+      "exit_code": 0,
+      "tool_use_passed": true,
+      "directed_thinking_passed": false,
+      "tool_call_count": 0
+    }
+  ],
+  "summary": {
+    "passed": 1,
+    "failed": 0,
+    "errors": 1,
+    "not_installed": 0,
+    "planned": 0,
+    "directed_thinking_visible": 0
+  },
+  "source_spec": "evals/live_harnesses/sdk_agent_smoke.json",
+  "command": "python -m claude_agent_harness_opt live-harness evals/live_harnesses/sdk_agent_smoke.json --harnesses claude_agent_sdk_python_latest,openai_agents_sdk_python_latest --cases 'sdk custom pwd tool directed smoke'"
+}
+""",
+            encoding="utf-8",
+        )
+        try:
+            failures = _check_result_json(path)
+        finally:
+            path.unlink()
+
+        joined = "\n".join(failures)
+        self.assertIn("cells[0].exit_code must be an integer or null", joined)
+        self.assertIn("cells[0].tool_use_passed must be boolean", joined)
+        self.assertIn("cells[0].directed_thinking_passed must be boolean", joined)
+        self.assertIn("cells[0].tool_call_count must be a nonnegative integer", joined)
+        self.assertIn("cells[0].passed status must have exit_code 0", joined)
+        self.assertIn("cells[0].passed status must have tool_use_passed true", joined)
+        self.assertIn("cells[1].auth_failed status must have nonzero exit_code", joined)
+        self.assertIn("cells[1].auth_failed status must have tool_use_passed false", joined)
+
     def test_model_matrix_receipt_requires_live_and_consistent_rows(self):
         path = ROOT / "evals" / "results" / "bad_model_matrix_receipt.json"
         path.write_text(
