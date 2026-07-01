@@ -80,7 +80,13 @@ class CheckEvalSurfacesScriptTests(unittest.TestCase):
   "name": "bad live harness",
   "value_bar": {"claim": "Bad spec."},
   "cases": [{"name": "case without prompt"}],
-  "harnesses": [{"name": "missing adapter", "command": ["echo", "ok"]}]
+  "harnesses": [
+    {
+      "name": "missing adapter",
+      "command": ["python", "scripts/missing_live_helper.py"],
+      "version_command": ["python", "scripts/missing_live_helper.py", "--version"]
+    }
+  ]
 }
 """,
             encoding="utf-8",
@@ -95,6 +101,11 @@ class CheckEvalSurfacesScriptTests(unittest.TestCase):
         self.assertIn("value_bar.adversarial_check must be present", joined)
         self.assertIn("cases[0] missing prompt_template", joined)
         self.assertIn("harnesses[0] missing adapter", joined)
+        self.assertIn("harnesses[0] missing marker", joined)
+        self.assertIn("harnesses[0] missing expected_tool", joined)
+        self.assertIn("harnesses[0] expected_args_contains must be a nonempty object", joined)
+        self.assertIn("harnesses[0].command[1] local path missing", joined)
+        self.assertIn("harnesses[0].version_command[1] local path missing", joined)
 
     def test_live_harness_surface_skips_disappearing_glob_results(self):
         with patch(

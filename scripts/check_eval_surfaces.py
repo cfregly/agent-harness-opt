@@ -299,12 +299,51 @@ def _check_live_harness_spec_shape(rel: Path, spec: dict[str, Any]) -> list[str]
             continue
         if not str(harness.get("name", "")).strip():
             failures.append(f"{rel}: harnesses[{index}] missing name")
+        if not str(harness.get("marker", "")).strip():
+            failures.append(f"{rel}: harnesses[{index}] missing marker")
         command = harness.get("command")
         if not isinstance(command, list) or not command:
             failures.append(f"{rel}: harnesses[{index}] command must be a nonempty list")
+        else:
+            failures.extend(_check_command_path_tokens(rel, f"harnesses[{index}].command", command))
+        version_command = harness.get("version_command")
+        if not isinstance(version_command, list) or not version_command:
+            failures.append(f"{rel}: harnesses[{index}] version_command must be a nonempty list")
+        else:
+            failures.extend(
+                _check_command_path_tokens(rel, f"harnesses[{index}].version_command", version_command)
+            )
         if not str(harness.get("adapter", "")).strip():
             failures.append(f"{rel}: harnesses[{index}] missing adapter")
+        if not str(harness.get("expected_tool", "")).strip():
+            failures.append(f"{rel}: harnesses[{index}] missing expected_tool")
+        expected_args = harness.get("expected_args_contains")
+        if not isinstance(expected_args, dict) or not expected_args:
+            failures.append(f"{rel}: harnesses[{index}] expected_args_contains must be a nonempty object")
     return failures
+
+
+def _check_command_path_tokens(rel: Path, label: str, command: list[Any]) -> list[str]:
+    failures: list[str] = []
+    for index, part in enumerate(command):
+        token = str(part)
+        if not _looks_like_local_command_path(token):
+            continue
+        if not (ROOT / token).exists():
+            failures.append(f"{rel}: {label}[{index}] local path missing: {token}")
+    return failures
+
+
+def _looks_like_local_command_path(token: str) -> bool:
+    if not token or any(marker in token for marker in ("{", "}", "$")):
+        return False
+    if token.startswith(("http://", "https://", "/tmp/")):
+        return False
+    if Path(token).is_absolute():
+        return False
+    if token.startswith(("docs/", "evals/", "prompts/", "recipes/", "scripts/", ".claude/")):
+        return True
+    return token.endswith((".json", ".jsonl", ".md", ".py", ".txt", ".yaml", ".yml"))
 
 
 def _check_trace_suites() -> list[str]:

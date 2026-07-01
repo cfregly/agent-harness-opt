@@ -118,7 +118,8 @@ matrix-shaped targets under `evals/targets`.
 
 `scripts/check_eval_surfaces.py` keeps the other eval fixtures honest. It validates every retained
 example fixture, dry-runs every read-only E2E spec, dry-runs every live harness spec without
-credentials, runs every trace suite, and validates the harness-check catalogs.
+credentials, validates live-harness command arrays, version commands, expected tool contracts, and
+local script path references, runs every trace suite, and validates the harness-check catalogs.
 
 `scripts/check_prompt_recipe_surfaces.py` keeps reusable prompt and recipe assets retained as eval
 surfaces too. It renders every recipe, lints the recipe tool boundaries, checks use-case suitability,
