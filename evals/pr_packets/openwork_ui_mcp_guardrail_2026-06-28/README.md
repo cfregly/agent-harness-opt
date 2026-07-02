@@ -4,9 +4,20 @@ Share link: [OpenWork UI MCP Guardrail full PR/evidence bundle](https://github.c
 
 ## Summary
 
-| Before | After | Result |
-|---|---|---|
-| `docs_openwork_ui_mcp` scored 1.000 on the retained slice. | No suggested wording change from this slice. No upstream change is promoted. | `source_tuned_openwork_ui_mcp` also scored 1.000. Keep the cases as regression coverage. |
+| Exact change | Before | After | Result |
+|---|---|---|---|
+| No wording change promoted from this slice. | `docs_openwork_ui_mcp` scored 1.000 on the retained slice. | Keep the current surface and retain the cases as regression coverage. | `source_tuned_openwork_ui_mcp` also scored 1.000. Keep the cases as regression coverage. |
+
+
+## Result
+
+Current frontier stress receipt: 28 current available-frontier cells, 27 passed, 0 failed, 1 error on OpenAI `gpt-5.5` and Gemini `gemini-3.1-pro-preview-customtools`. Treat this as hill-descending coverage for the next tuning pass.
+
+Anthropic Opus frontier receipt: 14 Anthropic Opus cells, 14 passed, 0 failed, 0 errors on accessible `claude-opus-4-8`. Any failed cells are model-selection findings, not provider-credit blockers.
+
+Guardrail. No upstream change is promoted because the baseline already passed the tested slice.
+
+The live Anthropic prompt JSON run kept both docs-level and source-tuned variants at 7/7, so the packet is guardrail evidence rather than a promoted change.
 
 ## Why This Matters
 
@@ -95,43 +106,19 @@ Provider/model rows are evidence lanes. The target repo actions above are the on
 ## Evidence Bundle
 
 - Public harness repo: [claude-agent-harness-opt](https://github.com/cfregly/claude-agent-harness-opt)
-- Founder handoff: [OpenWork UI MCP](https://github.com/cfregly/claude-agent-harness-opt/tree/main/docs/findings/openwork)
-- Packet folder: [openwork_ui_mcp_guardrail_2026-06-28](https://github.com/cfregly/claude-agent-harness-opt/tree/main/evals/pr_packets/openwork_ui_mcp_guardrail_2026-06-28)
+- Bundle folder: [openwork_ui_mcp_guardrail_2026-06-28](https://github.com/cfregly/claude-agent-harness-opt/tree/main/evals/pr_packets/openwork_ui_mcp_guardrail_2026-06-28)
+- Matrix: [openwork_ui_mcp_tool_selection.json](https://github.com/cfregly/claude-agent-harness-opt/blob/main/evals/model_matrix/openwork_ui_mcp_tool_selection.json)
+- Result artifact: [openwork_ui_mcp_tool_selection_2026-06-28.md](https://github.com/cfregly/claude-agent-harness-opt/blob/main/evals/results/openwork_ui_mcp_tool_selection_2026-06-28.md)
 - PR_TITLE.txt: [PR_TITLE.txt](https://github.com/cfregly/claude-agent-harness-opt/blob/main/evals/pr_packets/openwork_ui_mcp_guardrail_2026-06-28/PR_TITLE.txt)
 - PR_BODY.md: [PR_BODY.md](https://github.com/cfregly/claude-agent-harness-opt/blob/main/evals/pr_packets/openwork_ui_mcp_guardrail_2026-06-28/PR_BODY.md)
 - REPRODUCTION.md: [REPRODUCTION.md](https://github.com/cfregly/claude-agent-harness-opt/blob/main/evals/pr_packets/openwork_ui_mcp_guardrail_2026-06-28/REPRODUCTION.md)
 - evidence.json: [evidence.json](https://github.com/cfregly/claude-agent-harness-opt/blob/main/evals/pr_packets/openwork_ui_mcp_guardrail_2026-06-28/evidence.json)
-- Matrix: [openwork_ui_mcp_tool_selection.json](https://github.com/cfregly/claude-agent-harness-opt/blob/main/evals/model_matrix/openwork_ui_mcp_tool_selection.json)
-- Result artifact: [openwork_ui_mcp_tool_selection_2026-06-28.md](https://github.com/cfregly/claude-agent-harness-opt/blob/main/evals/results/openwork_ui_mcp_tool_selection_2026-06-28.md)
 - Target repo: [openwork](https://github.com/different-ai/openwork)
 
-[Current frontier stress receipts](https://github.com/cfregly/claude-agent-harness-opt/blob/main/docs/frontier-stress-2026-07-01.md) tracks all retained current available-frontier receipts.
+<details>
+<summary>LLM / Machine-readable details</summary>
 
-Bundle folder: [openwork_ui_mcp_guardrail_2026-06-28](https://github.com/cfregly/claude-agent-harness-opt/tree/main/evals/pr_packets/openwork_ui_mcp_guardrail_2026-06-28)
-
-- Finding folder: [OpenWork UI MCP Guardrail finding](https://github.com/cfregly/claude-agent-harness-opt/tree/main/docs/findings/openwork)
-- PR title: [PR_TITLE.txt](https://github.com/cfregly/claude-agent-harness-opt/blob/main/evals/pr_packets/openwork_ui_mcp_guardrail_2026-06-28/PR_TITLE.txt)
-- PR body: [PR_BODY.md](https://github.com/cfregly/claude-agent-harness-opt/blob/main/evals/pr_packets/openwork_ui_mcp_guardrail_2026-06-28/PR_BODY.md)
-- Reproduction doc: [REPRODUCTION.md](https://github.com/cfregly/claude-agent-harness-opt/blob/main/evals/pr_packets/openwork_ui_mcp_guardrail_2026-06-28/REPRODUCTION.md)
-- Evidence JSON: [evidence.json](https://github.com/cfregly/claude-agent-harness-opt/blob/main/evals/pr_packets/openwork_ui_mcp_guardrail_2026-06-28/evidence.json)
-- Frontier stress receipt: [openwork_ui_mcp_tool_selection_frontier_available_live_2026-07-01.md](https://github.com/cfregly/claude-agent-harness-opt/blob/main/evals/results/openwork_ui_mcp_tool_selection_frontier_available_live_2026-07-01.md)
-- Frontier JSON receipt: [openwork_ui_mcp_tool_selection_frontier_available_live_2026-07-01.json](https://github.com/cfregly/claude-agent-harness-opt/blob/main/evals/results/openwork_ui_mcp_tool_selection_frontier_available_live_2026-07-01.json)
-- Anthropic Opus receipt: [openwork_ui_mcp_tool_selection_frontier_anthropic_live_2026-07-01.md](https://github.com/cfregly/claude-agent-harness-opt/blob/main/evals/results/openwork_ui_mcp_tool_selection_frontier_anthropic_live_2026-07-01.md)
-- Anthropic Opus JSON: [openwork_ui_mcp_tool_selection_frontier_anthropic_live_2026-07-01.json](https://github.com/cfregly/claude-agent-harness-opt/blob/main/evals/results/openwork_ui_mcp_tool_selection_frontier_anthropic_live_2026-07-01.json)
-- Live result: [openwork_ui_mcp_tool_selection_2026-06-28.md](https://github.com/cfregly/claude-agent-harness-opt/blob/main/evals/results/openwork_ui_mcp_tool_selection_2026-06-28.md)
-- Detailed note: [yc-p2026-mcp-sweep.md](https://github.com/cfregly/claude-agent-harness-opt/blob/main/docs/yc-p2026-mcp-sweep.md)
-
-## Result
-
-Current frontier stress receipt: 28 current available-frontier cells, 27 passed, 0 failed, 1 error on OpenAI `gpt-5.5` and Gemini `gemini-3.1-pro-preview-customtools`. Treat this as hill-descending coverage for the next tuning pass.
-
-Anthropic Opus frontier receipt: 14 Anthropic Opus cells, 14 passed, 0 failed, 0 errors on accessible `claude-opus-4-8`. Any failed cells are model-selection findings, not provider-credit blockers.
-
-Guardrail. No upstream change is promoted because the baseline already passed the tested slice.
-
-The live Anthropic prompt JSON run kept both docs-level and source-tuned variants at 7/7, so the packet is guardrail evidence rather than a promoted change.
-
-## Evidence
+## Artifact Pointers
 
 - Source: [OpenWork repo](https://github.com/different-ai/openwork)
 - Matrix: [openwork_ui_mcp_tool_selection.json](https://github.com/cfregly/claude-agent-harness-opt/blob/main/evals/model_matrix/openwork_ui_mcp_tool_selection.json)
@@ -142,3 +129,5 @@ The live Anthropic prompt JSON run kept both docs-level and source-tuned variant
 ## Reproduce
 
 [REPRODUCTION.md](https://github.com/cfregly/claude-agent-harness-opt/blob/main/evals/pr_packets/openwork_ui_mcp_guardrail_2026-06-28/REPRODUCTION.md) contains the exact command and pinned matrix surface.
+
+</details>

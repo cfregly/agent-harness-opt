@@ -10,16 +10,16 @@ regressions.
 
 ## Summary
 
-| Target | Before | After | Result |
-|---|---|---|---|
-| Firecrawl MCP | `legacy_firecrawl_mcp` chose `firecrawl_extract` for one known URL plus structured fields. | Suggested change: Use `firecrawl_scrape` for one known page with specific fields. Reserve `firecrawl_extract` for broader extraction. | `tuned_firecrawl_mcp_boundaries` chose `firecrawl_scrape`. |
-| Supabase MCP | `terse_supabase_database_mcp` chose `execute_sql` for DDL and RLS changes. | Suggested change: Route schema-changing SQL to `apply_migration`. Keep `execute_sql` for ordinary SQL. | `tuned_supabase_database_boundaries` chose `apply_migration`. |
-| Zymtrace MCP | `stock_zymtrace_mcp` missed default-project and bounded-drilldown arguments. | Suggested change: Tighten default-project, resource-first, metrics-first, and bounded hot-trace routing. | `tuned_zymtrace_mcp_boundaries` passed all retained held-out routing cases. |
-| Screenpipe MCP | `readme_screenpipe_mcp` sent exact keyword lookup to `search-content`. | Suggested change: Route literal keyword or exact phrase lookup to `keyword-search`. | `source_tuned_screenpipe_mcp` sent it to `keyword-search`. |
-| InsForge MCP | `readme_insforge_mcp` called `create-deployment` for a relative source path. | Suggested change: Require absolute deployment paths before calling `create-deployment`. | `source_tuned_insforge_mcp` rejected the request with `NO_TOOL`. |
-| Humwork MCP | README-level descriptions passed 7/7. | No suggested wording change from this slice. No upstream change is promoted. | Skill-tuned descriptions also passed 7/7. Keep cases as guardrail coverage. |
-| OpenWork UI MCP | Docs-level descriptions passed 7/7. | No suggested wording change from this slice. No upstream change is promoted. | Source-tuned descriptions also passed 7/7. Keep cases as guardrail coverage. |
-| GitHub, Playwright, Slack, Filesystem, Postgres MCP Pro, Context7, ClickHouse | Stock descriptions passed or the apparent miss was a verifier/transient issue. | No suggested wording change from this slice. No upstream change is promoted. | Tuned descriptions did not produce a confirmed baseline delta. Keep cases as regression coverage. |
+| Target | Exact change | Before | After | Result |
+|---|---|---|---|---|
+| Firecrawl MCP | Use `firecrawl_scrape` for one known page with specific fields. Reserve `firecrawl_extract` for broader extraction. | `legacy_firecrawl_mcp` chose `firecrawl_extract` for one known URL plus structured fields. | The single-page request routes to `firecrawl_scrape`. | `tuned_firecrawl_mcp_boundaries` chose the intended tool. |
+| Supabase MCP | Route schema-changing SQL to `apply_migration`. Keep `execute_sql` for ordinary SQL. | `terse_supabase_database_mcp` chose `execute_sql` for DDL and RLS changes. | Schema-changing SQL routes to `apply_migration`. | `tuned_supabase_database_boundaries` chose the intended tool. |
+| Zymtrace MCP | Tighten default-project, resource-first, metrics-first, and bounded hot-trace routing. | `stock_zymtrace_mcp` missed default-project and bounded-drilldown arguments. | Agents see explicit defaults, resource fallbacks, metrics-first GPU flow, and bounded trace drilldown. | `tuned_zymtrace_mcp_boundaries` passed all retained held-out routing cases. |
+| Screenpipe MCP | Route literal keyword or exact phrase lookup to `keyword-search`. | `readme_screenpipe_mcp` sent exact keyword lookup to `search-content`. | Exact keyword lookup routes to `keyword-search`. | `source_tuned_screenpipe_mcp` chose the intended tool. |
+| InsForge MCP | Require absolute deployment paths before calling `create-deployment`. | `readme_insforge_mcp` called `create-deployment` for a relative source path. | Relative source paths are rejected before tool execution. | `source_tuned_insforge_mcp` chose `NO_TOOL`. |
+| Humwork MCP | No wording change promoted from this slice. | README-level descriptions passed 7/7. | Keep current wording and retain the cases. | Skill-tuned descriptions also passed 7/7. Guardrail only. |
+| OpenWork UI MCP | No wording change promoted from this slice. | Docs-level descriptions passed 7/7. | Keep current wording and retain the cases. | Source-tuned descriptions also passed 7/7. Guardrail only. |
+| GitHub, Playwright, Slack, Filesystem, Postgres MCP Pro, Context7, ClickHouse | No wording change promoted from this slice. | Stock descriptions passed or the apparent miss was a verifier/transient issue. | Keep current wording and retain useful cases. | Tuned descriptions did not produce a confirmed baseline delta. |
 
 ## Targets Tested
 

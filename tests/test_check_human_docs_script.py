@@ -84,11 +84,11 @@ class CheckHumanDocsScriptTests(unittest.TestCase):
                 "# Sample Finding\n\n"
                 "Share link: [Sample](https://github.com/cfregly/claude-agent-harness-opt/tree/main/docs/findings/sample)\n\n"
                 "## Summary\n\n"
-                "| Before | After | Result |\n|---|---|---|\n| Before. | Suggested change: update routing. | Result. |\n\n"
+                "| Exact change | Before | After | Result |\n|---|---|---|---|\n| Update routing. | Before. | After. | Result. |\n\n"
                 "## Why This Matters\n\n"
                 "- Value proposition: useful.\n\n"
                 "## Recommended Actions\n\n"
-                "- Apply this change.\n\n"
+                "- Apply exact change.\n\n"
                 "## Run This In Your Repo\n\n"
                 "Run a local agent.\n\n"
                 "## Model Coverage\n\n"
@@ -123,13 +123,13 @@ class CheckHumanDocsScriptTests(unittest.TestCase):
             (packet / "PR_BODY.md").write_text(
                 "Suggested title: Sample\n\n"
                 "## Summary\n\n"
-                "| Before | After | Result |\n|---|---|---|\n| Before. | Suggested change: update routing. | Result. |\n\n"
+                "| Exact change | Before | After | Result |\n|---|---|---|---|\n| Update routing. | Before. | After. | Result. |\n\n"
                 "## Evidence Bundle\n\n"
                 "Evidence.\n\n"
                 "## Why This Matters\n\n"
                 "- Value proposition: useful.\n\n"
                 "## Recommended Actions\n\n"
-                "- Apply this change.\n\n"
+                "- Apply exact change.\n\n"
                 "## Model Coverage\n\n"
                 "- Coverage.\n\n"
                 "## Run This In Your Repo\n\n"
@@ -181,7 +181,7 @@ class CheckHumanDocsScriptTests(unittest.TestCase):
             (packet / "PR_BODY.md").write_text(
                 "Suggested title: Sample\n\n"
                 "## Summary\n\n"
-                "| Before | After | Result |\n|---|---|---|\n| Before. | Suggested change: update routing. | Result. |\n\n"
+                "| Exact change | Before | After | Result |\n|---|---|---|---|\n| Update routing. | Before. | After. | Result. |\n\n"
                 "## Why This Matters\n\n"
                 "- Value proposition: useful.\n\n"
                 "## Recommended Actions\n\n"
@@ -217,11 +217,11 @@ class CheckHumanDocsScriptTests(unittest.TestCase):
             (packet / "PR_BODY.md").write_text(
                 "Suggested title: Sample\n\n"
                 "## Summary\n\n"
-                "| Before | After | Result |\n|---|---|---|\n| Before. | Suggested change: update routing. | Result. |\n\n"
+                "| Exact change | Before | After | Result |\n|---|---|---|---|\n| Update routing. | Before. | After. | Result. |\n\n"
                 "## Why This Matters\n\n"
                 "- Value proposition: useful.\n\n"
                 "## Recommended Actions\n\n"
-                "- Apply this change.\n\n"
+                "- Apply exact change.\n\n"
                 "## Run This In Your Repo\n\n"
                 "codex exec -C /path/to/repo --sandbox read-only -\n"
                 "claude -p --permission-mode plan\n"
@@ -241,6 +241,49 @@ class CheckHumanDocsScriptTests(unittest.TestCase):
 
         joined = "\n".join(failures)
         self.assertIn("evals/pr_packets/sample/PR_BODY.md: duplicate founder-handoff section ## Model Coverage", joined)
+
+    def test_rejects_duplicate_lower_change_and_evidence_sections(self):
+        with tempfile.TemporaryDirectory() as temp_dir:
+            root = Path(temp_dir)
+            _write_readme(root)
+            packet = root / "evals" / "pr_packets" / "sample"
+            packet.mkdir(parents=True)
+            (packet / "PR_BODY.md").write_text(
+                "Suggested title: Sample\n\n"
+                "## Summary\n\n"
+                "| Exact change | Before | After | Result |\n|---|---|---|---|\n| Update routing. | Before. | After. | Result. |\n\n"
+                "## Why This Matters\n\n"
+                "- Value proposition: useful.\n\n"
+                "## Recommended Actions\n\n"
+                "- Apply exact change.\n\n"
+                "## Run This In Your Repo\n\n"
+                "codex exec -C /path/to/repo --sandbox read-only -\n"
+                "claude -p --permission-mode plan\n"
+                "gemini --approval-mode plan --output-format text\n"
+                "Review this action-first finding:\n"
+                "Do not edit files yet.\n\n"
+                "## Model Coverage\n\n"
+                "- Coverage.\n\n"
+                "## Evidence Bundle\n\n"
+                "Bundle.\n\n"
+                "## Suggested Change\n\n"
+                "Old duplicate.\n\n"
+                "## Evidence\n\n"
+                "Old duplicate.\n",
+                encoding="utf-8",
+            )
+
+            failures = check_human_docs(root)
+
+        joined = "\n".join(failures)
+        self.assertIn(
+            "evals/pr_packets/sample/PR_BODY.md: move ## Suggested Change into the top Summary table or remove the duplicate section",
+            joined,
+        )
+        self.assertIn(
+            "evals/pr_packets/sample/PR_BODY.md: use one founder-facing ## Evidence Bundle section, not a second ## Evidence section",
+            joined,
+        )
 
     def test_rejects_pr_reproduction_without_supporting_evidence_note(self):
         with tempfile.TemporaryDirectory() as temp_dir:
@@ -293,7 +336,7 @@ class CheckHumanDocsScriptTests(unittest.TestCase):
         joined = "\n".join(failures)
         self.assertIn("docs/confirmed-improvements.md: missing ## Summary", joined)
 
-    def test_rejects_company_summary_doc_without_suggested_change(self):
+    def test_rejects_company_summary_doc_without_exact_change_column(self):
         with tempfile.TemporaryDirectory() as temp_dir:
             root = Path(temp_dir)
             _write_readme(root)
@@ -312,7 +355,7 @@ class CheckHumanDocsScriptTests(unittest.TestCase):
 
         joined = "\n".join(failures)
         self.assertIn(
-            "docs/confirmed-improvements.md: action summary table must show suggested changes or explicit no-change guardrails",
+            "docs/confirmed-improvements.md: action summary table must include Exact change, Before, After, and Result columns",
             joined,
         )
 

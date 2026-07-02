@@ -52,17 +52,18 @@ class PrPacketTests(unittest.TestCase):
             self.assertIn("## Summary", body)
             self.assertLess(body.index("## Summary"), body.index("## Why This Matters"))
             self.assertNotIn("## Founder Summary", body)
-            self.assertIn("| Before | After | Result |", body)
-            self.assertIn("| `stock` scored 0.000", body)
+            self.assertIn("| Exact change | Before | After | Result |", body)
+            self.assertIn("| Clarify when to call the tuned tool.", body)
             self.assertIn(
-                "Suggested change: Clarify when to call the tuned tool.<br>Add an explicit tuned-tool routing regression.",
+                "| Add an explicit tuned-tool routing regression.",
                 body,
             )
-            self.assertIn("`tuned` scored 1.000, a 1.000 gain. Add retained cases as regression coverage.", body)
+            self.assertIn("`stock` scored 0.000; failures clustered on single page extraction.", body)
+            self.assertIn("`tuned` scored 1.000, a 1.000 gain. This clears the adversarially-confirmed to add value bar", body)
             self.assertIn("## Why This Matters", body)
             self.assertIn("helps agents choose the intended Example MCP workflow", body)
             self.assertIn("## Recommended Actions", body)
-            self.assertIn("Apply this change: Clarify when to call the tuned tool.", body)
+            self.assertIn("Apply exact change: Clarify when to call the tuned tool.", body)
             self.assertIn("Add an explicit tuned-tool routing regression.", body)
             self.assertIn("## Model Coverage", body)
             self.assertIn("| Anthropic | `stock` 0/1 passed, 1 failed, 0 errors.", body)
@@ -78,6 +79,9 @@ class PrPacketTests(unittest.TestCase):
             self.assertIn("https://github.com/cfregly/claude-agent-harness-opt/tree/main/docs/findings/example", body)
             self.assertIn("## Evidence Bundle", body)
             self.assertIn("evals/pr_packets/example/evidence.json", body)
+            self.assertNotIn("Founder handoff:", body)
+            self.assertNotIn("## Evidence\n", body)
+            self.assertNotIn("## Suggested Change", body)
             self.assertNotIn("## Actions By Company", body)
             self.assertNotIn("### Anthropic", body)
             self.assertIn("## What Already Works", body)
@@ -159,7 +163,7 @@ class PrPacketTests(unittest.TestCase):
 
             body = packet["files"]["PR_BODY.md"]
             self.assertFalse(packet["passed"])
-            self.assertIn("No suggested wording change from this slice. No upstream change is promoted.", body)
+            self.assertIn("No wording change promoted from this slice.", body)
             self.assertIn("- No upstream change is promoted from this slice.", body)
             self.assertIn("`tuned` also scored 1.000. Keep the cases as regression coverage.", body)
             self.assertIn("Keep the selected cases below as regression coverage", body)

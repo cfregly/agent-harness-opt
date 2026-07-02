@@ -5,9 +5,16 @@ Suggested title: Add data-backed OpenWork UI MCP tool-routing evidence
 
 ## Summary
 
-| Before | After | Result |
-|---|---|---|
-| `docs_openwork_ui_mcp` scored 1.000 on the retained slice. | No suggested wording change from this slice. No upstream change is promoted. | `source_tuned_openwork_ui_mcp` also scored 1.000. Keep the cases as regression coverage. |
+| Exact change | Before | After | Result |
+|---|---|---|---|
+| No wording change promoted from this slice. | `docs_openwork_ui_mcp` scored 1.000 on the retained slice. | Keep the current surface and retain the cases as regression coverage. | `source_tuned_openwork_ui_mcp` also scored 1.000. Keep the cases as regression coverage. |
+
+
+## Result
+
+- Guardrail: no upstream change is promoted because `docs_openwork_ui_mcp` and `source_tuned_openwork_ui_mcp` did not produce a qualifying delta.
+- Value bar: 0.000 delta against a 0.010 minimum.
+- Proof scope: 14 live matrix cells, 14 passed, 0 failed, 0 errors.
 
 ## Why This Matters
 
@@ -96,20 +103,19 @@ Provider/model rows are evidence lanes. The target repo actions above are the on
 ## Evidence Bundle
 
 - Public harness repo: [claude-agent-harness-opt](https://github.com/cfregly/claude-agent-harness-opt)
-- Founder handoff: [OpenWork UI MCP](https://github.com/cfregly/claude-agent-harness-opt/tree/main/docs/findings/openwork)
-- Packet folder: [openwork_ui_mcp_guardrail_2026-06-28](https://github.com/cfregly/claude-agent-harness-opt/tree/main/evals/pr_packets/openwork_ui_mcp_guardrail_2026-06-28)
+- Bundle folder: [openwork_ui_mcp_guardrail_2026-06-28](https://github.com/cfregly/claude-agent-harness-opt/tree/main/evals/pr_packets/openwork_ui_mcp_guardrail_2026-06-28)
+- Matrix: [openwork_ui_mcp_tool_selection.json](https://github.com/cfregly/claude-agent-harness-opt/blob/main/evals/model_matrix/openwork_ui_mcp_tool_selection.json)
+- Result artifact: [openwork_ui_mcp_tool_selection_2026-06-28.md](https://github.com/cfregly/claude-agent-harness-opt/blob/main/evals/results/openwork_ui_mcp_tool_selection_2026-06-28.md)
 - PR_TITLE.txt: [PR_TITLE.txt](https://github.com/cfregly/claude-agent-harness-opt/blob/main/evals/pr_packets/openwork_ui_mcp_guardrail_2026-06-28/PR_TITLE.txt)
 - PR_BODY.md: [PR_BODY.md](https://github.com/cfregly/claude-agent-harness-opt/blob/main/evals/pr_packets/openwork_ui_mcp_guardrail_2026-06-28/PR_BODY.md)
 - REPRODUCTION.md: [REPRODUCTION.md](https://github.com/cfregly/claude-agent-harness-opt/blob/main/evals/pr_packets/openwork_ui_mcp_guardrail_2026-06-28/REPRODUCTION.md)
 - evidence.json: [evidence.json](https://github.com/cfregly/claude-agent-harness-opt/blob/main/evals/pr_packets/openwork_ui_mcp_guardrail_2026-06-28/evidence.json)
-- Matrix: [openwork_ui_mcp_tool_selection.json](https://github.com/cfregly/claude-agent-harness-opt/blob/main/evals/model_matrix/openwork_ui_mcp_tool_selection.json)
-- Result artifact: [openwork_ui_mcp_tool_selection_2026-06-28.md](https://github.com/cfregly/claude-agent-harness-opt/blob/main/evals/results/openwork_ui_mcp_tool_selection_2026-06-28.md)
 - Target repo: [openwork](https://github.com/different-ai/openwork)
 
 <details>
 <summary>LLM / Machine-readable details</summary>
 
-## Evidence
+## Artifact Pointers
 
 - Finding folder: [OpenWork UI MCP Guardrail finding](https://github.com/cfregly/claude-agent-harness-opt/tree/main/docs/findings/openwork)
 - Matrix: [openwork_ui_mcp_tool_selection.json](https://github.com/cfregly/claude-agent-harness-opt/blob/main/evals/model_matrix/openwork_ui_mcp_tool_selection.json)
@@ -122,17 +128,6 @@ Provider/model rows are evidence lanes. The target repo actions above are the on
 - Current frontier JSON receipt: [openwork_ui_mcp_tool_selection_frontier_available_live_2026-07-01.json](https://github.com/cfregly/claude-agent-harness-opt/blob/main/evals/results/openwork_ui_mcp_tool_selection_frontier_available_live_2026-07-01.json)
 - Anthropic Opus frontier receipt: [openwork_ui_mcp_tool_selection_frontier_anthropic_live_2026-07-01.md](https://github.com/cfregly/claude-agent-harness-opt/blob/main/evals/results/openwork_ui_mcp_tool_selection_frontier_anthropic_live_2026-07-01.md)
 - Anthropic Opus JSON receipt: [openwork_ui_mcp_tool_selection_frontier_anthropic_live_2026-07-01.json](https://github.com/cfregly/claude-agent-harness-opt/blob/main/evals/results/openwork_ui_mcp_tool_selection_frontier_anthropic_live_2026-07-01.json)
-
-## Result
-
-- packet type: guardrail
-- promoted by value bar: no
-- baseline variant: docs_openwork_ui_mcp
-- candidate variant: source_tuned_openwork_ui_mcp
-- baseline score: 1.000
-- candidate score: 1.000
-- delta: 0.000
-- minimum delta: 0.010
 
 ## Cases
 

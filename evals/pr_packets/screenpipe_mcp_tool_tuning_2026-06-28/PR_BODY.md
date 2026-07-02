@@ -5,21 +5,33 @@ Suggested title: Tighten Screenpipe MCP retrieval routing with live evals
 
 ## Summary
 
-| Before | After | Result |
-|---|---|---|
-| `readme_screenpipe_mcp` scored 0.857. Baseline mistakes clustered on exact keyword uses keyword search. | Suggested change: Clarify that `keyword-search` is for literal terms and exact phrases. Reserve `search-content` for transcript lines, screen text, speaker or window filters, tags, memories, and broader content search. | `source_tuned_screenpipe_mcp` scored 1.000, a 0.143 gain. Add retained cases as regression coverage. |
+| Exact change | Before | After | Result |
+|---|---|---|---|
+| Clarify that `keyword-search` is for literal terms and exact phrases. Reserve `search-content` for transcript lines, screen text, speaker or window filters, tags, memories, and broader content search. | `readme_screenpipe_mcp` scored 0.857. Baseline mistakes clustered on exact keyword uses keyword search. | The target surface states this routing/default/fallback behavior before the agent chooses tools. | `source_tuned_screenpipe_mcp` scored 1.000, a 0.143 gain. Add retained cases as regression coverage. |
+
+
+## Result
+
+- Confirmed improvement: `source_tuned_screenpipe_mcp` moved from 0.857 to 1.000, a 0.143 gain over `readme_screenpipe_mcp`.
+- Value bar: cleared the 0.010 minimum delta.
+- Proof scope: 14 live matrix cells, 13 passed, 1 failed, 0 errors.
+
+## What Failed
+
+- `readme_screenpipe_mcp` failed or chose the wrong boundary on: exact keyword uses keyword search.
+- Those failures are the target-owned behavior to encode in descriptions, defaults, options, or regression tests.
 
 ## Why This Matters
 
 - Value proposition: helps agents choose the intended Screenpipe MCP workflow instead of adjacent tools that look plausible.
 - Proof: `source_tuned_screenpipe_mcp` scored 1.000, a 0.143 gain.
-- Evidence: 14 live matrix cells on the same tasks, providers, harnesses, and instruction variants.
+- Proof scope: 14 live matrix cells on the same tasks, providers, harnesses, and instruction variants.
 - Baseline failure pattern: exact keyword uses keyword search.
 - Downside avoided: plausible-but-wrong tool choices that waste time or return misleading results.
 
 ## Recommended Actions
 
-- Apply this change: Clarify that `keyword-search` is for literal terms and exact phrases. Reserve `search-content` for transcript lines, screen text, speaker or window filters, tags, memories, and broader content search.
+- Apply exact change: Clarify that `keyword-search` is for literal terms and exact phrases. Reserve `search-content` for transcript lines, screen text, speaker or window filters, tags, memories, and broader content search.
 - Add the selected cases below to repo CI or release-blocking regression coverage.
 - Run the local-agent prompt below in your repo to identify exact files, patch locations, tests, and risks before editing.
 
@@ -97,20 +109,19 @@ Provider/model rows are evidence lanes. The target repo actions above are the on
 ## Evidence Bundle
 
 - Public harness repo: [claude-agent-harness-opt](https://github.com/cfregly/claude-agent-harness-opt)
-- Founder handoff: [Screenpipe MCP](https://github.com/cfregly/claude-agent-harness-opt/tree/main/docs/findings/screenpipe)
-- Packet folder: [screenpipe_mcp_tool_tuning_2026-06-28](https://github.com/cfregly/claude-agent-harness-opt/tree/main/evals/pr_packets/screenpipe_mcp_tool_tuning_2026-06-28)
+- Bundle folder: [screenpipe_mcp_tool_tuning_2026-06-28](https://github.com/cfregly/claude-agent-harness-opt/tree/main/evals/pr_packets/screenpipe_mcp_tool_tuning_2026-06-28)
+- Matrix: [screenpipe_mcp_tool_selection.json](https://github.com/cfregly/claude-agent-harness-opt/blob/main/evals/model_matrix/screenpipe_mcp_tool_selection.json)
+- Result artifact: [screenpipe_mcp_tool_selection_2026-06-28.md](https://github.com/cfregly/claude-agent-harness-opt/blob/main/evals/results/screenpipe_mcp_tool_selection_2026-06-28.md)
 - PR_TITLE.txt: [PR_TITLE.txt](https://github.com/cfregly/claude-agent-harness-opt/blob/main/evals/pr_packets/screenpipe_mcp_tool_tuning_2026-06-28/PR_TITLE.txt)
 - PR_BODY.md: [PR_BODY.md](https://github.com/cfregly/claude-agent-harness-opt/blob/main/evals/pr_packets/screenpipe_mcp_tool_tuning_2026-06-28/PR_BODY.md)
 - REPRODUCTION.md: [REPRODUCTION.md](https://github.com/cfregly/claude-agent-harness-opt/blob/main/evals/pr_packets/screenpipe_mcp_tool_tuning_2026-06-28/REPRODUCTION.md)
 - evidence.json: [evidence.json](https://github.com/cfregly/claude-agent-harness-opt/blob/main/evals/pr_packets/screenpipe_mcp_tool_tuning_2026-06-28/evidence.json)
-- Matrix: [screenpipe_mcp_tool_selection.json](https://github.com/cfregly/claude-agent-harness-opt/blob/main/evals/model_matrix/screenpipe_mcp_tool_selection.json)
-- Result artifact: [screenpipe_mcp_tool_selection_2026-06-28.md](https://github.com/cfregly/claude-agent-harness-opt/blob/main/evals/results/screenpipe_mcp_tool_selection_2026-06-28.md)
 - Target repo: [screenpipe](https://github.com/screenpipe/screenpipe)
 
 <details>
 <summary>LLM / Machine-readable details</summary>
 
-## Evidence
+## Artifact Pointers
 
 - Finding folder: [Screenpipe MCP Tool Tuning finding](https://github.com/cfregly/claude-agent-harness-opt/tree/main/docs/findings/screenpipe)
 - Matrix: [screenpipe_mcp_tool_selection.json](https://github.com/cfregly/claude-agent-harness-opt/blob/main/evals/model_matrix/screenpipe_mcp_tool_selection.json)
@@ -123,17 +134,6 @@ Provider/model rows are evidence lanes. The target repo actions above are the on
 - Current frontier JSON receipt: [screenpipe_mcp_tool_selection_frontier_available_live_2026-07-01.json](https://github.com/cfregly/claude-agent-harness-opt/blob/main/evals/results/screenpipe_mcp_tool_selection_frontier_available_live_2026-07-01.json)
 - Anthropic Opus frontier receipt: [screenpipe_mcp_tool_selection_frontier_anthropic_live_2026-07-01.md](https://github.com/cfregly/claude-agent-harness-opt/blob/main/evals/results/screenpipe_mcp_tool_selection_frontier_anthropic_live_2026-07-01.md)
 - Anthropic Opus JSON receipt: [screenpipe_mcp_tool_selection_frontier_anthropic_live_2026-07-01.json](https://github.com/cfregly/claude-agent-harness-opt/blob/main/evals/results/screenpipe_mcp_tool_selection_frontier_anthropic_live_2026-07-01.json)
-
-## Result
-
-- packet type: improvement
-- promoted by value bar: yes
-- baseline variant: readme_screenpipe_mcp
-- candidate variant: source_tuned_screenpipe_mcp
-- baseline score: 0.857
-- candidate score: 1.000
-- delta: 0.143
-- minimum delta: 0.010
 
 ## Cases
 

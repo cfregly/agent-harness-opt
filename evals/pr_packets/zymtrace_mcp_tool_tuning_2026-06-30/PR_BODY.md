@@ -5,21 +5,36 @@ Suggested title: Tighten Zymtrace MCP retrieval routing with live evals
 
 ## Summary
 
-| Before | After | Result |
-|---|---|---|
-| `stock_zymtrace_mcp` scored 0.583. Baseline mistakes clustered on default project metrics discovery skips search, gpu inference workflow starts with metrics, selected trace drilldown is bounded, hot trace discovery is bounded. | Suggested change: Clarify default-project, GPU metrics-first, resource-first, and bounded hot-traces routing.<br>Add an explicit idle-exclusion option or marker for optimization-oriented `hot_traces` discovery.<br>Add a server-side option or marker that keeps `zymtrace-profiler` from being presented as an optimization target in `topentities`.<br>Add a small read-only GPU readiness resource that reports GPU support, GPU metric collection, detected GPU names, and CUDA library extraction state without exposing the license value. | `tuned_zymtrace_mcp_boundaries` scored 1.000, a 0.417 gain. Add retained cases as regression coverage. |
+| Exact change | Before | After | Result |
+|---|---|---|---|
+| Clarify default-project, GPU metrics-first, resource-first, and bounded hot-traces routing. | `stock_zymtrace_mcp` scored 0.583. Baseline mistakes clustered on default project metrics discovery skips search, gpu inference workflow starts with metrics, selected trace drilldown is bounded, hot trace discovery is bounded. | The target surface states this routing/default/fallback behavior before the agent chooses tools. | `tuned_zymtrace_mcp_boundaries` scored 1.000, a 0.417 gain. Add retained cases as regression coverage. |
+| Add an explicit idle-exclusion option or marker for optimization-oriented `hot_traces` discovery. | `stock_zymtrace_mcp` scored 0.583. Baseline mistakes clustered on default project metrics discovery skips search, gpu inference workflow starts with metrics, selected trace drilldown is bounded, hot trace discovery is bounded. | Optimization-oriented hot-trace discovery excludes or clearly marks idle traces before ranking work. | `tuned_zymtrace_mcp_boundaries` scored 1.000, a 0.417 gain. Add retained cases as regression coverage. |
+| Add a server-side option or marker that keeps `zymtrace-profiler` from being presented as an optimization target in `topentities`. | `stock_zymtrace_mcp` scored 0.583. Baseline mistakes clustered on default project metrics discovery skips search, gpu inference workflow starts with metrics, selected trace drilldown is bounded, hot trace discovery is bounded. | Profiler self-noise is not presented as an application optimization target. | `tuned_zymtrace_mcp_boundaries` scored 1.000, a 0.417 gain. Add retained cases as regression coverage. |
+| Add a small read-only GPU readiness resource that reports GPU support, GPU metric collection, detected GPU names, and CUDA library extraction state without exposing the license value. | `stock_zymtrace_mcp` scored 0.583. Baseline mistakes clustered on default project metrics discovery skips search, gpu inference workflow starts with metrics, selected trace drilldown is bounded, hot trace discovery is bounded. | Agents can read GPU readiness from one safe MCP surface before querying GPU metrics. | `tuned_zymtrace_mcp_boundaries` scored 1.000, a 0.417 gain. Add retained cases as regression coverage. |
+
+
+## Result
+
+- Confirmed improvement: `tuned_zymtrace_mcp_boundaries` moved from 0.583 to 1.000, a 0.417 gain over `stock_zymtrace_mcp`.
+- Value bar: cleared the 0.010 minimum delta.
+- Proof scope: 48 live matrix cells, 38 passed, 10 failed, 0 errors.
+
+## What Failed
+
+- `stock_zymtrace_mcp` failed or chose the wrong boundary on: default project metrics discovery skips search, gpu inference workflow starts with metrics, selected trace drilldown is bounded, hot trace discovery is bounded.
+- Those failures are the target-owned behavior to encode in descriptions, defaults, options, or regression tests.
 
 ## Why This Matters
 
 - Value proposition: helps agents choose the intended Zymtrace MCP workflow instead of adjacent tools that look plausible.
 - Proof: `tuned_zymtrace_mcp_boundaries` scored 1.000, a 0.417 gain.
-- Evidence: 48 live matrix cells on the same tasks, providers, harnesses, and instruction variants.
+- Proof scope: 48 live matrix cells on the same tasks, providers, harnesses, and instruction variants.
 - Baseline failure pattern: default project metrics discovery skips search, gpu inference workflow starts with metrics, selected trace drilldown is bounded, hot trace discovery is bounded.
 - Downside avoided: plausible-but-wrong tool choices that waste time or return misleading results.
 
 ## Recommended Actions
 
-- Apply this change: Clarify default-project, GPU metrics-first, resource-first, and bounded hot-traces routing.
+- Apply exact change: Clarify default-project, GPU metrics-first, resource-first, and bounded hot-traces routing.
 - Add an explicit idle-exclusion option or marker for optimization-oriented `hot_traces` discovery.
 - Add a server-side option or marker that keeps `zymtrace-profiler` from being presented as an optimization target in `topentities`.
 - Add a small read-only GPU readiness resource that reports GPU support, GPU metric collection, detected GPU names, and CUDA library extraction state without exposing the license value.
@@ -102,14 +117,13 @@ Provider/model rows are evidence lanes. The target repo actions above are the on
 ## Evidence Bundle
 
 - Public harness repo: [claude-agent-harness-opt](https://github.com/cfregly/claude-agent-harness-opt)
-- Founder handoff: [Zymtrace MCP](https://github.com/cfregly/claude-agent-harness-opt/tree/main/docs/findings/zymtrace)
-- Packet folder: [zymtrace_mcp_tool_tuning_2026-06-30](https://github.com/cfregly/claude-agent-harness-opt/tree/main/evals/pr_packets/zymtrace_mcp_tool_tuning_2026-06-30)
+- Bundle folder: [zymtrace_mcp_tool_tuning_2026-06-30](https://github.com/cfregly/claude-agent-harness-opt/tree/main/evals/pr_packets/zymtrace_mcp_tool_tuning_2026-06-30)
+- Matrix: [zymtrace_mcp_tool_selection.json](https://github.com/cfregly/claude-agent-harness-opt/blob/main/evals/model_matrix/zymtrace_mcp_tool_selection.json)
+- Result artifact: [zymtrace_mcp_matrix_live_2026-06-30.json](https://github.com/cfregly/claude-agent-harness-opt/blob/main/evals/results/zymtrace_mcp_matrix_live_2026-06-30.json)
 - PR_TITLE.txt: [PR_TITLE.txt](https://github.com/cfregly/claude-agent-harness-opt/blob/main/evals/pr_packets/zymtrace_mcp_tool_tuning_2026-06-30/PR_TITLE.txt)
 - PR_BODY.md: [PR_BODY.md](https://github.com/cfregly/claude-agent-harness-opt/blob/main/evals/pr_packets/zymtrace_mcp_tool_tuning_2026-06-30/PR_BODY.md)
 - REPRODUCTION.md: [REPRODUCTION.md](https://github.com/cfregly/claude-agent-harness-opt/blob/main/evals/pr_packets/zymtrace_mcp_tool_tuning_2026-06-30/REPRODUCTION.md)
 - evidence.json: [evidence.json](https://github.com/cfregly/claude-agent-harness-opt/blob/main/evals/pr_packets/zymtrace_mcp_tool_tuning_2026-06-30/evidence.json)
-- Matrix: [zymtrace_mcp_tool_selection.json](https://github.com/cfregly/claude-agent-harness-opt/blob/main/evals/model_matrix/zymtrace_mcp_tool_selection.json)
-- Result artifact: [zymtrace_mcp_matrix_live_2026-06-30.json](https://github.com/cfregly/claude-agent-harness-opt/blob/main/evals/results/zymtrace_mcp_matrix_live_2026-06-30.json)
 - Target repo: [zymtrace](https://github.com/zystem-io/zymtrace)
 
 <details>
@@ -161,16 +175,6 @@ This change is backed by a harness matrix result, not a prose-only review. The b
 - skills: configure-zymtrace-mcp, optimize-cpu-workloads, optimize-gpu-workloads, optimize-memory-allocation
 - tool count: 25
 - target repo: https://github.com/zystem-io/zymtrace
-
-## Result
-
-- promoted by value bar: yes
-- baseline variant: stock_zymtrace_mcp
-- candidate variant: tuned_zymtrace_mcp_boundaries
-- baseline score: 0.583
-- candidate score: 1.000
-- delta: 0.417
-- minimum delta: 0.010
 
 ## What We Learned
 
@@ -232,7 +236,7 @@ python -m claude_agent_harness_opt model-matrix evals/model_matrix/zymtrace_mcp_
 - hot trace discovery is bounded chose hot_traces
 - resource fallback hot functions chose topfunctions
 
-## Evidence
+## Artifact Pointers
 
 - Public harness repo: [claude-agent-harness-opt](https://github.com/cfregly/claude-agent-harness-opt)
 - Reproduction doc: [REPRODUCTION.md](https://github.com/cfregly/claude-agent-harness-opt/blob/main/evals/pr_packets/zymtrace_mcp_tool_tuning_2026-06-30/REPRODUCTION.md)

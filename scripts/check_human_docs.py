@@ -190,19 +190,34 @@ def _check_founder_handoff(rel: Path, text: str, *, require_share_link: bool) ->
     why_index = indexes.get("## Why This Matters", -1)
     if table_index != -1:
         table_window = text[table_index : why_index if why_index != -1 else table_index + 1200]
-        if "| Before | After | Result |" not in table_window:
-            failures.append(f"{rel}: first founder table must include Before, After, and Result columns")
+        if "| Exact change | Before | After | Result |" not in table_window:
+            failures.append(f"{rel}: first founder table must include Exact change, Before, After, and Result columns")
         if "Model coverage:" in table_window or "Evidence lane" in table_window:
             failures.append(f"{rel}: first founder table must show target-owned value, not provider coverage")
-        if "no upstream change is promoted" not in table_window.casefold() and "Suggested change:" not in table_window:
-            failures.append(f"{rel}: Summary table must show the suggested change before Why This Matters")
+        if "no wording change promoted" not in table_window.casefold() and "Exact change" not in table_window:
+            failures.append(f"{rel}: Summary table must show exact target-owned changes before Why This Matters")
         if require_share_link:
             first_twelve = "\n".join(text.splitlines()[:12])
             if "## Summary" not in first_twelve:
                 failures.append(f"{rel}: Summary table must be visible in the first 12 lines")
+    if re.search(r"(?m)^## Suggested Change\s*$", text):
+        failures.append(f"{rel}: move ## Suggested Change into the top Summary table or remove the duplicate section")
+    if re.search(r"(?m)^## Evidence\s*$", text):
+        failures.append(f"{rel}: use one founder-facing ## Evidence Bundle section, not a second ## Evidence section")
 
     cta_index = indexes.get("## Run This In Your Repo", -1)
     evidence_index = indexes.get("## Evidence Bundle", -1)
+    for heading in ("## Result", "## What Failed", "## Additional Live Findings"):
+        section_index = text.find(heading)
+        if section_index == -1:
+            continue
+        if why_index != -1 and section_index > why_index:
+            failures.append(f"{rel}: {heading} must appear before Why This Matters")
+        if cta_index != -1 and section_index > cta_index:
+            failures.append(f"{rel}: {heading} must appear before Run This In Your Repo")
+        detail_index = text.find(LLM_SUMMARY)
+        if detail_index != -1 and section_index > detail_index:
+            failures.append(f"{rel}: {heading} must appear before LLM details")
     if cta_index != -1 and evidence_index != -1 and evidence_index < cta_index:
         failures.append(f"{rel}: Evidence Bundle must appear after Run This In Your Repo")
 
@@ -269,10 +284,12 @@ def _check_action_summary_doc(rel: Path, text: str) -> list[str]:
     if detail_index != -1 and index > detail_index:
         failures.append(f"{rel}: {heading} must appear before LLM details")
     summary_window = text[index : index + 5000]
-    if "Before | After | Result" not in summary_window:
-        failures.append(f"{rel}: action summary table must include Before, After, and Result columns")
-    if "Suggested change:" not in summary_window and "No suggested wording change" not in summary_window:
-        failures.append(f"{rel}: action summary table must show suggested changes or explicit no-change guardrails")
+    if "Exact change | Before | After | Result" not in summary_window:
+        failures.append(f"{rel}: action summary table must include Exact change, Before, After, and Result columns")
+    if "Suggested change:" in summary_window:
+        failures.append(f"{rel}: action summary table must use exact changes, not Suggested change labels")
+    if "No wording change promoted" not in summary_window and "Exact change" not in summary_window:
+        failures.append(f"{rel}: action summary table must show exact changes or explicit no-change guardrails")
     return failures
 
 

@@ -4,21 +4,33 @@ Share link: [gstack full PR/evidence bundle](https://github.com/cfregly/claude-a
 
 ## Summary
 
-| Before | After | Result |
-|---|---|---|
-| `gstack_stock_skill_descriptions` scored 0.975. Baseline mistakes clustered on careful-mode, browser-headless. | Suggested change: Clarify browser alias and safety-mode skill routing boundaries. | `gstack_boundary_tuned_skill_descriptions` scored 0.992, a 0.017 gain. Add retained cases as regression coverage. |
+| Exact change | Before | After | Result |
+|---|---|---|---|
+| Clarify browser alias and safety-mode skill routing boundaries. | `gstack_stock_skill_descriptions` scored 0.975. Baseline mistakes clustered on careful-mode, browser-headless. | The target surface states this routing/default/fallback behavior before the agent chooses tools. | `gstack_boundary_tuned_skill_descriptions` scored 0.992, a 0.017 gain. Add retained cases as regression coverage. |
+
+
+## Result
+
+Current frontier stress receipt: 496 current available-frontier cells, 484 passed, 8 failed, 4 errors on OpenAI `gpt-5.5` and Gemini `gemini-3.1-pro-preview-customtools`. Treat this as hill-descending coverage for the next tuning pass.
+
+Anthropic Opus frontier receipt: 248 Anthropic Opus cells, 0 passed, 0 failed, 248 errors. The new key passed smoke testing, then later Anthropic calls hit credit exhaustion where shown in the receipt.
+
+Confirmed improvement. This clears the adversarially-confirmed to add value bar.
+
+The tuned gstack skill descriptions improved the 720-cell live matrix from 0.975 to 0.992, with
+the remaining packet evidence preserved for reruns and upstream review.
 
 ## Why This Matters
 
 - Value proposition: helps agents choose the intended gstack workflow instead of adjacent tools that look plausible.
 - Proof: `gstack_boundary_tuned_skill_descriptions` scored 0.992, a 0.017 gain.
-- Evidence: 720 live matrix cells on the same tasks, providers, harnesses, and instruction variants.
+- Proof scope: 720 live matrix cells on the same tasks, providers, harnesses, and instruction variants.
 - Baseline failure pattern: careful-mode, browser-headless.
 - Downside avoided: plausible-but-wrong tool choices that waste time or return misleading results.
 
 ## Recommended Actions
 
-- Apply this change: Clarify browser alias and safety-mode skill routing boundaries.
+- Apply exact change: Clarify browser alias and safety-mode skill routing boundaries.
 - Add the selected cases below to repo CI or release-blocking regression coverage.
 - Run the local-agent prompt below in your repo to identify exact files, patch locations, tests, and risks before editing.
 
@@ -98,45 +110,21 @@ Provider/model rows are evidence lanes. The target repo actions above are the on
 ## Evidence Bundle
 
 - Public harness repo: [claude-agent-harness-opt](https://github.com/cfregly/claude-agent-harness-opt)
-- Founder handoff: [gstack](https://github.com/cfregly/claude-agent-harness-opt/tree/main/docs/findings/gstack)
-- Packet folder: [gstack_skill_routing_2026-06-25](https://github.com/cfregly/claude-agent-harness-opt/tree/main/evals/pr_packets/gstack_skill_routing_2026-06-25)
+- Bundle folder: [gstack_skill_routing_2026-06-25](https://github.com/cfregly/claude-agent-harness-opt/tree/main/evals/pr_packets/gstack_skill_routing_2026-06-25)
+- Matrix: [gstack_skill_selection_matrix.json](https://github.com/cfregly/claude-agent-harness-opt/blob/main/evals/targets/gstack/gstack_skill_selection_matrix.json)
+- Result artifact: [gstack_skill_matrix_live_2026-06-25.json](https://github.com/cfregly/claude-agent-harness-opt/blob/main/evals/results/gstack_skill_matrix_live_2026-06-25.json)
 - PR_TITLE.txt: [PR_TITLE.txt](https://github.com/cfregly/claude-agent-harness-opt/blob/main/evals/pr_packets/gstack_skill_routing_2026-06-25/PR_TITLE.txt)
 - PR_BODY.md: [PR_BODY.md](https://github.com/cfregly/claude-agent-harness-opt/blob/main/evals/pr_packets/gstack_skill_routing_2026-06-25/PR_BODY.md)
 - REPRODUCTION.md: [REPRODUCTION.md](https://github.com/cfregly/claude-agent-harness-opt/blob/main/evals/pr_packets/gstack_skill_routing_2026-06-25/REPRODUCTION.md)
 - evidence.json: [evidence.json](https://github.com/cfregly/claude-agent-harness-opt/blob/main/evals/pr_packets/gstack_skill_routing_2026-06-25/evidence.json)
-- Matrix: [gstack_skill_selection_matrix.json](https://github.com/cfregly/claude-agent-harness-opt/blob/main/evals/targets/gstack/gstack_skill_selection_matrix.json)
-- Result artifact: [gstack_skill_matrix_live_2026-06-25.json](https://github.com/cfregly/claude-agent-harness-opt/blob/main/evals/results/gstack_skill_matrix_live_2026-06-25.json)
 - Target repo: [gstack](https://github.com/garrytan/gstack)
 
-- Packet folder: [gstack_skill_routing_2026-06-25](https://github.com/cfregly/claude-agent-harness-opt/tree/main/evals/pr_packets/gstack_skill_routing_2026-06-25)
-
-[Current frontier stress receipts](https://github.com/cfregly/claude-agent-harness-opt/blob/main/docs/frontier-stress-2026-07-01.md) tracks all retained current available-frontier receipts.
-
-Bundle folder: [gstack_skill_routing_2026-06-25](https://github.com/cfregly/claude-agent-harness-opt/tree/main/evals/pr_packets/gstack_skill_routing_2026-06-25)
-
-- PR title: [PR_TITLE.txt](https://github.com/cfregly/claude-agent-harness-opt/blob/main/evals/pr_packets/gstack_skill_routing_2026-06-25/PR_TITLE.txt)
-- PR body: [PR_BODY.md](https://github.com/cfregly/claude-agent-harness-opt/blob/main/evals/pr_packets/gstack_skill_routing_2026-06-25/PR_BODY.md)
-- Reproduction doc: [REPRODUCTION.md](https://github.com/cfregly/claude-agent-harness-opt/blob/main/evals/pr_packets/gstack_skill_routing_2026-06-25/REPRODUCTION.md)
-- Evidence JSON: [evidence.json](https://github.com/cfregly/claude-agent-harness-opt/blob/main/evals/pr_packets/gstack_skill_routing_2026-06-25/evidence.json)
-- Frontier stress receipt: [gstack_skill_matrix_frontier_available_live_2026-07-01.md](https://github.com/cfregly/claude-agent-harness-opt/blob/main/evals/results/gstack_skill_matrix_frontier_available_live_2026-07-01.md)
-- Frontier JSON receipt: [gstack_skill_matrix_frontier_available_live_2026-07-01.json](https://github.com/cfregly/claude-agent-harness-opt/blob/main/evals/results/gstack_skill_matrix_frontier_available_live_2026-07-01.json)
-- Anthropic Opus receipt: [gstack_skill_matrix_frontier_anthropic_attempt_2026-07-01.md](https://github.com/cfregly/claude-agent-harness-opt/blob/main/evals/results/gstack_skill_matrix_frontier_anthropic_attempt_2026-07-01.md)
-- Anthropic Opus JSON: [gstack_skill_matrix_frontier_anthropic_attempt_2026-07-01.json](https://github.com/cfregly/claude-agent-harness-opt/blob/main/evals/results/gstack_skill_matrix_frontier_anthropic_attempt_2026-07-01.json)
-- Live result: [gstack_skill_matrix_live_2026-06-25.json](https://github.com/cfregly/claude-agent-harness-opt/blob/main/evals/results/gstack_skill_matrix_live_2026-06-25.json)
-- Audit note: [gstack Skill Routing Audit](https://github.com/cfregly/claude-agent-harness-opt/blob/main/docs/gstack-skill-routing-audit.md)
-
-## Result
-
-Current frontier stress receipt: 496 current available-frontier cells, 484 passed, 8 failed, 4 errors on OpenAI `gpt-5.5` and Gemini `gemini-3.1-pro-preview-customtools`. Treat this as hill-descending coverage for the next tuning pass.
-
-Anthropic Opus frontier receipt: 248 Anthropic Opus cells, 0 passed, 0 failed, 248 errors. The new key passed smoke testing, then later Anthropic calls hit credit exhaustion where shown in the receipt.
-
-Confirmed improvement. This clears the adversarially-confirmed to add value bar.
-
-The tuned gstack skill descriptions improved the 720-cell live matrix from 0.975 to 0.992, with
-the remaining packet evidence preserved for reruns and upstream review.
+<details>
+<summary>LLM / Machine-readable details</summary>
 
 ## Reproduce
 
 [REPRODUCTION.md](https://github.com/cfregly/claude-agent-harness-opt/blob/main/evals/pr_packets/gstack_skill_routing_2026-06-25/REPRODUCTION.md)
 contains the exact command and pinned matrix surface.
+
+</details>

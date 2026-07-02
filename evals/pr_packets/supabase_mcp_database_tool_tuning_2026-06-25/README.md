@@ -4,21 +4,32 @@ Share link: [Supabase MCP Database Tool Tuning full PR/evidence bundle](https://
 
 ## Summary
 
-| Before | After | Result |
-|---|---|---|
-| `terse_supabase_database_mcp` scored 0.222. Baseline mistakes clustered on ddl create table uses migration, ddl create index uses migration, rls policy uses migration. | Suggested change: Clarify that `apply_migration` is required for DDL, schema changes, indexes, functions, triggers, extension enablement, and RLS policy changes. Reserve `execute_sql` for non-schema-changing SQL. | `tuned_supabase_database_boundaries` scored 1.000, a 0.778 gain. Add retained cases as regression coverage. |
+| Exact change | Before | After | Result |
+|---|---|---|---|
+| Clarify that `apply_migration` is required for DDL, schema changes, indexes, functions, triggers, extension enablement, and RLS policy changes. Reserve `execute_sql` for non-schema-changing SQL. | `terse_supabase_database_mcp` scored 0.222. Baseline mistakes clustered on ddl create table uses migration, ddl create index uses migration, rls policy uses migration. | The target surface states this routing/default/fallback behavior before the agent chooses tools. | `tuned_supabase_database_boundaries` scored 1.000, a 0.778 gain. Add retained cases as regression coverage. |
+
+
+## Result
+
+Current frontier stress receipt: 48 current available-frontier cells, 43 passed, 5 failed, 0 errors on OpenAI `gpt-5.5` and Gemini `gemini-3.1-pro-preview-customtools`. Treat this as hill-descending coverage for the next tuning pass.
+
+Anthropic Opus frontier receipt: 24 Anthropic Opus cells, 24 passed, 0 failed, 0 errors on accessible `claude-opus-4-8`. Any failed cells are model-selection findings, not provider-credit blockers.
+
+Confirmed improvement. This clears the adversarially-confirmed to add value bar.
+
+The adversarial DDL/RLS cells moved from 4/18 baseline passes to 18/18 tuned passes across Anthropic, OpenAI, Gemini, native tools, and prompt JSON.
 
 ## Why This Matters
 
 - Value proposition: helps agents choose the intended Supabase MCP workflow instead of adjacent tools that look plausible.
 - Proof: `tuned_supabase_database_boundaries` scored 1.000, a 0.778 gain.
-- Evidence: 36 live matrix cells on the same tasks, providers, harnesses, and instruction variants.
+- Proof scope: 36 live matrix cells on the same tasks, providers, harnesses, and instruction variants.
 - Baseline failure pattern: ddl create table uses migration, ddl create index uses migration, rls policy uses migration.
 - Downside avoided: plausible-but-wrong tool choices that waste time or return misleading results.
 
 ## Recommended Actions
 
-- Apply this change: Clarify that `apply_migration` is required for DDL, schema changes, indexes, functions, triggers, extension enablement, and RLS policy changes. Reserve `execute_sql` for non-schema-changing SQL.
+- Apply exact change: Clarify that `apply_migration` is required for DDL, schema changes, indexes, functions, triggers, extension enablement, and RLS policy changes. Reserve `execute_sql` for non-schema-changing SQL.
 - Add the selected cases below to repo CI or release-blocking regression coverage.
 - Run the local-agent prompt below in your repo to identify exact files, patch locations, tests, and risks before editing.
 
@@ -98,43 +109,19 @@ Provider/model rows are evidence lanes. The target repo actions above are the on
 ## Evidence Bundle
 
 - Public harness repo: [claude-agent-harness-opt](https://github.com/cfregly/claude-agent-harness-opt)
-- Founder handoff: [Supabase MCP](https://github.com/cfregly/claude-agent-harness-opt/tree/main/docs/findings/supabase)
-- Packet folder: [supabase_mcp_database_tool_tuning_2026-06-25](https://github.com/cfregly/claude-agent-harness-opt/tree/main/evals/pr_packets/supabase_mcp_database_tool_tuning_2026-06-25)
+- Bundle folder: [supabase_mcp_database_tool_tuning_2026-06-25](https://github.com/cfregly/claude-agent-harness-opt/tree/main/evals/pr_packets/supabase_mcp_database_tool_tuning_2026-06-25)
+- Matrix: [supabase_mcp_database_tool_selection.json](https://github.com/cfregly/claude-agent-harness-opt/blob/main/evals/model_matrix/supabase_mcp_database_tool_selection.json)
+- Result artifact: [supabase_mcp_ddl_boundary_live_2026-06-25.md](https://github.com/cfregly/claude-agent-harness-opt/blob/main/evals/results/supabase_mcp_ddl_boundary_live_2026-06-25.md)
 - PR_TITLE.txt: [PR_TITLE.txt](https://github.com/cfregly/claude-agent-harness-opt/blob/main/evals/pr_packets/supabase_mcp_database_tool_tuning_2026-06-25/PR_TITLE.txt)
 - PR_BODY.md: [PR_BODY.md](https://github.com/cfregly/claude-agent-harness-opt/blob/main/evals/pr_packets/supabase_mcp_database_tool_tuning_2026-06-25/PR_BODY.md)
 - REPRODUCTION.md: [REPRODUCTION.md](https://github.com/cfregly/claude-agent-harness-opt/blob/main/evals/pr_packets/supabase_mcp_database_tool_tuning_2026-06-25/REPRODUCTION.md)
 - evidence.json: [evidence.json](https://github.com/cfregly/claude-agent-harness-opt/blob/main/evals/pr_packets/supabase_mcp_database_tool_tuning_2026-06-25/evidence.json)
-- Matrix: [supabase_mcp_database_tool_selection.json](https://github.com/cfregly/claude-agent-harness-opt/blob/main/evals/model_matrix/supabase_mcp_database_tool_selection.json)
-- Result artifact: [supabase_mcp_ddl_boundary_live_2026-06-25.md](https://github.com/cfregly/claude-agent-harness-opt/blob/main/evals/results/supabase_mcp_ddl_boundary_live_2026-06-25.md)
 - Target repo: [mcp](https://github.com/supabase/mcp)
 
-[Current frontier stress receipts](https://github.com/cfregly/claude-agent-harness-opt/blob/main/docs/frontier-stress-2026-07-01.md) tracks all retained current available-frontier receipts.
+<details>
+<summary>LLM / Machine-readable details</summary>
 
-Bundle folder: [supabase_mcp_database_tool_tuning_2026-06-25](https://github.com/cfregly/claude-agent-harness-opt/tree/main/evals/pr_packets/supabase_mcp_database_tool_tuning_2026-06-25)
-
-- Finding folder: [Supabase MCP Database Tool Tuning finding](https://github.com/cfregly/claude-agent-harness-opt/tree/main/docs/findings/supabase)
-- PR title: [PR_TITLE.txt](https://github.com/cfregly/claude-agent-harness-opt/blob/main/evals/pr_packets/supabase_mcp_database_tool_tuning_2026-06-25/PR_TITLE.txt)
-- PR body: [PR_BODY.md](https://github.com/cfregly/claude-agent-harness-opt/blob/main/evals/pr_packets/supabase_mcp_database_tool_tuning_2026-06-25/PR_BODY.md)
-- Reproduction doc: [REPRODUCTION.md](https://github.com/cfregly/claude-agent-harness-opt/blob/main/evals/pr_packets/supabase_mcp_database_tool_tuning_2026-06-25/REPRODUCTION.md)
-- Evidence JSON: [evidence.json](https://github.com/cfregly/claude-agent-harness-opt/blob/main/evals/pr_packets/supabase_mcp_database_tool_tuning_2026-06-25/evidence.json)
-- Frontier stress receipt: [supabase_mcp_database_tool_selection_frontier_available_live_2026-07-01.md](https://github.com/cfregly/claude-agent-harness-opt/blob/main/evals/results/supabase_mcp_database_tool_selection_frontier_available_live_2026-07-01.md)
-- Frontier JSON receipt: [supabase_mcp_database_tool_selection_frontier_available_live_2026-07-01.json](https://github.com/cfregly/claude-agent-harness-opt/blob/main/evals/results/supabase_mcp_database_tool_selection_frontier_available_live_2026-07-01.json)
-- Anthropic Opus receipt: [supabase_mcp_database_tool_selection_frontier_anthropic_live_2026-07-01.md](https://github.com/cfregly/claude-agent-harness-opt/blob/main/evals/results/supabase_mcp_database_tool_selection_frontier_anthropic_live_2026-07-01.md)
-- Anthropic Opus JSON: [supabase_mcp_database_tool_selection_frontier_anthropic_live_2026-07-01.json](https://github.com/cfregly/claude-agent-harness-opt/blob/main/evals/results/supabase_mcp_database_tool_selection_frontier_anthropic_live_2026-07-01.json)
-- Live result: [supabase_mcp_ddl_boundary_live_2026-06-25.md](https://github.com/cfregly/claude-agent-harness-opt/blob/main/evals/results/supabase_mcp_ddl_boundary_live_2026-06-25.md)
-- Detailed note: [supabase-mcp-tool-tuning.md](https://github.com/cfregly/claude-agent-harness-opt/blob/main/docs/supabase-mcp-tool-tuning.md)
-
-## Result
-
-Current frontier stress receipt: 48 current available-frontier cells, 43 passed, 5 failed, 0 errors on OpenAI `gpt-5.5` and Gemini `gemini-3.1-pro-preview-customtools`. Treat this as hill-descending coverage for the next tuning pass.
-
-Anthropic Opus frontier receipt: 24 Anthropic Opus cells, 24 passed, 0 failed, 0 errors on accessible `claude-opus-4-8`. Any failed cells are model-selection findings, not provider-credit blockers.
-
-Confirmed improvement. This clears the adversarially-confirmed to add value bar.
-
-The adversarial DDL/RLS cells moved from 4/18 baseline passes to 18/18 tuned passes across Anthropic, OpenAI, Gemini, native tools, and prompt JSON.
-
-## Evidence
+## Artifact Pointers
 
 - Source: [Supabase MCP repo](https://github.com/supabase/mcp)
 - Matrix: [supabase_mcp_database_tool_selection.json](https://github.com/cfregly/claude-agent-harness-opt/blob/main/evals/model_matrix/supabase_mcp_database_tool_selection.json)
@@ -145,3 +132,5 @@ The adversarial DDL/RLS cells moved from 4/18 baseline passes to 18/18 tuned pas
 ## Reproduce
 
 [REPRODUCTION.md](https://github.com/cfregly/claude-agent-harness-opt/blob/main/evals/pr_packets/supabase_mcp_database_tool_tuning_2026-06-25/REPRODUCTION.md) contains the exact command and pinned matrix surface.
+
+</details>

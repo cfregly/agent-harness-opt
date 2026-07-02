@@ -5,21 +5,33 @@ Suggested title: Tighten InsForge MCP deploy routing with live evals
 
 ## Summary
 
-| Before | After | Result |
-|---|---|---|
-| `readme_insforge_mcp` scored 0.938. Baseline mistakes clustered on relative deploy path avoids tool. | Suggested change: Clarify that `create-deployment` requires an absolute `sourceDirectory` and must be avoided for relative paths, starter-template creation, deployment status lookup, or remote prepared-deployment triggering. | `source_tuned_insforge_mcp` scored 1.000, a 0.062 gain. Add retained cases as regression coverage. |
+| Exact change | Before | After | Result |
+|---|---|---|---|
+| Clarify that `create-deployment` requires an absolute `sourceDirectory` and must be avoided for relative paths, starter-template creation, deployment status lookup, or remote prepared-deployment triggering. | `readme_insforge_mcp` scored 0.938. Baseline mistakes clustered on relative deploy path avoids tool. | The target surface states this routing/default/fallback behavior before the agent chooses tools. | `source_tuned_insforge_mcp` scored 1.000, a 0.062 gain. Add retained cases as regression coverage. |
+
+
+## Result
+
+- Confirmed improvement: `source_tuned_insforge_mcp` moved from 0.938 to 1.000, a 0.062 gain over `readme_insforge_mcp`.
+- Value bar: cleared the 0.010 minimum delta.
+- Proof scope: 32 live matrix cells, 31 passed, 1 failed, 0 errors.
+
+## What Failed
+
+- `readme_insforge_mcp` failed or chose the wrong boundary on: relative deploy path avoids tool.
+- Those failures are the target-owned behavior to encode in descriptions, defaults, options, or regression tests.
 
 ## Why This Matters
 
 - Value proposition: helps agents choose the intended InsForge MCP workflow instead of adjacent tools that look plausible.
 - Proof: `source_tuned_insforge_mcp` scored 1.000, a 0.062 gain.
-- Evidence: 32 live matrix cells on the same tasks, providers, harnesses, and instruction variants.
+- Proof scope: 32 live matrix cells on the same tasks, providers, harnesses, and instruction variants.
 - Baseline failure pattern: relative deploy path avoids tool.
 - Downside avoided: plausible-but-wrong tool choices that waste time or return misleading results.
 
 ## Recommended Actions
 
-- Apply this change: Clarify that `create-deployment` requires an absolute `sourceDirectory` and must be avoided for relative paths, starter-template creation, deployment status lookup, or remote prepared-deployment triggering.
+- Apply exact change: Clarify that `create-deployment` requires an absolute `sourceDirectory` and must be avoided for relative paths, starter-template creation, deployment status lookup, or remote prepared-deployment triggering.
 - Add the selected cases below to repo CI or release-blocking regression coverage.
 - Run the local-agent prompt below in your repo to identify exact files, patch locations, tests, and risks before editing.
 
@@ -97,20 +109,19 @@ Provider/model rows are evidence lanes. The target repo actions above are the on
 ## Evidence Bundle
 
 - Public harness repo: [claude-agent-harness-opt](https://github.com/cfregly/claude-agent-harness-opt)
-- Founder handoff: [InsForge MCP](https://github.com/cfregly/claude-agent-harness-opt/tree/main/docs/findings/insforge)
-- Packet folder: [insforge_mcp_tool_tuning_2026-06-28](https://github.com/cfregly/claude-agent-harness-opt/tree/main/evals/pr_packets/insforge_mcp_tool_tuning_2026-06-28)
+- Bundle folder: [insforge_mcp_tool_tuning_2026-06-28](https://github.com/cfregly/claude-agent-harness-opt/tree/main/evals/pr_packets/insforge_mcp_tool_tuning_2026-06-28)
+- Matrix: [insforge_mcp_tool_selection.json](https://github.com/cfregly/claude-agent-harness-opt/blob/main/evals/model_matrix/insforge_mcp_tool_selection.json)
+- Result artifact: [insforge_mcp_tool_selection_2026-06-28.md](https://github.com/cfregly/claude-agent-harness-opt/blob/main/evals/results/insforge_mcp_tool_selection_2026-06-28.md)
 - PR_TITLE.txt: [PR_TITLE.txt](https://github.com/cfregly/claude-agent-harness-opt/blob/main/evals/pr_packets/insforge_mcp_tool_tuning_2026-06-28/PR_TITLE.txt)
 - PR_BODY.md: [PR_BODY.md](https://github.com/cfregly/claude-agent-harness-opt/blob/main/evals/pr_packets/insforge_mcp_tool_tuning_2026-06-28/PR_BODY.md)
 - REPRODUCTION.md: [REPRODUCTION.md](https://github.com/cfregly/claude-agent-harness-opt/blob/main/evals/pr_packets/insforge_mcp_tool_tuning_2026-06-28/REPRODUCTION.md)
 - evidence.json: [evidence.json](https://github.com/cfregly/claude-agent-harness-opt/blob/main/evals/pr_packets/insforge_mcp_tool_tuning_2026-06-28/evidence.json)
-- Matrix: [insforge_mcp_tool_selection.json](https://github.com/cfregly/claude-agent-harness-opt/blob/main/evals/model_matrix/insforge_mcp_tool_selection.json)
-- Result artifact: [insforge_mcp_tool_selection_2026-06-28.md](https://github.com/cfregly/claude-agent-harness-opt/blob/main/evals/results/insforge_mcp_tool_selection_2026-06-28.md)
 - Target repo: [insforge-mcp](https://github.com/InsForge/insforge-mcp)
 
 <details>
 <summary>LLM / Machine-readable details</summary>
 
-## Evidence
+## Artifact Pointers
 
 - Finding folder: [InsForge MCP Tool Tuning finding](https://github.com/cfregly/claude-agent-harness-opt/tree/main/docs/findings/insforge)
 - Matrix: [insforge_mcp_tool_selection.json](https://github.com/cfregly/claude-agent-harness-opt/blob/main/evals/model_matrix/insforge_mcp_tool_selection.json)
@@ -123,17 +134,6 @@ Provider/model rows are evidence lanes. The target repo actions above are the on
 - Current frontier JSON receipt: [insforge_mcp_tool_selection_frontier_available_live_2026-07-01.json](https://github.com/cfregly/claude-agent-harness-opt/blob/main/evals/results/insforge_mcp_tool_selection_frontier_available_live_2026-07-01.json)
 - Anthropic Opus frontier receipt: [insforge_mcp_tool_selection_frontier_anthropic_live_2026-07-01.md](https://github.com/cfregly/claude-agent-harness-opt/blob/main/evals/results/insforge_mcp_tool_selection_frontier_anthropic_live_2026-07-01.md)
 - Anthropic Opus JSON receipt: [insforge_mcp_tool_selection_frontier_anthropic_live_2026-07-01.json](https://github.com/cfregly/claude-agent-harness-opt/blob/main/evals/results/insforge_mcp_tool_selection_frontier_anthropic_live_2026-07-01.json)
-
-## Result
-
-- packet type: improvement
-- promoted by value bar: yes
-- baseline variant: readme_insforge_mcp
-- candidate variant: source_tuned_insforge_mcp
-- baseline score: 0.938
-- candidate score: 1.000
-- delta: 0.062
-- minimum delta: 0.010
 
 ## Cases
 

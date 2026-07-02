@@ -137,7 +137,6 @@ def render_upstream_pr_body(
     repro_command: str,
     options: PacketOptions,
 ) -> str:
-    target = options.target_name or "tool catalog"
     change = options.change_summary or "Clarify the tool-selection boundary shown by the eval."
     promote = "yes" if comparison.get("promote") else "no"
     lines = [
@@ -177,14 +176,6 @@ def render_upstream_pr_body(
     lines.extend(f"- {item}" for item in _downside_lines(result, comparison, options))
     lines.extend([
         "",
-        f"## Proposed change for {target}",
-        "",
-        change,
-        "",
-        "## Why",
-        "",
-        "This change is backed by a harness matrix result, not a prose-only review. The bar is adversarially-confirmed to add value.",
-        "",
         "## Pinned surface",
         "",
     ])
@@ -194,7 +185,7 @@ def render_upstream_pr_body(
     lines.extend(
         [
             "",
-            "## Result",
+            "## Value Bar Detail",
             "",
             f"- promoted by value bar: {promote}",
             f"- baseline variant: {comparison.get('baseline_variant', '')}",
@@ -250,7 +241,7 @@ def render_upstream_pr_body(
     lines.extend(
         [
             "",
-            "## Evidence Detail",
+            "## Artifact Detail",
             "",
             f"- public harness repo: {PROJECT_EVIDENCE_REPO}",
             "- `REPRODUCTION.md` contains the full local reproduction path.",
@@ -290,6 +281,20 @@ def _founder_handoff_lines(
     lines.extend(_before_after_lines(result, comparison, options, change))
     lines.extend([
         "",
+        "## Result",
+        "",
+    ])
+    lines.extend(f"- {item}" for item in _result_summary_lines(result, comparison))
+    failure_summary = _what_failed_lines(result, comparison, options)
+    if failure_summary:
+        lines.extend([
+            "",
+            "## What Failed",
+            "",
+        ])
+        lines.extend(f"- {item}" for item in failure_summary)
+    lines.extend([
+        "",
         "## Why This Matters",
         "",
     ])
@@ -321,6 +326,48 @@ def _founder_handoff_lines(
     return lines
 
 
+def _result_summary_lines(result: dict[str, Any], comparison: dict[str, Any]) -> list[str]:
+    baseline = str(comparison.get("baseline_variant") or "baseline")
+    candidate = str(comparison.get("candidate_variant") or "candidate")
+    baseline_score = _format_score(comparison.get("baseline_score"))
+    candidate_score = _format_score(comparison.get("candidate_score"))
+    delta = _format_score(comparison.get("delta"))
+    minimum_delta = _format_score(comparison.get("minimum_delta"))
+    counts = _summary_counts(result)
+    if comparison.get("promote"):
+        lines = [
+            f"Confirmed improvement: `{candidate}` moved from {baseline_score} to {candidate_score}, a {delta} gain over `{baseline}`.",
+            f"Value bar: cleared the {minimum_delta} minimum delta.",
+        ]
+    else:
+        lines = [
+            f"Guardrail: no upstream change is promoted because `{baseline}` and `{candidate}` did not produce a qualifying delta.",
+            f"Value bar: {delta} delta against a {minimum_delta} minimum.",
+        ]
+    if counts and counts["total"]:
+        lines.append(
+            f"Proof scope: {counts['total']} live matrix cells, {counts['passed']} passed, {counts['failed']} failed, {counts['errors']} errors."
+        )
+    return lines
+
+
+def _what_failed_lines(
+    result: dict[str, Any],
+    comparison: dict[str, Any],
+    options: PacketOptions,
+) -> list[str]:
+    if not comparison.get("promote"):
+        return []
+    baseline = str(comparison.get("baseline_variant") or options.baseline_variant or "baseline")
+    failures = _failure_case_names(result, baseline)
+    if not failures:
+        return []
+    return [
+        f"`{baseline}` failed or chose the wrong boundary on: {_case_list_text(failures)}.",
+        "Those failures are the target-owned behavior to encode in descriptions, defaults, options, or regression tests.",
+    ]
+
+
 def _why_this_matters_lines(
     result: dict[str, Any],
     comparison: dict[str, Any],
@@ -340,7 +387,7 @@ def _why_this_matters_lines(
             "Downside avoided: shipping unproven wording changes while the current behavior is already passing.",
         ]
         if counts and counts["total"]:
-            lines.insert(2, f"Evidence: {counts['total']} live matrix cells on the same tasks, providers, harnesses, and instruction variants.")
+            lines.insert(2, f"Proof scope: {counts['total']} live matrix cells on the same tasks, providers, harnesses, and instruction variants.")
         return lines[:5]
 
     target = options.target_name or "tool catalog"
@@ -349,7 +396,7 @@ def _why_this_matters_lines(
         f"Proof: `{candidate}` improved from {baseline_score} to {candidate_score}, a {delta} gain over `{baseline}`.",
     ]
     if counts and counts["total"]:
-        lines.append(f"Evidence: {counts['total']} live matrix cells on the same tasks, providers, harnesses, and instruction variants.")
+        lines.append(f"Proof scope: {counts['total']} live matrix cells on the same tasks, providers, harnesses, and instruction variants.")
     failures = _failure_case_names(result, baseline)
     if failures:
         lines.append(f"Baseline failure pattern: {_case_list_text(failures)}.")
@@ -364,8 +411,7 @@ def _recommended_action_lines(
     change: str,
 ) -> list[str]:
     if comparison.get("promote"):
-        actions = [f"Apply this change: {change}"]
-        actions.extend(str(item).strip() for item in options.target_actions if str(item).strip())
+        actions = [f"Apply exact change: {item}" for item in _target_change_items(change, options)]
         actions.extend(
             [
                 "Add the selected cases below to repo CI or release-blocking regression coverage.",
@@ -460,17 +506,16 @@ def _evidence_bundle_lines(
     options: PacketOptions,
 ) -> list[str]:
     lines = [f"- Public harness repo: [claude-agent-harness-opt]({PROJECT_EVIDENCE_REPO})"]
-    if options.finding_url:
-        lines.append(f"- Founder handoff: [{options.target_name or 'Finding'}]({options.finding_url})")
     if options.packet_url:
-        lines.append(f"- Packet folder: [{_last_url_part(options.packet_url)}]({options.packet_url})")
-        for filename in ("PR_TITLE.txt", "PR_BODY.md", "REPRODUCTION.md", "evidence.json"):
-            lines.append(f"- {filename}: [{filename}]({_packet_file_url(options.packet_url, filename)})")
+        lines.append(f"- Bundle folder: [{_last_url_part(options.packet_url)}]({options.packet_url})")
     matrix_path = str(result.get("matrix_path", "")).strip()
     if matrix_path:
         lines.append(f"- Matrix: [{Path(matrix_path).name}]({_repo_blob_url(matrix_path)})")
     if options.evidence_url:
         lines.append(f"- Result artifact: [{_last_url_part(options.evidence_url)}]({options.evidence_url})")
+    if options.packet_url:
+        for filename in ("PR_TITLE.txt", "PR_BODY.md", "REPRODUCTION.md", "evidence.json"):
+            lines.append(f"- {filename}: [{filename}]({_packet_file_url(options.packet_url, filename)})")
     target_repo = options.target_repo or str(source.get("repo", "")).strip()
     if target_repo:
         lines.append(f"- Target repo: [{_last_url_part(target_repo)}]({target_repo})")
@@ -796,29 +841,70 @@ def _before_after_lines(
     baseline_score = _format_score(comparison.get("baseline_score"))
     candidate_score = _format_score(comparison.get("candidate_score"))
     delta = _format_score(comparison.get("delta"))
-    before = (
-        f"`{baseline}` scored {baseline_score}. "
-        f"Baseline mistakes clustered on {_case_list_text(_failure_case_names(result, baseline))}."
-    )
+    failures = _failure_case_names(result, baseline)
     if comparison.get("promote"):
-        after = _summary_change_text(change, options)
-        result_text = f"`{candidate}` scored {candidate_score}, a {delta} gain. Add retained cases as regression coverage."
+        before = f"`{baseline}` scored {baseline_score}; failures clustered on {_case_list_text(failures)}."
+        if not failures:
+            before = f"`{baseline}` scored {baseline_score} on the retained slice."
+        result_text = (
+            f"`{candidate}` scored {candidate_score}, a {delta} gain. "
+            "This clears the adversarially-confirmed to add value bar; add retained cases as regression coverage."
+        )
+        lines = [
+            "| Exact change | Before | After | Result |",
+            "|---|---|---|---|",
+        ]
+        for action in _target_change_items(change, options):
+            lines.append(
+                "| "
+                f"{_table_cell(action)} | "
+                f"{_table_cell(before)} | "
+                f"{_table_cell(_after_change_text(action, target))} | "
+                f"{_table_cell(result_text)} |"
+            )
+        return lines
     else:
-        after = "No suggested wording change from this slice. No upstream change is promoted."
-        result_text = f"`{candidate}` also scored {candidate_score}. Keep the cases as regression coverage."
-    if not _failure_case_names(result, baseline):
         before = f"`{baseline}` scored {baseline_score} on the retained slice."
-    lines = [
-        "| Before | After | Result |",
-        "|---|---|---|",
-        f"| {_table_cell(before)} | {_table_cell(after)} | {_table_cell(result_text)} |",
-    ]
-    return lines
+        return [
+            "| Exact change | Before | After | Result |",
+            "|---|---|---|---|",
+            (
+                "| No wording change promoted from this slice. | "
+                f"{_table_cell(before)} | "
+                "Keep the current surface and retain the cases as regression coverage. | "
+                f"`{candidate}` also scored {candidate_score}. Keep the cases as regression coverage. Avoid changing a surface that already passes this retained slice. |"
+            ),
+        ]
+
+
+def _target_change_items(change: str, options: PacketOptions) -> list[str]:
+    items = [change.strip()]
+    items.extend(str(item).strip() for item in options.target_actions if str(item).strip())
+    seen: set[str] = set()
+    unique = []
+    for item in items:
+        normalized = " ".join(item.split())
+        if normalized and normalized not in seen:
+            seen.add(normalized)
+            unique.append(normalized)
+    return unique or ["Clarify the tool-selection boundary shown by the eval."]
+
+
+def _after_change_text(action: str, target: str) -> str:
+    lower = action.casefold()
+    if "idle" in lower and "trace" in lower:
+        return "Optimization-oriented hot-trace discovery excludes or clearly marks idle traces before ranking work."
+    if "zymtrace-profiler" in lower or "profiler" in lower and "topentities" in lower:
+        return "Profiler self-noise is not presented as an application optimization target."
+    if "gpu readiness" in lower or "supports_gpu" in lower:
+        return "Agents can read GPU readiness from one safe MCP surface before querying GPU metrics."
+    if "regression" in lower or "ci" in lower:
+        return "The measured tool-boundary cases become release-blocking regression coverage."
+    return f"The {target} surface states this routing/default/fallback behavior before the agent chooses tools."
 
 
 def _summary_change_text(change: str, options: PacketOptions) -> str:
-    actions = [f"Suggested change: {change}"]
-    actions.extend(str(item).strip() for item in options.target_actions if str(item).strip())
+    actions = [f"Exact change: {item}" for item in _target_change_items(change, options)]
     return "<br>".join(actions)
 
 
@@ -841,7 +927,7 @@ def _action_lines(
         lines = [
             f"### {target}",
             "",
-            f"- Apply this change: {change}",
+            f"- Apply exact change: {change}",
             "- Add the selected cases below to upstream CI or release-blocking regression coverage.",
             "- Keep the passing cells visible so maintainers preserve behavior that already works.",
         ]

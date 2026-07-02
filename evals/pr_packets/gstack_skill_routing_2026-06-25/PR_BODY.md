@@ -5,21 +5,33 @@ Suggested title: Tighten gstack browser and safety routing with live evals
 
 ## Summary
 
-| Before | After | Result |
-|---|---|---|
-| `gstack_stock_skill_descriptions` scored 0.975. Baseline mistakes clustered on careful-mode, browser-headless. | Suggested change: Clarify browser alias and safety-mode skill routing boundaries. | `gstack_boundary_tuned_skill_descriptions` scored 0.992, a 0.017 gain. Add retained cases as regression coverage. |
+| Exact change | Before | After | Result |
+|---|---|---|---|
+| Clarify browser alias and safety-mode skill routing boundaries. | `gstack_stock_skill_descriptions` scored 0.975. Baseline mistakes clustered on careful-mode, browser-headless. | The target surface states this routing/default/fallback behavior before the agent chooses tools. | `gstack_boundary_tuned_skill_descriptions` scored 0.992, a 0.017 gain. Add retained cases as regression coverage. |
+
+
+## Result
+
+- Confirmed improvement: `gstack_boundary_tuned_skill_descriptions` moved from 0.975 to 0.992, a 0.017 gain over `gstack_stock_skill_descriptions`.
+- Value bar: cleared the 0.010 minimum delta.
+- Proof scope: 720 live matrix cells, 708 passed, 12 failed, 0 errors.
+
+## What Failed
+
+- `gstack_stock_skill_descriptions` failed or chose the wrong boundary on: careful-mode, browser-headless.
+- Those failures are the target-owned behavior to encode in descriptions, defaults, options, or regression tests.
 
 ## Why This Matters
 
 - Value proposition: helps agents choose the intended gstack workflow instead of adjacent tools that look plausible.
 - Proof: `gstack_boundary_tuned_skill_descriptions` scored 0.992, a 0.017 gain.
-- Evidence: 720 live matrix cells on the same tasks, providers, harnesses, and instruction variants.
+- Proof scope: 720 live matrix cells on the same tasks, providers, harnesses, and instruction variants.
 - Baseline failure pattern: careful-mode, browser-headless.
 - Downside avoided: plausible-but-wrong tool choices that waste time or return misleading results.
 
 ## Recommended Actions
 
-- Apply this change: Clarify browser alias and safety-mode skill routing boundaries.
+- Apply exact change: Clarify browser alias and safety-mode skill routing boundaries.
 - Add the selected cases below to repo CI or release-blocking regression coverage.
 - Run the local-agent prompt below in your repo to identify exact files, patch locations, tests, and risks before editing.
 
@@ -99,14 +111,13 @@ Provider/model rows are evidence lanes. The target repo actions above are the on
 ## Evidence Bundle
 
 - Public harness repo: [claude-agent-harness-opt](https://github.com/cfregly/claude-agent-harness-opt)
-- Founder handoff: [gstack](https://github.com/cfregly/claude-agent-harness-opt/tree/main/docs/findings/gstack)
-- Packet folder: [gstack_skill_routing_2026-06-25](https://github.com/cfregly/claude-agent-harness-opt/tree/main/evals/pr_packets/gstack_skill_routing_2026-06-25)
+- Bundle folder: [gstack_skill_routing_2026-06-25](https://github.com/cfregly/claude-agent-harness-opt/tree/main/evals/pr_packets/gstack_skill_routing_2026-06-25)
+- Matrix: [gstack_skill_selection_matrix.json](https://github.com/cfregly/claude-agent-harness-opt/blob/main/evals/targets/gstack/gstack_skill_selection_matrix.json)
+- Result artifact: [gstack_skill_matrix_live_2026-06-25.json](https://github.com/cfregly/claude-agent-harness-opt/blob/main/evals/results/gstack_skill_matrix_live_2026-06-25.json)
 - PR_TITLE.txt: [PR_TITLE.txt](https://github.com/cfregly/claude-agent-harness-opt/blob/main/evals/pr_packets/gstack_skill_routing_2026-06-25/PR_TITLE.txt)
 - PR_BODY.md: [PR_BODY.md](https://github.com/cfregly/claude-agent-harness-opt/blob/main/evals/pr_packets/gstack_skill_routing_2026-06-25/PR_BODY.md)
 - REPRODUCTION.md: [REPRODUCTION.md](https://github.com/cfregly/claude-agent-harness-opt/blob/main/evals/pr_packets/gstack_skill_routing_2026-06-25/REPRODUCTION.md)
 - evidence.json: [evidence.json](https://github.com/cfregly/claude-agent-harness-opt/blob/main/evals/pr_packets/gstack_skill_routing_2026-06-25/evidence.json)
-- Matrix: [gstack_skill_selection_matrix.json](https://github.com/cfregly/claude-agent-harness-opt/blob/main/evals/targets/gstack/gstack_skill_selection_matrix.json)
-- Result artifact: [gstack_skill_matrix_live_2026-06-25.json](https://github.com/cfregly/claude-agent-harness-opt/blob/main/evals/results/gstack_skill_matrix_live_2026-06-25.json)
 - Target repo: [gstack](https://github.com/garrytan/gstack)
 
 <details>
@@ -160,16 +171,6 @@ This change is backed by a harness matrix result, not a prose-only review. The b
 - target surface dirty: False
 - worktree dirty: True
 - target repo: https://github.com/garrytan/gstack
-
-## Result
-
-- promoted by value bar: yes
-- baseline variant: gstack_stock_skill_descriptions
-- candidate variant: gstack_boundary_tuned_skill_descriptions
-- baseline score: 0.975
-- candidate score: 0.992
-- delta: 0.017
-- minimum delta: 0.010
 
 ## What We Learned
 
@@ -246,7 +247,7 @@ python -m claude_agent_harness_opt model-matrix evals/targets/gstack/gstack_skil
 - design-variants chose gstack_design_shotgun
 - product-brainstorm chose gstack_office_hours
 
-## Evidence
+## Artifact Pointers
 
 - Public harness repo: [claude-agent-harness-opt](https://github.com/cfregly/claude-agent-harness-opt)
 - Reproduction doc: [REPRODUCTION.md](https://github.com/cfregly/claude-agent-harness-opt/blob/main/evals/pr_packets/gstack_skill_routing_2026-06-25/REPRODUCTION.md)

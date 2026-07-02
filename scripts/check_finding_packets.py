@@ -30,7 +30,7 @@ REPO_LINK_RE = re.compile(
 )
 LOCAL_ARTIFACT_RE = re.compile(r"`((?:docs|evals|README\.md)[^`]+)`")
 MATRIX_LINK_RE = re.compile(r"evals/(?:model_matrix/[^)`\s]+|targets/[^)`\s]+)\.json")
-REQUIRED_PACKET_SECTIONS = ("## Evidence Bundle", "## Result", "## Evidence", "## Reproduce")
+REQUIRED_PACKET_SECTIONS = ("## Summary", "## Evidence Bundle", "## Result", "## Reproduce")
 REQUIRED_PACKET_FILES = ("README.md",)
 REQUIRED_PACKET_ARTIFACT_PREFIXES = (
     "docs/",
@@ -123,6 +123,10 @@ def _check_packet_dir(packet_dir: Path, index_text: str, ledger_text: str) -> li
     for section in REQUIRED_PACKET_SECTIONS:
         if section not in text:
             failures.append(f"{rel_readme}: missing section {section}")
+    if re.search(r"(?m)^## Suggested Change\s*$", text):
+        failures.append(f"{rel_readme}: duplicate suggested-change section must be folded into top Summary")
+    if re.search(r"(?m)^## Evidence\s*$", text):
+        failures.append(f"{rel_readme}: duplicate evidence section must be folded into Evidence Bundle")
     if "Share link:" not in text:
         failures.append(f"{rel_readme}: missing share link")
     if "Bundle folder:" not in text:

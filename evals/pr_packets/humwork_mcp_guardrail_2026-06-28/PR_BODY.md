@@ -5,9 +5,16 @@ Suggested title: Add data-backed Humwork MCP tool-routing evidence
 
 ## Summary
 
-| Before | After | Result |
-|---|---|---|
-| `readme_humwork_mcp` scored 1.000 on the retained slice. | No suggested wording change from this slice. No upstream change is promoted. | `skill_tuned_humwork_mcp` also scored 1.000. Keep the cases as regression coverage. |
+| Exact change | Before | After | Result |
+|---|---|---|---|
+| No wording change promoted from this slice. | `readme_humwork_mcp` scored 1.000 on the retained slice. | Keep the current surface and retain the cases as regression coverage. | `skill_tuned_humwork_mcp` also scored 1.000. Keep the cases as regression coverage. |
+
+
+## Result
+
+- Guardrail: no upstream change is promoted because `readme_humwork_mcp` and `skill_tuned_humwork_mcp` did not produce a qualifying delta.
+- Value bar: 0.000 delta against a 0.010 minimum.
+- Proof scope: 14 live matrix cells, 14 passed, 0 failed, 0 errors.
 
 ## Why This Matters
 
@@ -96,20 +103,19 @@ Provider/model rows are evidence lanes. The target repo actions above are the on
 ## Evidence Bundle
 
 - Public harness repo: [claude-agent-harness-opt](https://github.com/cfregly/claude-agent-harness-opt)
-- Founder handoff: [Humwork MCP](https://github.com/cfregly/claude-agent-harness-opt/tree/main/docs/findings/humwork)
-- Packet folder: [humwork_mcp_guardrail_2026-06-28](https://github.com/cfregly/claude-agent-harness-opt/tree/main/evals/pr_packets/humwork_mcp_guardrail_2026-06-28)
+- Bundle folder: [humwork_mcp_guardrail_2026-06-28](https://github.com/cfregly/claude-agent-harness-opt/tree/main/evals/pr_packets/humwork_mcp_guardrail_2026-06-28)
+- Matrix: [humwork_mcp_tool_selection.json](https://github.com/cfregly/claude-agent-harness-opt/blob/main/evals/model_matrix/humwork_mcp_tool_selection.json)
+- Result artifact: [humwork_mcp_tool_selection_2026-06-28.md](https://github.com/cfregly/claude-agent-harness-opt/blob/main/evals/results/humwork_mcp_tool_selection_2026-06-28.md)
 - PR_TITLE.txt: [PR_TITLE.txt](https://github.com/cfregly/claude-agent-harness-opt/blob/main/evals/pr_packets/humwork_mcp_guardrail_2026-06-28/PR_TITLE.txt)
 - PR_BODY.md: [PR_BODY.md](https://github.com/cfregly/claude-agent-harness-opt/blob/main/evals/pr_packets/humwork_mcp_guardrail_2026-06-28/PR_BODY.md)
 - REPRODUCTION.md: [REPRODUCTION.md](https://github.com/cfregly/claude-agent-harness-opt/blob/main/evals/pr_packets/humwork_mcp_guardrail_2026-06-28/REPRODUCTION.md)
 - evidence.json: [evidence.json](https://github.com/cfregly/claude-agent-harness-opt/blob/main/evals/pr_packets/humwork_mcp_guardrail_2026-06-28/evidence.json)
-- Matrix: [humwork_mcp_tool_selection.json](https://github.com/cfregly/claude-agent-harness-opt/blob/main/evals/model_matrix/humwork_mcp_tool_selection.json)
-- Result artifact: [humwork_mcp_tool_selection_2026-06-28.md](https://github.com/cfregly/claude-agent-harness-opt/blob/main/evals/results/humwork_mcp_tool_selection_2026-06-28.md)
 - Target repo: [humwork-mcp](https://github.com/humworkai/humwork-mcp)
 
 <details>
 <summary>LLM / Machine-readable details</summary>
 
-## Evidence
+## Artifact Pointers
 
 - Finding folder: [Humwork MCP Guardrail finding](https://github.com/cfregly/claude-agent-harness-opt/tree/main/docs/findings/humwork)
 - Matrix: [humwork_mcp_tool_selection.json](https://github.com/cfregly/claude-agent-harness-opt/blob/main/evals/model_matrix/humwork_mcp_tool_selection.json)
@@ -122,17 +128,6 @@ Provider/model rows are evidence lanes. The target repo actions above are the on
 - Current frontier JSON receipt: [humwork_mcp_tool_selection_frontier_available_live_2026-07-01.json](https://github.com/cfregly/claude-agent-harness-opt/blob/main/evals/results/humwork_mcp_tool_selection_frontier_available_live_2026-07-01.json)
 - Anthropic Opus frontier receipt: [humwork_mcp_tool_selection_frontier_anthropic_live_2026-07-01.md](https://github.com/cfregly/claude-agent-harness-opt/blob/main/evals/results/humwork_mcp_tool_selection_frontier_anthropic_live_2026-07-01.md)
 - Anthropic Opus JSON receipt: [humwork_mcp_tool_selection_frontier_anthropic_live_2026-07-01.json](https://github.com/cfregly/claude-agent-harness-opt/blob/main/evals/results/humwork_mcp_tool_selection_frontier_anthropic_live_2026-07-01.json)
-
-## Result
-
-- packet type: guardrail
-- promoted by value bar: no
-- baseline variant: readme_humwork_mcp
-- candidate variant: skill_tuned_humwork_mcp
-- baseline score: 1.000
-- candidate score: 1.000
-- delta: 0.000
-- minimum delta: 0.010
 
 ## Cases
 
