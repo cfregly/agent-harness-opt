@@ -44,6 +44,7 @@ EVIDENCE_HEAVY_MARKERS = (
     "PR_BODY.md",
     "PR_TITLE.txt",
 )
+HUMAN_INTRO_MACHINE_DETAIL_LIMIT = 20
 ROOT_HUMAN_SECTIONS = (
     "## Demo",
     "## Share This",
@@ -186,16 +187,30 @@ def _check_founder_handoff(rel: Path, text: str, *, require_share_link: bool) ->
     if "## Founder Summary" in text:
         failures.append(f"{rel}: collapse ## Founder Summary into ## Summary and ## Why This Matters")
 
+    exact_heading = "### Exact Text To Apply"
+    exact_table = "| Where to edit | Baseline text | Suggested replacement text |"
+    behavior_heading = "### Baseline / Suggested Behavior"
+    behavior_table = "| Suggested change | Baseline / before description | Suggested / after description | Result |"
     table_index = indexes.get("## Summary", -1)
     why_index = indexes.get("## Why This Matters", -1)
     if table_index != -1:
         table_window = text[table_index : why_index if why_index != -1 else table_index + 1200]
-        if "| Suggested change | Baseline / before description | Suggested / after description | Result |" not in table_window:
-            failures.append(f"{rel}: first founder table must include Suggested change, Baseline / before description, Suggested / after description, and Result columns")
+        if exact_heading not in table_window:
+            failures.append(f"{rel}: Summary must include ### Exact Text To Apply before behavior summary")
+        if exact_table not in table_window:
+            failures.append(f"{rel}: Exact Text To Apply table must include Where to edit, Baseline text, and Suggested replacement text columns")
+        if behavior_heading not in table_window:
+            failures.append(f"{rel}: Summary must include ### Baseline / Suggested Behavior after exact text")
+        if behavior_table not in table_window:
+            failures.append(f"{rel}: Summary must include Suggested change, Baseline / before description, Suggested / after description, and Result columns")
+        if exact_heading in table_window and behavior_heading in table_window and table_window.find(exact_heading) > table_window.find(behavior_heading):
+            failures.append(f"{rel}: Exact Text To Apply must appear before Baseline / Suggested Behavior")
+        if exact_table in table_window and behavior_table in table_window and table_window.find(exact_table) > table_window.find(behavior_table):
+            failures.append(f"{rel}: exact copy/paste table must appear before behavior summary table")
         if "Model coverage:" in table_window or "Evidence lane" in table_window:
-            failures.append(f"{rel}: first founder table must show target-owned value, not provider coverage")
+            failures.append(f"{rel}: Summary tables must show target-owned value, not provider coverage")
         if "The target surface states" in table_window or "Baseline mistakes clustered" in table_window:
-            failures.append(f"{rel}: first founder table must show exact repo-owned before/after changes, not eval-summary filler")
+            failures.append(f"{rel}: Summary tables must show exact repo-owned before/after changes, not eval-summary filler")
         if "no wording change promoted" not in table_window.casefold() and "Suggested change" not in table_window:
             failures.append(f"{rel}: Summary table must show exact target-owned suggested changes before Why This Matters")
         if require_share_link:
@@ -323,7 +338,7 @@ def _check_machine_detail_placement(rel: Path, text: str) -> list[str]:
     if summary_index != -1:
         before = text[:summary_index]
         before_for_count = _human_intro_before_required_evidence(before)
-        if _machine_detail_count(before_for_count) >= 12:
+        if _machine_detail_count(before_for_count) >= HUMAN_INTRO_MACHINE_DETAIL_LIMIT:
             failures.append(f"{rel}: too much machine-readable detail appears before LLM disclosure")
         if len(before_for_count.splitlines()) > 140:
             failures.append(f"{rel}: human-facing content before LLM disclosure is too long")

@@ -52,6 +52,13 @@ class PrPacketTests(unittest.TestCase):
             self.assertIn("## Summary", body)
             self.assertLess(body.index("## Summary"), body.index("## Why This Matters"))
             self.assertNotIn("## Founder Summary", body)
+            self.assertIn("### Exact Text To Apply", body)
+            self.assertIn("| Where to edit | Baseline text | Suggested replacement text |", body)
+            self.assertIn("| Target tool or instruction surface |", body)
+            self.assertIn("Current wording does not make the measured boundary explicit.", body)
+            self.assertIn("Encode the measured Example MCP boundary in the tool or skill surface before the agent chooses a tool.", body)
+            self.assertIn("### Baseline / Suggested Behavior", body)
+            self.assertLess(body.index("### Exact Text To Apply"), body.index("### Baseline / Suggested Behavior"))
             self.assertIn("| Suggested change | Baseline / before description | Suggested / after description | Result |", body)
             self.assertIn("| Clarify when to call the tuned tool.", body)
             self.assertIn(
@@ -163,6 +170,12 @@ class PrPacketTests(unittest.TestCase):
 
             body = packet["files"]["PR_BODY.md"]
             self.assertFalse(packet["passed"])
+            self.assertIn("### Exact Text To Apply", body)
+            self.assertIn("| Where to edit | Baseline text | Suggested replacement text |", body)
+            self.assertIn("| No upstream text change promoted. |", body)
+            self.assertIn("Current tool descriptions already passed this retained slice.", body)
+            self.assertIn("### Baseline / Suggested Behavior", body)
+            self.assertLess(body.index("### Exact Text To Apply"), body.index("### Baseline / Suggested Behavior"))
             self.assertIn("No wording change promoted from this slice.", body)
             self.assertIn("- No upstream change is promoted from this slice.", body)
             self.assertIn("`tuned` also scored 1.000. Keep the cases as regression coverage.", body)

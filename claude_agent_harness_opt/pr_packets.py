@@ -277,9 +277,19 @@ def _founder_handoff_lines(
     lines: list[str] = [
         "## Summary",
         "",
-        "The table below is the exact handoff text. Baseline / before is the current behavior. Suggested / after is the proposed wording or behavior to implement.",
+        "### Exact Text To Apply",
+        "",
+        "Copy the suggested replacement text into the target repo field named in the first column.",
         "",
     ]
+    lines.extend(_exact_text_to_apply_lines(comparison, options, change))
+    lines.extend([
+        "",
+        "### Baseline / Suggested Behavior",
+        "",
+        "The table below is the exact handoff text. Baseline / before is the current behavior. Suggested / after is the proposed wording or behavior to implement.",
+        "",
+    ])
     lines.extend(_before_after_lines(result, comparison, options, change))
     lines.extend([
         "",
@@ -351,6 +361,239 @@ def _result_summary_lines(result: dict[str, Any], comparison: dict[str, Any]) ->
             f"Proof scope: {counts['total']} live matrix cells, {counts['passed']} passed, {counts['failed']} failed, {counts['errors']} errors."
         )
     return lines
+
+
+def _exact_text_to_apply_lines(
+    comparison: dict[str, Any],
+    options: PacketOptions,
+    change: str,
+) -> list[str]:
+    if not comparison.get("promote"):
+        return [
+            "| Where to edit | Baseline text | Suggested replacement text |",
+            "|---|---|---|",
+            "| No upstream text change promoted. | Current tool descriptions already passed this retained slice. | Do not change wording from this slice. Keep the cases as regression coverage. |",
+        ]
+
+    rows = _exact_text_rows(comparison, options, change)
+    lines = [
+        "| Where to edit | Baseline text | Suggested replacement text |",
+        "|---|---|---|",
+    ]
+    for where, before, after in rows:
+        lines.append(f"| {_table_cell(where)} | {_table_cell(before)} | {_table_cell(after)} |")
+    return lines
+
+
+def _exact_text_rows(
+    comparison: dict[str, Any],
+    options: PacketOptions,
+    change: str,
+) -> list[tuple[str, str, str]]:
+    baseline = str(comparison.get("baseline_variant") or options.baseline_variant).casefold()
+    target = f"{options.target_name} {change}".casefold()
+
+    if "firecrawl" in baseline or "firecrawl" in target:
+        return [
+            (
+                "`firecrawl_scrape.purpose`",
+                "Scrape content from a single URL with advanced options. This is the most powerful, fastest and most reliable scraper tool, if available you should always default to using this tool for any web scraping needs. Best for single page content extraction, when you know exactly which page contains the information. Not recommended for multiple pages (use batch_scrape), unknown page (use search), structured data (use extract).",
+                "Scrape one known URL into clean content or focused structured JSON.",
+            ),
+            (
+                "`firecrawl_scrape.input_schema.properties.formats.description`",
+                "Content formats to extract",
+                "Formats to return. Prefer a json format object with prompt/schema for specific fields; use markdown only when full page text is needed.",
+            ),
+            (
+                "`firecrawl_extract.purpose`",
+                "Extract structured information from web pages using LLM capabilities. Supports both cloud AI and self-hosted LLM extraction. Best for extracting specific structured data like prices, names, details from web pages. Not recommended when you need the full content of a page or when you're not looking for specific structured data.",
+                "Extract structured data from multiple pages or URL sets using Firecrawl's LLM extraction layer.",
+            ),
+            (
+                "`firecrawl_extract.avoid_when`",
+                "No one-known-URL avoid_when boundary.",
+                "Avoid for one known URL; use firecrawl_scrape with JSON format. Avoid for full page content, screenshots, or markdown.",
+            ),
+        ]
+
+    if "supabase" in baseline or "supabase" in target:
+        return [
+            (
+                "`execute_sql.purpose`",
+                "Executes raw SQL in the database.",
+                "Run regular SQL that does not change the database schema.",
+            ),
+            (
+                "`execute_sql.avoid_when`",
+                "No DDL/schema-change avoid_when boundary.",
+                "Avoid for DDL or schema changes such as CREATE TABLE, ALTER TABLE, DROP TABLE, CREATE INDEX, policies, triggers, functions, or extension enablement. Use apply_migration for those.",
+            ),
+            (
+                "`execute_sql.input_schema.properties.query.description`",
+                "SQL query to execute.",
+                "Regular SQL query that does not change schema.",
+            ),
+            (
+                "`apply_migration.purpose`",
+                "Applies a SQL migration to the database.",
+                "Apply DDL or schema-changing SQL as a tracked Supabase migration.",
+            ),
+            (
+                "`apply_migration.avoid_when`",
+                "No SELECT/ad-hoc-read avoid_when boundary.",
+                "Avoid for SELECT queries, ad hoc reads, reports, or non-schema SQL. Use execute_sql for regular queries that do not change schema.",
+            ),
+            (
+                "`apply_migration.input_schema.properties.query.description`",
+                "SQL query to apply.",
+                "DDL or schema-changing SQL to track as a migration.",
+            ),
+        ]
+
+    if "insforge" in baseline or "insforge" in target:
+        return [
+            (
+                "`create-deployment.purpose`",
+                "Create or prepare a source-code deployment.",
+                "Deploy or prepare upload for an existing source directory. Requires an absolute sourceDirectory path.",
+            ),
+            (
+                "`create-deployment.avoid_when`",
+                "No relative-path or non-deployment avoid_when boundary.",
+                "Avoid for relative paths, starter-template creation, deployment status lookup, or triggering a prepared deployment id in remote mode.",
+            ),
+        ]
+
+    if "screenpipe" in baseline or "screenpipe" in target:
+        return [
+            (
+                "`search-content.purpose`",
+                "Search through recorded content with content type filtering.",
+                "Search screen text, audio transcriptions, input events, and memories. Returns timestamped results with app context.",
+            ),
+            (
+                "`search-content.avoid_when`",
+                "No exact-keyword avoid_when boundary.",
+                "Avoid for broad questions like what was I doing; use activity-summary. Avoid for targeted UI controls; use search-elements. Avoid for fastest exact keyword lookup; use keyword-search.",
+            ),
+            (
+                "`keyword-search.purpose`",
+                "Fast keyword search across OCR and audio.",
+                "Fast FTS5 keyword search across OCR plus audio combined.",
+            ),
+            (
+                "`keyword-search.avoid_when`",
+                "No structured-filter avoid_when boundary.",
+                "Avoid for structured filtering by content type, speaker, window, or broad activity questions.",
+            ),
+        ]
+
+    if "zymtrace" in baseline or "zymtrace" in target:
+        return [
+            (
+                "`topfunctions.purpose`",
+                "Return list of GPU, CPU or allocation top functions.",
+                "Rank hottest functions for CPU, GPU, or allocation profiles.",
+            ),
+            (
+                "`topentities.purpose`",
+                "Return list of GPU, CPU or allocation top entities.",
+                "Rank top runtime entities such as executables, scripts, hosts, threads, deployments, containers, namespaces, pods, apps, services, or workloads.",
+            ),
+            (
+                "`flamegraph.purpose`",
+                "Return profiling data as flamegraph.",
+                "Return a high-level rendered flamegraph fallback for a time window and optional runtime filters.",
+            ),
+            (
+                "`hot_traces.purpose`",
+                "Find hot CPU/GPU profiling stack traces.",
+                "Discover hot stack traces/call trees and drill into one selected trace.",
+            ),
+            (
+                "`hot_traces.avoid_when`",
+                "No first-full-stack-fetch avoid_when boundary.",
+                "Avoid as a first full-stack fetch. Use meta_only=true and a small limit before requesting a selected prefix_hash.",
+            ),
+            (
+                "`hot_traces.input_schema.properties.meta_only`",
+                "Discovery mode",
+                "Use true for discovery; false only after selecting a prefix_hash or when full stacks are explicit",
+            ),
+            (
+                "`hot_traces.input_schema.properties.limit`",
+                "No limit argument in baseline schema.",
+                "Small result limit",
+            ),
+            (
+                "`project_metrics_activity_aggr.purpose`",
+                "Retrieve metrics activity aggregations for a project.",
+                "Discover active metric names and useful attributes for a project, including GPU, CPU, model, service, token, latency, and framework metrics.",
+            ),
+            (
+                "`project_metrics_activity_aggr.avoid_when`",
+                "No known-metric-name avoid_when boundary.",
+                "Avoid when the metric name is already known and the user asks for values; use project_metrics_query then.",
+            ),
+            (
+                "`project_metrics_query.purpose`",
+                "Query metrics for a project with custom filters.",
+                "Query metric time-series values for known metric names and dimensions.",
+            ),
+            (
+                "`project_metrics_query.avoid_when`",
+                "No metric-discovery avoid_when boundary.",
+                "Avoid before discovering metric names when the user is unsure what metrics exist.",
+            ),
+            (
+                "`projects_search.avoid_when`",
+                "No default-project avoid_when boundary.",
+                "Avoid for the normal default-project path. Do not search just because a project-scoped tool needs a project_id; use default project_id 00000000-0000-0000-0000-000000000000 unless the user explicitly asks otherwise.",
+            ),
+            (
+                "New MCP resource `gpu_readiness`",
+                "No single MCP resource reports GPU readiness without checking logs and metric surfaces.",
+                "Expose a read-only resource with supports_gpu, gpu_metrics_enabled, detected GPU names, and CUDA library extraction status. Do not expose the license value.",
+            ),
+        ]
+
+    if "gstack" in baseline or "gstack" in target:
+        return [
+            (
+                "`gstack_browse.avoid_when`",
+                "Avoid when another gstack skill clearly matches the request better.",
+                "Browser operation only. Do not choose for full QA with code fixes, report-only QA, or real Chrome side-panel setup.",
+            ),
+            (
+                "`gstack_connect_chrome.avoid_when`",
+                "Avoid when another gstack skill clearly matches the request better.",
+                "Use to launch a visible Chrome with side panel control. For headless browser testing, choose gstack_browse.",
+            ),
+            (
+                "`gstack_careful.avoid_when`",
+                "Avoid when another gstack skill clearly matches the request better.",
+                "Use for destructive-command warnings. For edit directory locking, choose gstack_freeze; for both, choose gstack_guard.",
+            ),
+            (
+                "`gstack_freeze.avoid_when`",
+                "Avoid when another gstack skill clearly matches the request better.",
+                "Use to restrict edits to a directory. For destructive-command warnings, choose gstack_careful; for both, choose gstack_guard.",
+            ),
+            (
+                "`gstack_guard.avoid_when`",
+                "Avoid when another gstack skill clearly matches the request better.",
+                "Use when the user explicitly wants both destructive-command warnings and directory-scoped edits.",
+            ),
+        ]
+
+    return [
+        (
+            "Target tool or instruction surface",
+            _before_change_text(_exact_change_text(change), "Current wording does not make the measured boundary explicit."),
+            _after_change_text(_exact_change_text(change), options.target_name or "target"),
+        )
+    ]
 
 
 def _what_failed_lines(
@@ -965,7 +1208,7 @@ def _before_change_text(action: str, fallback: str) -> str:
 
 
 def _summary_change_text(change: str, options: PacketOptions) -> str:
-    actions = [f"Exact change: {item}" for item in _target_change_items(change, options)]
+    actions = [f"Suggested change: {item}" for item in _target_change_items(change, options)]
     return "<br>".join(actions)
 
 

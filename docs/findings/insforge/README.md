@@ -4,6 +4,16 @@ Share link: [InsForge packet](https://github.com/cfregly/claude-agent-harness-op
 
 ## Summary
 
+### Exact Text To Apply
+
+Copy the suggested replacement text into the target repo field named in the first column.
+
+| Where to edit | Baseline text | Suggested replacement text |
+|---|---|---|
+| `create-deployment.purpose` | Create or prepare a source-code deployment. | Deploy or prepare upload for an existing source directory. Requires an absolute sourceDirectory path. |
+| `create-deployment.avoid_when` | No relative-path or non-deployment avoid_when boundary. | Avoid for relative paths, starter-template creation, deployment status lookup, or triggering a prepared deployment id in remote mode. |
+
+### Baseline / Suggested Behavior
 The table below is the exact handoff text. Baseline / before is the current behavior. Suggested / after is the proposed wording or behavior to implement.
 
 | Suggested change | Baseline / before description | Suggested / after description | Result |

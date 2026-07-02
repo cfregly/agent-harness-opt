@@ -5,6 +5,18 @@ Suggested title: Improve Firecrawl MCP tool routing with live eval evidence
 
 ## Summary
 
+### Exact Text To Apply
+
+Copy the suggested replacement text into the target repo field named in the first column.
+
+| Where to edit | Baseline text | Suggested replacement text |
+|---|---|---|
+| `firecrawl_scrape.purpose` | Scrape content from a single URL with advanced options. This is the most powerful, fastest and most reliable scraper tool, if available you should always default to using this tool for any web scraping needs. Best for single page content extraction, when you know exactly which page contains the information. Not recommended for multiple pages (use batch_scrape), unknown page (use search), structured data (use extract). | Scrape one known URL into clean content or focused structured JSON. |
+| `firecrawl_scrape.input_schema.properties.formats.description` | Content formats to extract | Formats to return. Prefer a json format object with prompt/schema for specific fields; use markdown only when full page text is needed. |
+| `firecrawl_extract.purpose` | Extract structured information from web pages using LLM capabilities. Supports both cloud AI and self-hosted LLM extraction. Best for extracting specific structured data like prices, names, details from web pages. Not recommended when you need the full content of a page or when you're not looking for specific structured data. | Extract structured data from multiple pages or URL sets using Firecrawl's LLM extraction layer. |
+| `firecrawl_extract.avoid_when` | No one-known-URL avoid_when boundary. | Avoid for one known URL; use firecrawl_scrape with JSON format. Avoid for full page content, screenshots, or markdown. |
+
+### Baseline / Suggested Behavior
 The table below is the exact handoff text. Baseline / before is the current behavior. Suggested / after is the proposed wording or behavior to implement.
 
 | Suggested change | Baseline / before description | Suggested / after description | Result |

@@ -4,6 +4,19 @@ Share link: [gstack packet](https://github.com/cfregly/claude-agent-harness-opt/
 
 ## Summary
 
+### Exact Text To Apply
+
+Copy the suggested replacement text into the target repo field named in the first column.
+
+| Where to edit | Baseline text | Suggested replacement text |
+|---|---|---|
+| `gstack_browse.avoid_when` | Avoid when another gstack skill clearly matches the request better. | Browser operation only. Do not choose for full QA with code fixes, report-only QA, or real Chrome side-panel setup. |
+| `gstack_connect_chrome.avoid_when` | Avoid when another gstack skill clearly matches the request better. | Use to launch a visible Chrome with side panel control. For headless browser testing, choose gstack_browse. |
+| `gstack_careful.avoid_when` | Avoid when another gstack skill clearly matches the request better. | Use for destructive-command warnings. For edit directory locking, choose gstack_freeze; for both, choose gstack_guard. |
+| `gstack_freeze.avoid_when` | Avoid when another gstack skill clearly matches the request better. | Use to restrict edits to a directory. For destructive-command warnings, choose gstack_careful; for both, choose gstack_guard. |
+| `gstack_guard.avoid_when` | Avoid when another gstack skill clearly matches the request better. | Use when the user explicitly wants both destructive-command warnings and directory-scoped edits. |
+
+### Baseline / Suggested Behavior
 The table below is the exact handoff text. Baseline / before is the current behavior. Suggested / after is the proposed wording or behavior to implement.
 
 | Suggested change | Baseline / before description | Suggested / after description | Result |

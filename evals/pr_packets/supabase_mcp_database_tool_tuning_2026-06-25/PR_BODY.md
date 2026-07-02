@@ -5,6 +5,20 @@ Suggested title: Tighten Supabase MCP database routing with live evals
 
 ## Summary
 
+### Exact Text To Apply
+
+Copy the suggested replacement text into the target repo field named in the first column.
+
+| Where to edit | Baseline text | Suggested replacement text |
+|---|---|---|
+| `execute_sql.purpose` | Executes raw SQL in the database. | Run regular SQL that does not change the database schema. |
+| `execute_sql.avoid_when` | No DDL/schema-change avoid_when boundary. | Avoid for DDL or schema changes such as CREATE TABLE, ALTER TABLE, DROP TABLE, CREATE INDEX, policies, triggers, functions, or extension enablement. Use apply_migration for those. |
+| `execute_sql.input_schema.properties.query.description` | SQL query to execute. | Regular SQL query that does not change schema. |
+| `apply_migration.purpose` | Applies a SQL migration to the database. | Apply DDL or schema-changing SQL as a tracked Supabase migration. |
+| `apply_migration.avoid_when` | No SELECT/ad-hoc-read avoid_when boundary. | Avoid for SELECT queries, ad hoc reads, reports, or non-schema SQL. Use execute_sql for regular queries that do not change schema. |
+| `apply_migration.input_schema.properties.query.description` | SQL query to apply. | DDL or schema-changing SQL to track as a migration. |
+
+### Baseline / Suggested Behavior
 The table below is the exact handoff text. Baseline / before is the current behavior. Suggested / after is the proposed wording or behavior to implement.
 
 | Suggested change | Baseline / before description | Suggested / after description | Result |

@@ -114,6 +114,46 @@ class CheckHumanDocsScriptTests(unittest.TestCase):
             joined,
         )
 
+    def test_rejects_sendable_packet_without_exact_text_to_apply(self):
+        with tempfile.TemporaryDirectory() as temp_dir:
+            root = Path(temp_dir)
+            _write_readme(root)
+            packet = root / "evals" / "pr_packets" / "sample"
+            packet.mkdir(parents=True)
+            (packet / "PR_BODY.md").write_text(
+                "Suggested title: Sample\n\n"
+                "## Summary\n\n"
+                "### Baseline / Suggested Behavior\n\n"
+                "| Suggested change | Baseline / before description | Suggested / after description | Result |\n|---|---|---|---|\n| Update routing. | Before. | After. | Result. |\n\n"
+                "## Why This Matters\n\n"
+                "- Value proposition: useful.\n\n"
+                "## Recommended Actions\n\n"
+                "- Apply suggested change.\n\n"
+                "## Run This In Your Repo\n\n"
+                "codex exec -C /path/to/repo --sandbox read-only -\n"
+                "claude -p --permission-mode plan\n"
+                "gemini --approval-mode plan --output-format text\n"
+                "Review this action-first finding:\n"
+                "Do not edit files yet.\n\n"
+                "## Model Coverage\n\n"
+                "- Coverage.\n\n"
+                "## Evidence Bundle\n\n"
+                "Evidence.\n",
+                encoding="utf-8",
+            )
+
+            failures = check_human_docs(root)
+
+        joined = "\n".join(failures)
+        self.assertIn(
+            "evals/pr_packets/sample/PR_BODY.md: Summary must include ### Exact Text To Apply before behavior summary",
+            joined,
+        )
+        self.assertIn(
+            "evals/pr_packets/sample/PR_BODY.md: Exact Text To Apply table must include Where to edit, Baseline text, and Suggested replacement text columns",
+            joined,
+        )
+
     def test_rejects_evidence_bundle_before_recommended_actions(self):
         with tempfile.TemporaryDirectory() as temp_dir:
             root = Path(temp_dir)

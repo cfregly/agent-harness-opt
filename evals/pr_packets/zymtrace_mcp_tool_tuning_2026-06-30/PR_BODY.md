@@ -5,6 +5,27 @@ Suggested title: Tighten Zymtrace MCP retrieval routing with live evals
 
 ## Summary
 
+### Exact Text To Apply
+
+Copy the suggested replacement text into the target repo field named in the first column.
+
+| Where to edit | Baseline text | Suggested replacement text |
+|---|---|---|
+| `topfunctions.purpose` | Return list of GPU, CPU or allocation top functions. | Rank hottest functions for CPU, GPU, or allocation profiles. |
+| `topentities.purpose` | Return list of GPU, CPU or allocation top entities. | Rank top runtime entities such as executables, scripts, hosts, threads, deployments, containers, namespaces, pods, apps, services, or workloads. |
+| `flamegraph.purpose` | Return profiling data as flamegraph. | Return a high-level rendered flamegraph fallback for a time window and optional runtime filters. |
+| `hot_traces.purpose` | Find hot CPU/GPU profiling stack traces. | Discover hot stack traces/call trees and drill into one selected trace. |
+| `hot_traces.avoid_when` | No first-full-stack-fetch avoid_when boundary. | Avoid as a first full-stack fetch. Use meta_only=true and a small limit before requesting a selected prefix_hash. |
+| `hot_traces.input_schema.properties.meta_only` | Discovery mode | Use true for discovery; false only after selecting a prefix_hash or when full stacks are explicit |
+| `hot_traces.input_schema.properties.limit` | No limit argument in baseline schema. | Small result limit |
+| `project_metrics_activity_aggr.purpose` | Retrieve metrics activity aggregations for a project. | Discover active metric names and useful attributes for a project, including GPU, CPU, model, service, token, latency, and framework metrics. |
+| `project_metrics_activity_aggr.avoid_when` | No known-metric-name avoid_when boundary. | Avoid when the metric name is already known and the user asks for values; use project_metrics_query then. |
+| `project_metrics_query.purpose` | Query metrics for a project with custom filters. | Query metric time-series values for known metric names and dimensions. |
+| `project_metrics_query.avoid_when` | No metric-discovery avoid_when boundary. | Avoid before discovering metric names when the user is unsure what metrics exist. |
+| `projects_search.avoid_when` | No default-project avoid_when boundary. | Avoid for the normal default-project path. Do not search just because a project-scoped tool needs a project_id; use default project_id 00000000-0000-0000-0000-000000000000 unless the user explicitly asks otherwise. |
+| New MCP resource `gpu_readiness` | No single MCP resource reports GPU readiness without checking logs and metric surfaces. | Expose a read-only resource with supports_gpu, gpu_metrics_enabled, detected GPU names, and CUDA library extraction status. Do not expose the license value. |
+
+### Baseline / Suggested Behavior
 The table below is the exact handoff text. Baseline / before is the current behavior. Suggested / after is the proposed wording or behavior to implement.
 
 | Suggested change | Baseline / before description | Suggested / after description | Result |

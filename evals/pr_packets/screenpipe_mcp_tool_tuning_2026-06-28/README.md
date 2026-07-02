@@ -4,6 +4,18 @@ Share link: [Screenpipe MCP Tool Tuning full PR/evidence bundle](https://github.
 
 ## Summary
 
+### Exact Text To Apply
+
+Copy the suggested replacement text into the target repo field named in the first column.
+
+| Where to edit | Baseline text | Suggested replacement text |
+|---|---|---|
+| `search-content.purpose` | Search through recorded content with content type filtering. | Search screen text, audio transcriptions, input events, and memories. Returns timestamped results with app context. |
+| `search-content.avoid_when` | No exact-keyword avoid_when boundary. | Avoid for broad questions like what was I doing; use activity-summary. Avoid for targeted UI controls; use search-elements. Avoid for fastest exact keyword lookup; use keyword-search. |
+| `keyword-search.purpose` | Fast keyword search across OCR and audio. | Fast FTS5 keyword search across OCR plus audio combined. |
+| `keyword-search.avoid_when` | No structured-filter avoid_when boundary. | Avoid for structured filtering by content type, speaker, window, or broad activity questions. |
+
+### Baseline / Suggested Behavior
 The table below is the exact handoff text. Baseline / before is the current behavior. Suggested / after is the proposed wording or behavior to implement.
 
 | Suggested change | Baseline / before description | Suggested / after description | Result |
