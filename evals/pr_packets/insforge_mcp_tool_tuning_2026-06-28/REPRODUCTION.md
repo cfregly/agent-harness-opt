@@ -1,7 +1,7 @@
 # Reproduction for InsForge MCP Tool Tuning
 
 > [!NOTE]
-> This is supporting evidence for the founder handoff. Start with `PR_BODY.md` for Founder Summary, Recommended Actions, and Run This In Your Repo.
+> This is supporting evidence for the founder handoff. Start with `PR_BODY.md` for Summary, Recommended Actions, and Run This In Your Repo.
 
 ## Source Pin
 

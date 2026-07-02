@@ -8,12 +8,6 @@ Share link: [Humwork packet](https://github.com/cfregly/claude-agent-harness-opt
 |---|---|---|
 | `readme_humwork_mcp` scored 1.000 on the retained slice. | No suggested wording change from this slice. No upstream change is promoted. | `skill_tuned_humwork_mcp` also scored 1.000. Keep the cases as regression coverage. |
 
-## Founder Summary
-
-- This is a guardrail finding for Humwork MCP.
-- No upstream change is promoted; this slice did not prove a better wording.
-- Action: keep retained cases as regression coverage and rerun local-agent review only when this surface changes.
-
 ## Why This Matters
 
 - Value proposition: avoid spending founder or engineering time on a wording change that did not beat the current surface.

@@ -8,12 +8,6 @@ Share link: [OpenWork UI MCP Guardrail full PR/evidence bundle](https://github.c
 |---|---|---|
 | `docs_openwork_ui_mcp` scored 1.000 on the retained slice. | No suggested wording change from this slice. No upstream change is promoted. | `source_tuned_openwork_ui_mcp` also scored 1.000. Keep the cases as regression coverage. |
 
-## Founder Summary
-
-- This is a guardrail finding for OpenWork UI MCP.
-- No upstream change is promoted; this slice did not prove a better wording.
-- Action: keep retained cases as regression coverage and rerun local-agent review only when this surface changes.
-
 ## Why This Matters
 
 - Value proposition: avoid spending founder or engineering time on a wording change that did not beat the current surface.

@@ -9,14 +9,6 @@ Suggested title: Tighten gstack browser and safety routing with live evals
 |---|---|---|
 | `gstack_stock_skill_descriptions` scored 0.975. Baseline mistakes clustered on careful-mode, browser-headless. | Suggested change: Clarify browser alias and safety-mode skill routing boundaries. | `gstack_boundary_tuned_skill_descriptions` scored 0.992, a 0.017 gain. Add retained cases as regression coverage. |
 
-## Founder Summary
-
-- This is a confirmed improvement for gstack.
-- Proof: `gstack_boundary_tuned_skill_descriptions` scored 0.992, a 0.017 gain.
-- Action: apply the suggested change(s) in the Summary table.
-- Next step: run the local-agent review below, then add retained cases as regression coverage.
-- Evidence: 720 live matrix cells on the same tasks, providers, harnesses, and instruction variants.
-
 ## Why This Matters
 
 - Value proposition: helps agents choose the intended gstack workflow instead of adjacent tools that look plausible.

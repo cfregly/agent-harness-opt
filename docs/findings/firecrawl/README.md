@@ -8,14 +8,6 @@ Share link: [Firecrawl packet](https://github.com/cfregly/claude-agent-harness-o
 |---|---|---|
 | `legacy_firecrawl_mcp` scored 0.000. Baseline mistakes clustered on single known page structured fields. | Suggested change: Clarify that `firecrawl_scrape` handles one known page, including structured JSON fields. Reserve `firecrawl_extract` for broader multi-page structured extraction jobs. | `tuned_firecrawl_mcp_boundaries` scored 1.000, a 1.000 gain. Add retained cases as regression coverage. |
 
-## Founder Summary
-
-- This is a confirmed improvement for Firecrawl MCP.
-- Proof: `tuned_firecrawl_mcp_boundaries` scored 1.000, a 1.000 gain.
-- Action: apply the suggested change(s) in the Summary table.
-- Next step: run the local-agent review below, then add retained cases as regression coverage.
-- Evidence: 12 live matrix cells on the same tasks, providers, harnesses, and instruction variants.
-
 ## Why This Matters
 
 - Value proposition: helps agents choose the intended Firecrawl MCP workflow instead of adjacent tools that look plausible.

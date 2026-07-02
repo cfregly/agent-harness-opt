@@ -50,8 +50,8 @@ class PrPacketTests(unittest.TestCase):
             self.assertEqual("Tighten Example MCP retrieval routing with live evals\n", title)
             self.assertIn("Suggested title: Tighten Example MCP retrieval routing with live evals", body)
             self.assertIn("## Summary", body)
-            self.assertLess(body.index("## Summary"), body.index("## Founder Summary"))
-            self.assertIn("## Founder Summary", body)
+            self.assertLess(body.index("## Summary"), body.index("## Why This Matters"))
+            self.assertNotIn("## Founder Summary", body)
             self.assertIn("| Before | After | Result |", body)
             self.assertIn("| `stock` scored 0.000", body)
             self.assertIn(
@@ -108,7 +108,7 @@ class PrPacketTests(unittest.TestCase):
             self.assertTrue(Path(written["evidence.json"]).exists())
             reproduction = Path(written["REPRODUCTION.md"]).read_text(encoding="utf-8")
             self.assertIn("This is supporting evidence for the founder handoff", reproduction)
-            self.assertIn("Start with `PR_BODY.md` for Founder Summary, Recommended Actions, and Run This In Your Repo", reproduction)
+            self.assertIn("Start with `PR_BODY.md` for Summary, Recommended Actions, and Run This In Your Repo", reproduction)
 
     def test_frontier_cells_are_called_out_separately(self):
         with tempfile.TemporaryDirectory() as tmp:

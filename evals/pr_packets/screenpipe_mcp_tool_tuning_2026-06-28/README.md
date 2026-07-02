@@ -8,14 +8,6 @@ Share link: [Screenpipe MCP Tool Tuning full PR/evidence bundle](https://github.
 |---|---|---|
 | `readme_screenpipe_mcp` scored 0.857. Baseline mistakes clustered on exact keyword uses keyword search. | Suggested change: Clarify that `keyword-search` is for literal terms and exact phrases. Reserve `search-content` for transcript lines, screen text, speaker or window filters, tags, memories, and broader content search. | `source_tuned_screenpipe_mcp` scored 1.000, a 0.143 gain. Add retained cases as regression coverage. |
 
-## Founder Summary
-
-- This is a confirmed improvement for Screenpipe MCP.
-- Proof: `source_tuned_screenpipe_mcp` scored 1.000, a 0.143 gain.
-- Action: apply the suggested change(s) in the Summary table.
-- Next step: run the local-agent review below, then add retained cases as regression coverage.
-- Evidence: 14 live matrix cells on the same tasks, providers, harnesses, and instruction variants.
-
 ## Why This Matters
 
 - Value proposition: helps agents choose the intended Screenpipe MCP workflow instead of adjacent tools that look plausible.

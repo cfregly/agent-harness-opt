@@ -290,12 +290,6 @@ def _founder_handoff_lines(
     lines.extend(_before_after_lines(result, comparison, options, change))
     lines.extend([
         "",
-        "## Founder Summary",
-        "",
-    ])
-    lines.extend(_founder_summary_lines(result, comparison, options, change))
-    lines.extend([
-        "",
         "## Why This Matters",
         "",
     ])
@@ -325,37 +319,6 @@ def _founder_handoff_lines(
     ])
     lines.extend(_evidence_bundle_lines(result, source, options))
     return lines
-
-
-def _founder_summary_lines(
-    result: dict[str, Any],
-    comparison: dict[str, Any],
-    options: PacketOptions,
-    change: str,
-) -> list[str]:
-    target = options.target_name or "tool catalog"
-    baseline = str(comparison.get("baseline_variant") or options.baseline_variant or "baseline")
-    candidate = str(comparison.get("candidate_variant") or options.candidate_variant or "candidate")
-    baseline_score = _format_score(comparison.get("baseline_score"))
-    candidate_score = _format_score(comparison.get("candidate_score"))
-    delta = _format_score(comparison.get("delta"))
-    counts = _summary_counts(result)
-    if comparison.get("promote"):
-        lines = [
-            f"- This is a confirmed improvement for {target}.",
-            f"- Proof: `{candidate}` moved the score from {baseline_score} on `{baseline}` to {candidate_score}, a {delta} gain.",
-            f"- Action: {change}",
-            "- Next step: run the local-agent review below, then add retained cases as regression coverage.",
-        ]
-        if counts and counts["total"]:
-            lines.append(f"- Evidence: {counts['total']} live matrix cells on the same tasks, providers, harnesses, and instruction variants.")
-        return lines
-    return [
-        f"- This is a guardrail finding for {target}.",
-        f"- `{baseline}` and `{candidate}` did not prove a better upstream wording on this slice.",
-        "- No upstream change is promoted.",
-        "- Action: keep the retained cases as regression coverage and rerun local-agent review only when this surface changes.",
-    ]
 
 
 def _why_this_matters_lines(
@@ -542,7 +505,7 @@ def render_reproduction_doc(
         f"# Reproduction for {options.target_name}",
         "",
         "> [!NOTE]",
-        "> This is supporting evidence for the founder handoff. Start with `PR_BODY.md` for Founder Summary, Recommended Actions, and Run This In Your Repo.",
+        "> This is supporting evidence for the founder handoff. Start with `PR_BODY.md` for Summary, Recommended Actions, and Run This In Your Repo.",
         "",
         "## Source Pin",
         "",

@@ -8,14 +8,6 @@ Share link: [Zymtrace full PR/evidence bundle](https://github.com/cfregly/claude
 |---|---|---|
 | `stock_zymtrace_mcp` scored 0.583. Baseline mistakes clustered on default project metrics discovery skips search, gpu inference workflow starts with metrics, selected trace drilldown is bounded, hot trace discovery is bounded. | Suggested change: Clarify default-project, GPU metrics-first, resource-first, and bounded hot-traces routing.<br>Add an explicit idle-exclusion option or marker for optimization-oriented `hot_traces` discovery.<br>Add a server-side option or marker that keeps `zymtrace-profiler` from being presented as an optimization target in `topentities`.<br>Add a small read-only GPU readiness resource that reports GPU support, GPU metric collection, detected GPU names, and CUDA library extraction state without exposing the license value. | `tuned_zymtrace_mcp_boundaries` scored 1.000, a 0.417 gain. Add retained cases as regression coverage. |
 
-## Founder Summary
-
-- This is a confirmed improvement for Zymtrace MCP.
-- Proof: `tuned_zymtrace_mcp_boundaries` scored 1.000, a 0.417 gain.
-- Action: apply the suggested change(s) in the Summary table.
-- Next step: run the local-agent review below, then add retained cases as regression coverage.
-- Evidence: 48 live matrix cells on the same tasks, providers, harnesses, and instruction variants.
-
 ## Why This Matters
 
 - Value proposition: helps agents choose the intended Zymtrace MCP workflow instead of adjacent tools that look plausible.

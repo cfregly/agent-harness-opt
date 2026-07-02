@@ -23,7 +23,6 @@ SUPPORTING_EVIDENCE_DOCS = {
 }
 FOUNDER_HANDOFF_SECTIONS = (
     "## Summary",
-    "## Founder Summary",
     "## Why This Matters",
     "## Recommended Actions",
     "## Run This In Your Repo",
@@ -184,17 +183,19 @@ def _check_founder_handoff(rel: Path, text: str, *, require_share_link: bool) ->
 
     if "## Actions By Company" in text:
         failures.append(f"{rel}: replace ## Actions By Company with target-owned Recommended Actions and Model Coverage")
+    if "## Founder Summary" in text:
+        failures.append(f"{rel}: collapse ## Founder Summary into ## Summary and ## Why This Matters")
 
     table_index = indexes.get("## Summary", -1)
-    founder_index = indexes.get("## Founder Summary", -1)
+    why_index = indexes.get("## Why This Matters", -1)
     if table_index != -1:
-        table_window = text[table_index : founder_index if founder_index != -1 else table_index + 1200]
+        table_window = text[table_index : why_index if why_index != -1 else table_index + 1200]
         if "| Before | After | Result |" not in table_window:
             failures.append(f"{rel}: first founder table must include Before, After, and Result columns")
         if "Model coverage:" in table_window or "Evidence lane" in table_window:
             failures.append(f"{rel}: first founder table must show target-owned value, not provider coverage")
         if "no upstream change is promoted" not in table_window.casefold() and "Suggested change:" not in table_window:
-            failures.append(f"{rel}: Summary table must show the suggested change before Founder Summary")
+            failures.append(f"{rel}: Summary table must show the suggested change before Why This Matters")
         if require_share_link:
             first_twelve = "\n".join(text.splitlines()[:12])
             if "## Summary" not in first_twelve:
@@ -217,7 +218,6 @@ def _check_founder_handoff(rel: Path, text: str, *, require_share_link: bool) ->
         if early_evidence:
             failures.append(f"{rel}: evidence-heavy links must appear after local-agent CTA")
 
-    why_index = indexes.get("## Why This Matters", -1)
     actions_index = indexes.get("## Recommended Actions", -1)
     if why_index != -1:
         why_end = actions_index if actions_index != -1 else why_index + 2000

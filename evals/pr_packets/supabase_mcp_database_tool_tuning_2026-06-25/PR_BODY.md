@@ -9,14 +9,6 @@ Suggested title: Tighten Supabase MCP database routing with live evals
 |---|---|---|
 | `terse_supabase_database_mcp` scored 0.222. Baseline mistakes clustered on ddl create table uses migration, ddl create index uses migration, rls policy uses migration. | Suggested change: Clarify that `apply_migration` is required for DDL, schema changes, indexes, functions, triggers, extension enablement, and RLS policy changes. Reserve `execute_sql` for non-schema-changing SQL. | `tuned_supabase_database_boundaries` scored 1.000, a 0.778 gain. Add retained cases as regression coverage. |
 
-## Founder Summary
-
-- This is a confirmed improvement for Supabase MCP.
-- Proof: `tuned_supabase_database_boundaries` scored 1.000, a 0.778 gain.
-- Action: apply the suggested change(s) in the Summary table.
-- Next step: run the local-agent review below, then add retained cases as regression coverage.
-- Evidence: 36 live matrix cells on the same tasks, providers, harnesses, and instruction variants.
-
 ## Why This Matters
 
 - Value proposition: helps agents choose the intended Supabase MCP workflow instead of adjacent tools that look plausible.

@@ -9,14 +9,6 @@ Suggested title: Tighten InsForge MCP deploy routing with live evals
 |---|---|---|
 | `readme_insforge_mcp` scored 0.938. Baseline mistakes clustered on relative deploy path avoids tool. | Suggested change: Clarify that `create-deployment` requires an absolute `sourceDirectory` and must be avoided for relative paths, starter-template creation, deployment status lookup, or remote prepared-deployment triggering. | `source_tuned_insforge_mcp` scored 1.000, a 0.062 gain. Add retained cases as regression coverage. |
 
-## Founder Summary
-
-- This is a confirmed improvement for InsForge MCP.
-- Proof: `source_tuned_insforge_mcp` scored 1.000, a 0.062 gain.
-- Action: apply the suggested change(s) in the Summary table.
-- Next step: run the local-agent review below, then add retained cases as regression coverage.
-- Evidence: 32 live matrix cells on the same tasks, providers, harnesses, and instruction variants.
-
 ## Why This Matters
 
 - Value proposition: helps agents choose the intended InsForge MCP workflow instead of adjacent tools that look plausible.

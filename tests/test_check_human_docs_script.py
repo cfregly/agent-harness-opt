@@ -55,7 +55,7 @@ class CheckHumanDocsScriptTests(unittest.TestCase):
         joined = "\n".join(failures)
         self.assertIn("docs/machine.md: machine-heavy doc must end with LLM / Machine-readable details", joined)
 
-    def test_rejects_sendable_packet_without_founder_summary(self):
+    def test_rejects_sendable_packet_without_why_this_matters(self):
         with tempfile.TemporaryDirectory() as temp_dir:
             root = Path(temp_dir)
             _write_readme(root)
@@ -72,7 +72,7 @@ class CheckHumanDocsScriptTests(unittest.TestCase):
             failures = check_human_docs(root)
 
         joined = "\n".join(failures)
-        self.assertIn("docs/findings/sample/README.md: missing founder-handoff section ## Founder Summary", joined)
+        self.assertIn("docs/findings/sample/README.md: missing founder-handoff section ## Why This Matters", joined)
 
     def test_rejects_sendable_packet_without_local_agent_cta(self):
         with tempfile.TemporaryDirectory() as temp_dir:
@@ -85,16 +85,14 @@ class CheckHumanDocsScriptTests(unittest.TestCase):
                 "Share link: [Sample](https://github.com/cfregly/claude-agent-harness-opt/tree/main/docs/findings/sample)\n\n"
                 "## Summary\n\n"
                 "| Before | After | Result |\n|---|---|---|\n| Before. | Suggested change: update routing. | Result. |\n\n"
-                "## Founder Summary\n\n"
-                "- Send this.\n\n"
                 "## Why This Matters\n\n"
                 "- Value proposition: useful.\n\n"
                 "## Recommended Actions\n\n"
                 "- Apply this change.\n\n"
-                "## Model Coverage\n\n"
-                "- Coverage.\n\n"
                 "## Run This In Your Repo\n\n"
                 "Run a local agent.\n\n"
+                "## Model Coverage\n\n"
+                "- Coverage.\n\n"
                 "## Evidence Bundle\n\n"
                 "Bundle folder: [Sample](https://github.com/cfregly/claude-agent-harness-opt/tree/main/evals/pr_packets/sample)\n",
                 encoding="utf-8",
@@ -126,8 +124,6 @@ class CheckHumanDocsScriptTests(unittest.TestCase):
                 "Suggested title: Sample\n\n"
                 "## Summary\n\n"
                 "| Before | After | Result |\n|---|---|---|\n| Before. | Suggested change: update routing. | Result. |\n\n"
-                "## Founder Summary\n\n"
-                "- Summary.\n\n"
                 "## Evidence Bundle\n\n"
                 "Evidence.\n\n"
                 "## Why This Matters\n\n"
@@ -162,11 +158,10 @@ class CheckHumanDocsScriptTests(unittest.TestCase):
                 "<details>\n"
                 "<summary>LLM / Machine-readable details</summary>\n\n"
                 "## Summary\n\n"
-                "## Founder Summary\n\n"
                 "## Why This Matters\n\n"
                 "## Recommended Actions\n\n"
-                "## Model Coverage\n\n"
                 "## Run This In Your Repo\n\n"
+                "## Model Coverage\n\n"
                 "## Evidence Bundle\n\n"
                 "</details>\n",
                 encoding="utf-8",
@@ -175,7 +170,7 @@ class CheckHumanDocsScriptTests(unittest.TestCase):
             failures = check_human_docs(root)
 
         joined = "\n".join(failures)
-        self.assertIn("evals/pr_packets/sample/PR_BODY.md: ## Founder Summary must appear before LLM details", joined)
+        self.assertIn("evals/pr_packets/sample/PR_BODY.md: ## Summary must appear before LLM details", joined)
 
     def test_rejects_provider_actions_above_target_actions(self):
         with tempfile.TemporaryDirectory() as temp_dir:
@@ -187,21 +182,19 @@ class CheckHumanDocsScriptTests(unittest.TestCase):
                 "Suggested title: Sample\n\n"
                 "## Summary\n\n"
                 "| Before | After | Result |\n|---|---|---|\n| Before. | Suggested change: update routing. | Result. |\n\n"
-                "## Founder Summary\n\n"
-                "- Summary.\n\n"
                 "## Why This Matters\n\n"
                 "- Value proposition: useful.\n\n"
                 "## Recommended Actions\n\n"
                 "### Anthropic\n\n"
                 "- Add provider cases.\n\n"
-                "## Model Coverage\n\n"
-                "- Coverage.\n\n"
                 "## Run This In Your Repo\n\n"
                 "codex exec -C /path/to/repo --sandbox read-only -\n"
                 "claude -p --permission-mode plan\n"
                 "gemini --approval-mode plan --output-format text\n"
                 "Review this action-first finding:\n"
                 "Do not edit files yet.\n\n"
+                "## Model Coverage\n\n"
+                "- Coverage.\n\n"
                 "## Evidence Bundle\n\n"
                 "Evidence.\n",
                 encoding="utf-8",
@@ -225,8 +218,6 @@ class CheckHumanDocsScriptTests(unittest.TestCase):
                 "Suggested title: Sample\n\n"
                 "## Summary\n\n"
                 "| Before | After | Result |\n|---|---|---|\n| Before. | Suggested change: update routing. | Result. |\n\n"
-                "## Founder Summary\n\n"
-                "- Summary.\n\n"
                 "## Why This Matters\n\n"
                 "- Value proposition: useful.\n\n"
                 "## Recommended Actions\n\n"
