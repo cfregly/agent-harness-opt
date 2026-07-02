@@ -7,7 +7,7 @@ Suggested title: Add data-backed OpenWork UI MCP tool-routing evidence
 
 | Exact change | Before | After | Result |
 |---|---|---|---|
-| No wording change promoted from this slice. | `docs_openwork_ui_mcp` scored 1.000 on the retained slice. | Keep the current surface and retain the cases as regression coverage. | `source_tuned_openwork_ui_mcp` also scored 1.000. Keep the cases as regression coverage. |
+| No wording change promoted from this slice. | The retained MCP surface already passed every tested tool-selection case. | No tool or wording change is promoted. Keep current behavior and retain the cases as regression coverage. | `source_tuned_openwork_ui_mcp` also scored 1.000. Keep the cases as regression coverage. |
 
 
 ## Result

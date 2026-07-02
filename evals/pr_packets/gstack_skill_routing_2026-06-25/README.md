@@ -6,7 +6,7 @@ Share link: [gstack full PR/evidence bundle](https://github.com/cfregly/claude-a
 
 | Exact change | Before | After | Result |
 |---|---|---|---|
-| Clarify browser alias and safety-mode skill routing boundaries. | `gstack_stock_skill_descriptions` scored 0.975. Baseline mistakes clustered on careful-mode, browser-headless. | The target surface states this routing/default/fallback behavior before the agent chooses tools. | `gstack_boundary_tuned_skill_descriptions` scored 0.992, a 0.017 gain. Add retained cases as regression coverage. |
+| Clarify browser alias and safety-mode skill routing boundaries. | Agents could confuse browser/headless aliases or careful-mode versus other safety-mode skills. | Clarify browser/headless aliases and safety or careful-mode skill boundaries before the agent selects a skill. | `gstack_boundary_tuned_skill_descriptions` scored 0.992, a 0.017 gain. Add retained cases as regression coverage. |
 
 
 ## Result

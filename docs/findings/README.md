@@ -16,10 +16,10 @@ Every current available-frontier receipt and Anthropic Opus attempt is indexed i
 | Supabase | Route schema-changing SQL to `apply_migration`, not `execute_sql`. | `terse_supabase_database_mcp` scored 0.222. | DDL, schema, index, trigger, function, and RLS changes route to migrations. | `tuned_supabase_database_boundaries` scored 1.000. |
 | InsForge | Reject relative deploy paths before `create-deployment`. | `readme_insforge_mcp` scored 0.938. | Relative deploy paths stop before the tool call. | `source_tuned_insforge_mcp` scored 1.000. |
 | Screenpipe | Route exact phrase lookup to `keyword-search`, not broad content search. | `readme_screenpipe_mcp` scored 0.857. | Exact keyword and phrase lookups route to `keyword-search`. | `source_tuned_screenpipe_mcp` scored 1.000. |
-| Firecrawl | Use `firecrawl_scrape` for one known page; reserve `firecrawl_extract` for broader extraction jobs. | `legacy_firecrawl_mcp` scored 0.000. | Single known-page structured extraction routes to `firecrawl_scrape`. | `tuned_firecrawl_mcp_boundaries` scored 1.000. |
+| Firecrawl | Use `firecrawl_scrape` for one known page. Reserve `firecrawl_extract` for broader extraction jobs. | `legacy_firecrawl_mcp` scored 0.000. | Single known-page structured extraction routes to `firecrawl_scrape`. | `tuned_firecrawl_mcp_boundaries` scored 1.000. |
 | Zymtrace | Tighten default-project, resource-first, metrics-first, and bounded hot-trace routing. | `stock_zymtrace_mcp` scored 0.583. | Agents see the intended default, resource, metrics, and trace-drilldown boundaries first. | `tuned_zymtrace_mcp_boundaries` scored 1.000. |
-| Humwork | No wording change promoted from this slice. | `readme_humwork_mcp` scored 1.000. | Keep current wording and retain the cases. | `skill_tuned_humwork_mcp` also scored 1.000; guardrail only. |
-| OpenWork | No wording change promoted from this slice. | `docs_openwork_ui_mcp` scored 1.000. | Keep current wording and retain the cases. | `source_tuned_openwork_ui_mcp` also scored 1.000; guardrail only. |
+| Humwork | No wording change promoted from this slice. | `readme_humwork_mcp` scored 1.000. | Keep current wording and retain the cases. | `skill_tuned_humwork_mcp` also scored 1.000. Guardrail only. |
+| OpenWork | No wording change promoted from this slice. | `docs_openwork_ui_mcp` scored 1.000. | Keep current wording and retain the cases. | `source_tuned_openwork_ui_mcp` also scored 1.000. Guardrail only. |
 
 ## Shareable Bundles
 

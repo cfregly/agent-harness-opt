@@ -6,7 +6,7 @@ Share link: [Supabase MCP Database Tool Tuning full PR/evidence bundle](https://
 
 | Exact change | Before | After | Result |
 |---|---|---|---|
-| Clarify that `apply_migration` is required for DDL, schema changes, indexes, functions, triggers, extension enablement, and RLS policy changes. Reserve `execute_sql` for non-schema-changing SQL. | `terse_supabase_database_mcp` scored 0.222. Baseline mistakes clustered on ddl create table uses migration, ddl create index uses migration, rls policy uses migration. | The target surface states this routing/default/fallback behavior before the agent chooses tools. | `tuned_supabase_database_boundaries` scored 1.000, a 0.778 gain. Add retained cases as regression coverage. |
+| Clarify that `apply_migration` is required for DDL, schema changes, indexes, functions, triggers, extension enablement, and RLS policy changes. Reserve `execute_sql` for non-schema-changing SQL. | Schema-changing SQL such as `CREATE TABLE`, `CREATE INDEX`, functions, triggers, extensions, and RLS policy changes could be routed to `execute_sql`. | DDL, schema changes, indexes, functions, triggers, extensions, and RLS changes route to `apply_migration`. `execute_sql` is reserved for non-schema SQL. | `tuned_supabase_database_boundaries` scored 1.000, a 0.778 gain. Add retained cases as regression coverage. |
 
 
 ## Result

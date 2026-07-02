@@ -7,7 +7,7 @@ Suggested title: Tighten InsForge MCP deploy routing with live evals
 
 | Exact change | Before | After | Result |
 |---|---|---|---|
-| Clarify that `create-deployment` requires an absolute `sourceDirectory` and must be avoided for relative paths, starter-template creation, deployment status lookup, or remote prepared-deployment triggering. | `readme_insforge_mcp` scored 0.938. Baseline mistakes clustered on relative deploy path avoids tool. | The target surface states this routing/default/fallback behavior before the agent chooses tools. | `source_tuned_insforge_mcp` scored 1.000, a 0.062 gain. Add retained cases as regression coverage. |
+| Clarify that `create-deployment` requires an absolute `sourceDirectory` and must be avoided for relative paths, starter-template creation, deployment status lookup, or remote prepared-deployment triggering. | A relative path such as `.` could still lead the agent to call `create-deployment`, even though deployment requires an absolute `sourceDirectory`. | `create-deployment` requires an absolute `sourceDirectory`. Relative paths, starter-template creation, status lookup, and remote prepared-deployment triggering do not call it. | `source_tuned_insforge_mcp` scored 1.000, a 0.062 gain. Add retained cases as regression coverage. |
 
 
 ## Result

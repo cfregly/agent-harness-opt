@@ -858,7 +858,7 @@ def _before_after_lines(
             lines.append(
                 "| "
                 f"{_table_cell(action)} | "
-                f"{_table_cell(before)} | "
+                f"{_table_cell(_before_change_text(action, before))} | "
                 f"{_table_cell(_after_change_text(action, target))} | "
                 f"{_table_cell(result_text)} |"
             )
@@ -878,8 +878,8 @@ def _before_after_lines(
 
 
 def _target_change_items(change: str, options: PacketOptions) -> list[str]:
-    items = [change.strip()]
-    items.extend(str(item).strip() for item in options.target_actions if str(item).strip())
+    items = [_exact_change_text(change.strip())]
+    items.extend(_exact_change_text(str(item).strip()) for item in options.target_actions if str(item).strip())
     seen: set[str] = set()
     unique = []
     for item in items:
@@ -890,17 +890,76 @@ def _target_change_items(change: str, options: PacketOptions) -> list[str]:
     return unique or ["Clarify the tool-selection boundary shown by the eval."]
 
 
+def _exact_change_text(action: str) -> str:
+    lower = action.casefold()
+    if "default-project" in lower or "hot-trace" in lower or "metrics-first" in lower:
+        return (
+            "Encode the profiling workflow: prefer MCP resources for `topfunctions`, `topentities`, and `flamegraph`. "
+            "Use project UUID `00000000-0000-0000-0000-000000000000` unless the user names another project. "
+            "Discover metrics before GPU or inference metric queries. Use rank-first CPU tools. "
+            "Fetch full traces only after a selected `prefix_hash`."
+        )
+    return action
+
+
 def _after_change_text(action: str, target: str) -> str:
     lower = action.casefold()
+    if "firecrawl_scrape" in lower or "firecrawl_extract" in lower:
+        return "`firecrawl_scrape` handles the exact URL with structured JSON fields. `firecrawl_extract` stays reserved for broader multi-page extraction."
+    if "apply_migration" in lower or "execute_sql" in lower:
+        return "DDL, schema changes, indexes, functions, triggers, extensions, and RLS changes route to `apply_migration`. `execute_sql` is reserved for non-schema SQL."
+    if "create-deployment" in lower or "sourcedirectory" in lower:
+        return "`create-deployment` requires an absolute `sourceDirectory`. Relative paths, starter-template creation, status lookup, and remote prepared-deployment triggering do not call it."
+    if "keyword-search" in lower or "search-content" in lower:
+        return "Literal terms and exact phrases route to `keyword-search`. `search-content` stays for broader content, transcript, screen text, speaker, window, tag, and memory search."
+    if (
+        "default-project" in lower
+        or "hot-trace" in lower
+        or "metrics-first" in lower
+        or "project uuid" in lower
+        or "prefix_hash" in lower
+    ):
+        return "Use MCP resources first for `topfunctions`, `topentities`, and `flamegraph`. Use the default project UUID unless another project is named. Discover metrics before GPU or inference queries. Rank CPU traces before full trace fetches. Fetch full trace only after a selected `prefix_hash`."
+    if "browser alias" in lower or "safety-mode" in lower:
+        return "Clarify browser/headless aliases and safety or careful-mode skill boundaries before the agent selects a skill."
     if "idle" in lower and "trace" in lower:
-        return "Optimization-oriented hot-trace discovery excludes or clearly marks idle traces before ranking work."
+        return "Add idle exclusion or an explicit idle marker for optimization-oriented `hot_traces` discovery before traces are ranked."
     if "zymtrace-profiler" in lower or "profiler" in lower and "topentities" in lower:
-        return "Profiler self-noise is not presented as an application optimization target."
+        return "Filter or mark `zymtrace-profiler` in `topentities` so profiler self-noise is not presented as an application optimization target."
     if "gpu readiness" in lower or "supports_gpu" in lower:
-        return "Agents can read GPU readiness from one safe MCP surface before querying GPU metrics."
+        return "Expose one read-only GPU readiness resource with `supports_gpu`, `gpu_metrics_enabled`, detected GPU names, and CUDA library extraction status without exposing the license value."
     if "regression" in lower or "ci" in lower:
         return "The measured tool-boundary cases become release-blocking regression coverage."
-    return f"The {target} surface states this routing/default/fallback behavior before the agent chooses tools."
+    return f"Encode the measured {target} boundary in the tool or skill surface before the agent chooses a tool."
+
+
+def _before_change_text(action: str, fallback: str) -> str:
+    lower = action.casefold()
+    if "firecrawl_scrape" in lower or "firecrawl_extract" in lower:
+        return "A request for one exact URL plus specific fields could be routed to `firecrawl_extract`, even though it is not a broad multi-page extraction job."
+    if "apply_migration" in lower or "execute_sql" in lower:
+        return "Schema-changing SQL such as `CREATE TABLE`, `CREATE INDEX`, functions, triggers, extensions, and RLS policy changes could be routed to `execute_sql`."
+    if "create-deployment" in lower or "sourcedirectory" in lower:
+        return "A relative path such as `.` could still lead the agent to call `create-deployment`, even though deployment requires an absolute `sourceDirectory`."
+    if "keyword-search" in lower or "search-content" in lower:
+        return "Exact keyword or phrase lookup could be routed to broad `search-content` instead of the dedicated literal lookup tool."
+    if (
+        "default-project" in lower
+        or "hot-trace" in lower
+        or "metrics-first" in lower
+        or "project uuid" in lower
+        or "prefix_hash" in lower
+    ):
+        return "Agents could skip resource-first lookup, use `project_id: \"default\"`, query GPU or inference metrics before discovery, or fetch full traces before selecting a `prefix_hash`."
+    if "browser alias" in lower or "safety-mode" in lower:
+        return "Agents could confuse browser/headless aliases or careful-mode versus other safety-mode skills."
+    if "idle" in lower and "trace" in lower:
+        return "`hot_traces` can rank an `IDLE` trace first for optimization-oriented discovery."
+    if "zymtrace-profiler" in lower or "profiler" in lower and "topentities" in lower:
+        return "`topentities` can expose `zymtrace-profiler` as if it were an application optimization target."
+    if "gpu readiness" in lower or "supports_gpu" in lower:
+        return "GPU support, GPU metric collection, detected GPU names, and CUDA library extraction state are scattered across logs and metric surfaces."
+    return fallback
 
 
 def _summary_change_text(change: str, options: PacketOptions) -> str:

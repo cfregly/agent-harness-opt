@@ -194,6 +194,8 @@ def _check_founder_handoff(rel: Path, text: str, *, require_share_link: bool) ->
             failures.append(f"{rel}: first founder table must include Exact change, Before, After, and Result columns")
         if "Model coverage:" in table_window or "Evidence lane" in table_window:
             failures.append(f"{rel}: first founder table must show target-owned value, not provider coverage")
+        if "The target surface states" in table_window or "Baseline mistakes clustered" in table_window:
+            failures.append(f"{rel}: first founder table must show exact repo-owned before/after changes, not eval-summary filler")
         if "no wording change promoted" not in table_window.casefold() and "Exact change" not in table_window:
             failures.append(f"{rel}: Summary table must show exact target-owned changes before Why This Matters")
         if require_share_link:

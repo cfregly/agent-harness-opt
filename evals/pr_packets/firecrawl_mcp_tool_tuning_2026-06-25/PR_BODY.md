@@ -7,7 +7,7 @@ Suggested title: Improve Firecrawl MCP tool routing with live eval evidence
 
 | Exact change | Before | After | Result |
 |---|---|---|---|
-| Clarify that `firecrawl_scrape` handles one known page, including structured JSON fields. Reserve `firecrawl_extract` for broader multi-page structured extraction jobs. | `legacy_firecrawl_mcp` scored 0.000. Baseline mistakes clustered on single known page structured fields. | The target surface states this routing/default/fallback behavior before the agent chooses tools. | `tuned_firecrawl_mcp_boundaries` scored 1.000, a 1.000 gain. Add retained cases as regression coverage. |
+| Clarify that `firecrawl_scrape` handles one known page, including structured JSON fields. Reserve `firecrawl_extract` for broader multi-page structured extraction jobs. | A request for one exact URL plus specific fields could be routed to `firecrawl_extract`, even though it is not a broad multi-page extraction job. | `firecrawl_scrape` handles the exact URL with structured JSON fields. `firecrawl_extract` stays reserved for broader multi-page extraction. | `tuned_firecrawl_mcp_boundaries` scored 1.000, a 1.000 gain. Add retained cases as regression coverage. |
 
 
 ## Result

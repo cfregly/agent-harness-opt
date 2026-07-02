@@ -7,7 +7,7 @@ Suggested title: Tighten Screenpipe MCP retrieval routing with live evals
 
 | Exact change | Before | After | Result |
 |---|---|---|---|
-| Clarify that `keyword-search` is for literal terms and exact phrases. Reserve `search-content` for transcript lines, screen text, speaker or window filters, tags, memories, and broader content search. | `readme_screenpipe_mcp` scored 0.857. Baseline mistakes clustered on exact keyword uses keyword search. | The target surface states this routing/default/fallback behavior before the agent chooses tools. | `source_tuned_screenpipe_mcp` scored 1.000, a 0.143 gain. Add retained cases as regression coverage. |
+| Clarify that `keyword-search` is for literal terms and exact phrases. Reserve `search-content` for transcript lines, screen text, speaker or window filters, tags, memories, and broader content search. | Exact keyword or phrase lookup could be routed to broad `search-content` instead of the dedicated literal lookup tool. | Literal terms and exact phrases route to `keyword-search`. `search-content` stays for broader content, transcript, screen text, speaker, window, tag, and memory search. | `source_tuned_screenpipe_mcp` scored 1.000, a 0.143 gain. Add retained cases as regression coverage. |
 
 
 ## Result
