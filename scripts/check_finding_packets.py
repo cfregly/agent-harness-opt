@@ -518,11 +518,18 @@ def _check_model_matrix_receipt(path: Path, payload: dict[str, Any]) -> list[str
                 if not str(result.get(field, "")).strip():
                     failures.append(f"{rel}: results[{idx}] missing {field}")
             status = str(result.get("status", "")).strip()
-            if status not in {"planned", "passed", "failed", "error", "skipped"}:
+            if status not in {"planned", "passed", "failed", "error", "provider_blocked", "skipped"}:
                 failures.append(f"{rel}: results[{idx}].status is not a known model-matrix status")
             if status == "error":
                 if not str(result.get("error", "")).strip():
                     failures.append(f"{rel}: results[{idx}].error must explain error status")
+            elif status == "provider_blocked":
+                if not str(result.get("error", "")).strip():
+                    failures.append(f"{rel}: results[{idx}].error must explain provider_blocked status")
+                if result.get("provider_status") != "provider_blocked":
+                    failures.append(f"{rel}: results[{idx}].provider_status must match provider_blocked status")
+                if not str(result.get("provider_block_reason", "")).strip():
+                    failures.append(f"{rel}: results[{idx}].provider_block_reason must explain provider_blocked status")
             else:
                 if not isinstance(result.get("passed"), bool):
                     failures.append(f"{rel}: results[{idx}].passed must be boolean")
@@ -533,9 +540,12 @@ def _check_model_matrix_receipt(path: Path, payload: dict[str, Any]) -> list[str
             if result.get("passed") is False:
                 saw_failed = True
         if payload.get("passed") is False and not saw_failed:
-            saw_error = any(isinstance(item, dict) and item.get("status") == "error" for item in results)
-            if not saw_error:
-                failures.append(f"{rel}: failed model-matrix receipt has no failed or error result rows")
+            saw_error_or_blocker = any(
+                isinstance(item, dict) and item.get("status") in {"error", "provider_blocked"}
+                for item in results
+            )
+            if not saw_error_or_blocker:
+                failures.append(f"{rel}: failed model-matrix receipt has no failed, error, or provider-blocked result rows")
     matrix_path = str(payload.get("matrix_path", "")).strip()
     if not matrix_path:
         failures.append(f"{rel}: matrix_path must be present")
@@ -576,6 +586,8 @@ def _check_model_matrix_summary(
         "skipped": statuses["skipped"],
         "total": len(results),
     }
+    if statuses["provider_blocked"] or "provider_blocked" in summary:
+        expected_counts["provider_blocked"] = statuses["provider_blocked"]
     for field, expected in expected_counts.items():
         value = summary.get(field)
         if field == "total" and (not _is_plain_int(value) or value <= 0):
@@ -627,7 +639,7 @@ def _model_matrix_status_counts(results: list[Any]) -> Counter[str]:
 def _model_matrix_passed_from_results(results: list[Any]) -> bool | None:
     statuses = _model_matrix_status_counts(results)
     executed = statuses["passed"] + statuses["failed"] + statuses["error"]
-    if executed == 0 or statuses["failed"] or statuses["error"]:
+    if executed == 0 or statuses["failed"] or statuses["error"] or statuses["provider_blocked"]:
         return False
     if statuses["skipped"]:
         return None
@@ -750,6 +762,7 @@ def _model_matrix_cell_summaries(results: list[Any]) -> dict[tuple[str, str, str
         passed = sum(1 for item in items if item.get("status") == "passed")
         failed = sum(1 for item in items if item.get("status") == "failed")
         errors = sum(1 for item in items if item.get("status") == "error")
+        provider_blocked = sum(1 for item in items if item.get("status") == "provider_blocked")
         skipped = sum(1 for item in items if item.get("status") == "skipped")
         denominator = passed + failed + errors
         score = passed / denominator if denominator else 0.0
@@ -757,6 +770,7 @@ def _model_matrix_cell_summaries(results: list[Any]) -> dict[tuple[str, str, str
             "errors": errors,
             "failed": failed,
             "passed": passed,
+            "provider_blocked": provider_blocked,
             "score": round(score, 3),
             "skipped": skipped,
         }
@@ -784,6 +798,12 @@ def _check_model_matrix_cell_summary(
             failures.append(f"{rel}: {label}.skipped must be an integer")
         elif value != expected["skipped"]:
             failures.append(f"{rel}: {label}.skipped does not match result rows")
+    if "provider_blocked" in cell:
+        value = cell.get("provider_blocked")
+        if not _is_plain_int(value):
+            failures.append(f"{rel}: {label}.provider_blocked must be an integer")
+        elif value != expected["provider_blocked"]:
+            failures.append(f"{rel}: {label}.provider_blocked does not match result rows")
     if "score" in cell:
         try:
             value = round(float(cell["score"]), 3)
@@ -1397,6 +1417,8 @@ def _check_raw_matrix_markdown_counts(path: Path, text: str) -> list[str]:
         "Errors": statuses["error"] + statuses["errored"],
         "Skipped": statuses["skipped"] + statuses["skip"],
     }
+    if statuses["provider_blocked"] or _markdown_summary_value(raw_text, "Provider blocked"):
+        expected_counts["Provider blocked"] = statuses["provider_blocked"]
     for label, expected in expected_counts.items():
         value = _markdown_summary_value(raw_text, label)
         if not value:
@@ -1436,7 +1458,13 @@ def _raw_matrix_passed(statuses: Counter[str], *, live: bool) -> bool:
     if not live:
         return sum(statuses.values()) > 0
     executed = statuses["passed"] + statuses["failed"] + statuses["error"] + statuses["errored"]
-    return executed > 0 and statuses["failed"] == 0 and statuses["error"] == 0 and statuses["errored"] == 0
+    return (
+        executed > 0
+        and statuses["failed"] == 0
+        and statuses["error"] == 0
+        and statuses["errored"] == 0
+        and statuses["provider_blocked"] == 0
+    )
 
 
 def _raw_matrix_score(statuses: Counter[str], *, live: bool) -> float:
@@ -1454,7 +1482,16 @@ def _check_model_matrix_markdown_result_rows(path: Path, text: str) -> list[str]
     if not rows:
         return [f"{rel}: Results table has no result rows"]
     seen: set[tuple[str, str, str, str, str, str]] = set()
-    allowed_statuses = {"planned", "passed", "failed", "error", "errored", "skipped", "skip"}
+    allowed_statuses = {
+        "planned",
+        "passed",
+        "failed",
+        "error",
+        "errored",
+        "provider_blocked",
+        "skipped",
+        "skip",
+    }
     for idx, row in enumerate(rows, start=1):
         if len(row) < 8:
             failures.append(f"{rel}: Results row {idx} has too few columns")
@@ -1550,6 +1587,7 @@ def _markdown_cell_summaries(rows: list[list[str]]) -> dict[tuple[str, str, str,
         passed = statuses["passed"]
         failed = statuses["failed"]
         errors = statuses["error"] + statuses["errored"]
+        provider_blocked = statuses["provider_blocked"]
         skipped = statuses["skipped"] + statuses["skip"]
         denominator = passed + failed + errors
         score = round(passed / denominator, 3) if denominator else 0.0
@@ -1557,6 +1595,7 @@ def _markdown_cell_summaries(rows: list[list[str]]) -> dict[tuple[str, str, str,
             "errors": errors,
             "failed": failed,
             "passed": passed,
+            "provider_blocked": provider_blocked,
             "score": score,
             "skipped": skipped,
         }
@@ -1634,8 +1673,10 @@ def _check_optimization_gate_markdown_counts(path: Path, text: str) -> list[str]
             failures.append(f"{rel}: {label} summary does not match Results table")
     optional_counts = {
         "Baseline errors": _variant_status_count(rows, {baseline}, {"error", "errored"}) if baseline else None,
+        "Baseline provider blocked": _variant_status_count(rows, {baseline}, {"provider_blocked"}) if baseline else None,
         "Baseline skipped": _variant_status_count(rows, {baseline}, {"skipped", "skip"}) if baseline else None,
         "Optimized errors": _variant_status_count(rows, optimized, {"error", "errored"}) if optimized else None,
+        "Optimized provider blocked": _variant_status_count(rows, optimized, {"provider_blocked"}) if optimized else None,
         "Optimized skipped": _variant_status_count(rows, optimized, {"skipped", "skip"}) if optimized else None,
     }
     for label, expected in optional_counts.items():
@@ -1691,9 +1732,10 @@ def _optimization_gate_passed(rows: list[list[str]], variants: set[str], live_va
         return None
     failed = _variant_status_count(rows, variants, {"failed"})
     errors = _variant_status_count(rows, variants, {"error", "errored"})
+    provider_blocked = _variant_status_count(rows, variants, {"provider_blocked"})
     skipped = _variant_status_count(rows, variants, {"skipped", "skip"})
     planned = _variant_status_count(rows, variants, {"planned"})
-    if failed or errors or skipped:
+    if failed or errors or provider_blocked or skipped:
         return False
     if live_value.casefold() == "yes":
         return _variant_status_count(rows, variants, {"passed"}) > 0 and planned == 0

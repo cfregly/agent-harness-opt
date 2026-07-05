@@ -8,6 +8,7 @@ import os
 from typing import Any, Callable
 from urllib import error, request
 
+from .provider_status import anthropic_credit_block_fields
 from .trace_review import TraceReview
 
 
@@ -297,6 +298,9 @@ def _post_json(
             return json.loads(response.read().decode("utf-8"))
     except error.HTTPError as exc:
         detail = exc.read().decode("utf-8", errors="replace")
+        fields = anthropic_credit_block_fields(detail)
+        if fields:
+            raise ClaudeJudgeError(fields["error"]) from exc
         raise ClaudeJudgeError(f"Claude API request failed: HTTP {exc.code}: {detail}") from exc
     except error.URLError as exc:
         raise ClaudeJudgeError(f"Claude API request failed: {exc.reason}") from exc

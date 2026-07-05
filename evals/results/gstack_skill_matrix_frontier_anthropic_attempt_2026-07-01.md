@@ -6,14 +6,15 @@ Live: yes
 This retained receipt uses the newly provided Anthropic key against the accessible `claude-opus-4-8` profile.
 
 > [!NOTE]
-> The new key passed a smoke test. Later cells in this batch hit Anthropic credit exhaustion, so credit-exhausted rows are retained as provider-state evidence rather than hidden or deleted.
+> Anthropic sent billing-lockout notices on 2026-07-01 for the `FluxCapacitor` and `Stealth` organizations: API access was disabled because each organization was out of usage credits. The regenerated JSON receipt now fails closed at provider preflight and marks these rows as `provider_blocked`, not model-quality failures.
 
 ## Matrix Summary
 
 - total: 248
 - passed_cases: 0
 - failed_cases: 0
-- errors: 248
+- errors: 0
+- provider_blocked: 248
 - skipped: 0
 - score: 0.0
 
@@ -23,22 +24,16 @@ This retained receipt uses the newly provided Anthropic key against the accessib
 
 ## Status By Profile
 
-| Profile | Passed | Failed | Errors | Skipped |
-|---|---:|---:|---:|---:|
-| `anthropic-opus-high` | 0 | 0 | 248 | 0 |
+| Profile | Passed | Failed | Errors | Provider blocked | Skipped |
+|---|---:|---:|---:|---:|---:|
+| `anthropic-opus-high` | 0 | 0 | 0 | 248 | 0 |
 
-## Remaining Failure Clusters
+## Provider-State Blocker
 
-- 8x `browser-compat-alias`: status `error`, chose `error: credit balance is too low`
-- 8x `browser-headless`: status `error`, chose `error: credit balance is too low`
-- 8x `qa-fix`: status `error`, chose `error: credit balance is too low`
-- 8x `qa-report-only`: status `error`, chose `error: credit balance is too low`
-- 8x `implemented-design-polish`: status `error`, chose `error: credit balance is too low`
-- 8x `design-plan-review`: status `error`, chose `error: credit balance is too low`
-- 8x `design-system`: status `error`, chose `error: credit balance is too low`
-- 8x `design-variants`: status `error`, chose `error: credit balance is too low`
-- 8x `product-brainstorm`: status `error`, chose `error: credit balance is too low`
-- 8x `spec-plus-browser-validation`: status `error`, chose `error: credit balance is too low`
+- 248 cells were blocked before live fanout by Anthropic billing or usage-credit state.
+- The blocker reason is `anthropic_billing_or_usage_credits`.
+- Remediation is to add Anthropic API credits or enable auto-reload, then rerun the Anthropic profile.
+- No gstack tool-routing quality conclusion should be drawn from this Anthropic receipt until provider access is restored.
 
 ## Machine-readable Receipt
 

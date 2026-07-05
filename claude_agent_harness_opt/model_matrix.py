@@ -12,6 +12,10 @@ from typing import Any
 from urllib import error, parse, request
 
 from .adapters import load_run_export, normalize_run_export
+from .provider_status import (
+    PROVIDER_BLOCKED_STATUS,
+    anthropic_credit_block_fields,
+)
 
 
 DEFAULT_TIMEOUT = 90
@@ -20,6 +24,14 @@ KEYLESS_PROVIDERS = {"trace_fixture"}
 
 class ModelMatrixError(RuntimeError):
     """Raised when a model matrix cannot be loaded or run."""
+
+
+class ProviderBlockedError(ModelMatrixError):
+    """Raised when provider account state blocks live calls."""
+
+    def __init__(self, fields: dict[str, str]) -> None:
+        self.fields = fields
+        super().__init__(fields["error"])
 
 
 @dataclass(frozen=True)
@@ -145,6 +157,8 @@ def run_model_matrix_data(
     if not selected:
         raise ModelMatrixError(_empty_selection_message(matrix, active_filters))
     results = []
+    provider_status = []
+    provider_blocks: dict[tuple[str, str, str, str, str], dict[str, Any]] = {}
 
     if not live:
         for run in selected:
@@ -157,17 +171,30 @@ def run_model_matrix_data(
                     "status": "planned",
                 }
             )
-    elif concurrency > 1:
-        with ThreadPoolExecutor(max_workers=concurrency) as executor:
-            futures = [
-                executor.submit(_run_live_case, run, env, require_live=require_live)
-                for run in selected
-            ]
-            for future in futures:
-                results.append(future.result())
     else:
-        for run in selected:
-            results.append(_run_live_case(run, env, require_live=require_live))
+        provider_status, provider_blocks = _preflight_provider_status(selected, env)
+        blocked_results = [
+            _provider_blocked_result(run, env, provider_blocks[_provider_preflight_key(run, env)])
+            for run in selected
+            if _provider_preflight_key(run, env) in provider_blocks
+        ]
+        runnable = [
+            run
+            for run in selected
+            if _provider_preflight_key(run, env) not in provider_blocks
+        ]
+        results.extend(blocked_results)
+        if concurrency > 1:
+            with ThreadPoolExecutor(max_workers=concurrency) as executor:
+                futures = [
+                    executor.submit(_run_live_case, run, env, require_live=require_live)
+                    for run in runnable
+                ]
+                for future in futures:
+                    results.append(future.result())
+        else:
+            for run in runnable:
+                results.append(_run_live_case(run, env, require_live=require_live))
 
     return {
         "case_definitions": _case_definitions(selected),
@@ -179,9 +206,136 @@ def run_model_matrix_data(
         "matrix_path": matrix.get("_matrix_path", ""),
         "max_cases": max_cases,
         "passed": _matrix_passed(results, live=live, require_live=require_live),
+        "provider_status": provider_status,
         "results": results,
         "source": matrix.get("source", {}),
         "summary": _summary(results, live=live),
+    }
+
+
+def _preflight_provider_status(
+    selected: list[dict[str, Any]],
+    env: dict[str, str],
+) -> tuple[list[dict[str, Any]], dict[tuple[str, str, str, str, str], dict[str, Any]]]:
+    statuses: list[dict[str, Any]] = []
+    blocks: dict[tuple[str, str, str, str, str], dict[str, Any]] = {}
+    seen: set[tuple[str, str, str, str, str]] = set()
+    for run in selected:
+        key = _provider_preflight_key(run, env)
+        if key in seen:
+            continue
+        seen.add(key)
+        profile = run["profile"]
+        provider = str(profile.get("provider", ""))
+        if provider != "anthropic":
+            continue
+        status = _anthropic_preflight_status(run, env)
+        statuses.append(status)
+        if status.get("status") == PROVIDER_BLOCKED_STATUS:
+            blocks[key] = status
+    return statuses, blocks
+
+
+def _provider_preflight_key(
+    run: dict[str, Any],
+    env: dict[str, str],
+) -> tuple[str, str, str, str, str]:
+    profile = run["profile"]
+    provider = str(profile.get("provider", ""))
+    api_key_env = str(profile.get("api_key_env", _default_api_key_env(provider)))
+    base_url = _provider_base_url(provider, env)
+    model = _model_name(profile, env)
+    profile_name = str(profile.get("name", profile.get("provider", "")))
+    return provider, profile_name, model, api_key_env, base_url
+
+
+def _provider_base_url(provider: str, env: dict[str, str]) -> str:
+    if provider == "anthropic":
+        return (env.get("ANTHROPIC_BASE_URL") or "https://api.anthropic.com").rstrip("/")
+    if provider == "openai":
+        return (env.get("OPENAI_BASE_URL") or "https://api.openai.com").rstrip("/")
+    if provider == "gemini":
+        return (env.get("GEMINI_BASE_URL") or "https://generativelanguage.googleapis.com/v1beta").rstrip("/")
+    return ""
+
+
+def _anthropic_preflight_status(run: dict[str, Any], env: dict[str, str]) -> dict[str, Any]:
+    profile = run["profile"]
+    provider = str(profile.get("provider", ""))
+    api_key_env = str(profile.get("api_key_env", _default_api_key_env(provider)))
+    api_key = env.get(api_key_env, "")
+    labels = _provider_status_labels(run, env)
+    if not api_key:
+        return {
+            **labels,
+            "api_key_env": api_key_env,
+            "reason": f"missing {api_key_env}",
+            "status": "missing_key",
+        }
+    url = f"{_provider_base_url(provider, env)}/v1/messages"
+    payload = {
+        "max_tokens": 1,
+        "messages": [{"role": "user", "content": "Reply OK."}],
+        "model": labels["model"],
+    }
+    headers = {
+        "anthropic-version": profile.get("anthropic_version", "2023-06-01"),
+        "content-type": "application/json",
+        "x-api-key": api_key,
+    }
+    try:
+        _post_json(url, payload, headers, min(int(profile.get("timeout", DEFAULT_TIMEOUT)), 30))
+    except ModelMatrixError as exc:
+        fields = anthropic_credit_block_fields(str(exc))
+        if fields:
+            return {
+                **labels,
+                **fields,
+                "api_key_env": api_key_env,
+                "preflight": True,
+                "status": PROVIDER_BLOCKED_STATUS,
+            }
+        return {
+            **labels,
+            "api_key_env": api_key_env,
+            "preflight": True,
+            "reason": "preflight did not identify a billing or usage-credit lockout",
+            "status": "preflight_unclear",
+        }
+    return {
+        **labels,
+        "api_key_env": api_key_env,
+        "preflight": True,
+        "status": "ok",
+    }
+
+
+def _provider_status_labels(run: dict[str, Any], env: dict[str, str]) -> dict[str, str]:
+    profile = run["profile"]
+    provider = str(profile.get("provider", ""))
+    return {
+        "model": _model_name(profile, env),
+        "profile": str(profile.get("name", provider)),
+        "provider": provider,
+    }
+
+
+def _provider_blocked_result(
+    run: dict[str, Any],
+    env: dict[str, str],
+    block: dict[str, Any],
+) -> dict[str, Any]:
+    labels = {**run["labels"], "model": _model_name(run["profile"], env)}
+    return {
+        **labels,
+        "case": run["case"]["name"],
+        "chosen_tools": [],
+        "error": block["error"],
+        "passed": False,
+        "provider_block_reason": block.get("provider_block_reason", ""),
+        "provider_remediation": block.get("provider_remediation", ""),
+        "provider_status": PROVIDER_BLOCKED_STATUS,
+        "status": PROVIDER_BLOCKED_STATUS,
     }
 
 
@@ -196,6 +350,7 @@ def render_model_matrix_markdown(result: dict[str, Any]) -> str:
         f"Passed cases: {summary['passed_cases']}",
         f"Failed cases: {summary['failed_cases']}",
         f"Errors: {summary['errors']}",
+        f"Provider blocked: {summary.get('provider_blocked', 0)}",
         f"Skipped: {summary['skipped']}",
         f"Score: {summary['score']:.3f}",
         "",
@@ -347,6 +502,15 @@ def _run_live_case(run: dict[str, Any], env: dict[str, str], *, require_live: bo
             "elapsed_ms": elapsed_ms,
             "status": status,
         }
+    except ProviderBlockedError as exc:
+        return {
+            **labels,
+            **exc.fields,
+            "case": run["case"]["name"],
+            "chosen_tools": [],
+            "passed": False,
+            "status": PROVIDER_BLOCKED_STATUS,
+        }
     except Exception as exc:  # noqa: BLE001
         return {
             **labels,
@@ -430,7 +594,13 @@ def _call_anthropic(
         "content-type": "application/json",
         "x-api-key": api_key,
     }
-    response = _post_json(url, payload, headers, int(profile.get("timeout", DEFAULT_TIMEOUT)))
+    try:
+        response = _post_json(url, payload, headers, int(profile.get("timeout", DEFAULT_TIMEOUT)))
+    except ModelMatrixError as exc:
+        fields = anthropic_credit_block_fields(str(exc))
+        if fields:
+            raise ProviderBlockedError(fields) from exc
+        raise
     if harness == "native_tools":
         for block in response.get("content", []):
             if isinstance(block, dict) and block.get("type") == "tool_use":
@@ -996,6 +1166,8 @@ def _default_api_key_env(provider: str) -> str:
 def _matrix_passed(results: list[dict[str, Any]], *, live: bool, require_live: bool) -> bool:
     if not live:
         return bool(results)
+    if any(item["status"] == PROVIDER_BLOCKED_STATUS for item in results):
+        return False
     executed = [item for item in results if item["status"] in {"passed", "failed", "error"}]
     if require_live and any(item["status"] in {"skipped", "error"} for item in results):
         return False
@@ -1008,6 +1180,7 @@ def _summary(results: list[dict[str, Any]], *, live: bool) -> dict[str, Any]:
     failed = counts.get("failed", 0)
     errors = counts.get("error", 0)
     planned = counts.get("planned", 0)
+    provider_blocked = counts.get(PROVIDER_BLOCKED_STATUS, 0)
     skipped = counts.get("skipped", 0)
     denominator = passed + failed + errors if live else planned
     score = passed / denominator if denominator and live else (1.0 if planned else 0.0)
@@ -1016,6 +1189,7 @@ def _summary(results: list[dict[str, Any]], *, live: bool) -> dict[str, Any]:
         "failed_cases": failed,
         "planned": planned or len(results),
         "passed_cases": passed,
+        "provider_blocked": provider_blocked,
         "score": round(score, 3),
         "skipped": skipped,
         "total": len(results),
@@ -1037,6 +1211,7 @@ def _cell_summary(results: list[dict[str, Any]]) -> list[dict[str, Any]]:
         passed = sum(1 for item in items if item["status"] == "passed")
         failed = sum(1 for item in items if item["status"] == "failed")
         errors = sum(1 for item in items if item["status"] == "error")
+        provider_blocked = sum(1 for item in items if item["status"] == PROVIDER_BLOCKED_STATUS)
         skipped = sum(1 for item in items if item["status"] == "skipped")
         denominator = passed + failed + errors
         score = passed / denominator if denominator else 0.0
@@ -1048,6 +1223,7 @@ def _cell_summary(results: list[dict[str, Any]]) -> list[dict[str, Any]]:
                 "instruction_variant": instruction_variant,
                 "passed": passed,
                 "provider": provider,
+                "provider_blocked": provider_blocked,
                 "score": round(score, 3),
                 "skipped": skipped,
                 "tool_variant": tool_variant,

@@ -1,8 +1,11 @@
 import json
 from pathlib import Path
 import unittest
+from unittest import mock
+from urllib import error
 
 from claude_agent_harness_opt.claude_judge import (
+    ClaudeJudgeError,
     build_claude_trace_judge_prompt,
     build_claude_tool_selection_judge_prompt,
     call_claude_messages,
@@ -16,6 +19,17 @@ from claude_agent_harness_opt.trace_review import load_trace, review_trace
 
 
 ROOT = Path(__file__).resolve().parents[1]
+
+
+class FakeErrorBody:
+    def __init__(self, body: bytes) -> None:
+        self.body = body
+
+    def read(self) -> bytes:
+        return self.body
+
+    def close(self) -> None:
+        pass
 
 
 def fake_request(
@@ -74,6 +88,21 @@ class ClaudeJudgeTests(unittest.TestCase):
             request_fn=fake_request,
         )
         self.assertEqual("text", response["content"][0]["type"])
+
+    def test_call_claude_messages_maps_credit_lockout_to_provider_blocker(self):
+        body = FakeErrorBody(
+            b'{"error":{"message":"Your credit balance is too low to access the Anthropic API."}}'
+        )
+        blocked = error.HTTPError(
+            "https://api.anthropic.com/v1/messages",
+            400,
+            "Bad Request",
+            hdrs=None,
+            fp=body,
+        )
+        with mock.patch("claude_agent_harness_opt.claude_judge.request.urlopen", side_effect=blocked):
+            with self.assertRaisesRegex(ClaudeJudgeError, "billing or usage credits"):
+                call_claude_messages("judge this", api_key="test-key", model="claude-test")
 
     def test_judge_trace_with_claude_returns_semantic_score(self):
         trace = load_trace(ROOT / "evals" / "examples" / "agent_trace_good.json")

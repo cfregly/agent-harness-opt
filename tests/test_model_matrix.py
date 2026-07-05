@@ -2,6 +2,7 @@ from pathlib import Path
 import tempfile
 import unittest
 
+import claude_agent_harness_opt.model_matrix as model_matrix_module
 from claude_agent_harness_opt.model_matrix import (
     MatrixFilters,
     ModelMatrixError,
@@ -174,13 +175,60 @@ class ModelMatrixTests(unittest.TestCase):
                     "instruction_variant": "rules",
                     "status": "skipped",
                 },
+                {
+                    "provider": "anthropic",
+                    "harness": "prompt_json",
+                    "tool_variant": "candidate",
+                    "instruction_variant": "rules",
+                    "status": "provider_blocked",
+                },
             ]
         )
 
         self.assertEqual(1, len(cells))
         self.assertEqual(1, cells[0]["passed"])
+        self.assertEqual(1, cells[0]["provider_blocked"])
         self.assertEqual(1, cells[0]["skipped"])
         self.assertEqual(1.0, cells[0]["score"])
+
+    def test_anthropic_credit_preflight_fails_closed_before_live_fanout(self):
+        calls = []
+
+        def fake_post_json(url, payload, headers, timeout):
+            calls.append((url, payload, headers, timeout))
+            raise ModelMatrixError(
+                "HTTP 400: Your access to the Claude API has been disabled because "
+                "your organization is out of usage credits."
+            )
+
+        original = model_matrix_module._post_json
+        model_matrix_module._post_json = fake_post_json
+        try:
+            with tempfile.TemporaryDirectory() as tmpdir:
+                env_path = Path(tmpdir) / ".env"
+                env_path.write_text("ANTHROPIC_API_KEY=test-key\n", encoding="utf-8")
+                result = run_model_matrix(
+                    ROOT / "evals" / "model_matrix" / "coding_tool_selection.json",
+                    live=True,
+                    require_live=True,
+                    env_file=env_path,
+                    filters=MatrixFilters(
+                        providers={"anthropic"},
+                        harnesses={"prompt_json"},
+                        variants={"tuned_boundaries"},
+                        instruction_variants={"boundary_rules"},
+                    ),
+                    max_cases=2,
+                )
+        finally:
+            model_matrix_module._post_json = original
+
+        self.assertEqual(1, len(calls))
+        self.assertFalse(result["passed"])
+        self.assertEqual(2, result["summary"]["provider_blocked"])
+        self.assertEqual(0, result["summary"]["errors"])
+        self.assertEqual({"provider_blocked"}, {item["status"] for item in result["results"]})
+        self.assertEqual("provider_blocked", result["provider_status"][0]["status"])
 
     def test_dry_run_model_matrix_filters_cases(self):
         result = run_model_matrix(

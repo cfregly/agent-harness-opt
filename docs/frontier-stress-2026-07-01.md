@@ -3,7 +3,7 @@
 This page points maintainers to current frontier receipts for every retained MCP tool-selection eval plus the gstack skill-routing packet.
 
 > [!NOTE]
-> Use these receipts as hill-descending evidence first. A clean pass means the eval slice held on that frontier profile. A failed or errored receipt marks the next boundary or provider-state blocker to resolve.
+> Use these receipts as hill-descending evidence first. A clean pass means the eval slice held on that frontier profile. Failed cells are model-selection evidence. `provider_blocked` cells are provider access or billing state and must be resolved before drawing model-quality conclusions.
 
 > [!NOTE]
 > This page is supporting evidence for the action-first finding packets. Start with [Founder Findings](https://github.com/cfregly/claude-agent-harness-opt/tree/main/docs/findings) or [Confirmed Improvements](https://github.com/cfregly/claude-agent-harness-opt/blob/main/docs/confirmed-improvements.md) for Summary.
@@ -35,8 +35,9 @@ This page points maintainers to current frontier receipts for every retained MCP
 - OpenAI and Gemini available-frontier receipts: 15 retained receipts, 1356 cells, 1259 passed, 79 failed, and 18 errors.
 - Anthropic Opus MCP receipts: 14 retained MCP receipts, 430 cells, 398 passed, 32 failed, and 0 errors after the targeted rerun.
 - Remaining Anthropic MCP failures are model-selection findings, not API-credit blockers.
-- gstack skill routing is retained separately as a provider-state blocker with 248 credit errors.
+- gstack skill routing is retained separately as a provider-state blocker with 248 `provider_blocked` cells and 0 model-quality errors.
 - `claude-fable-5` remains unavailable to the provided Anthropic key, so the retained Anthropic profile is the accessible `claude-opus-4-8` profile.
+- Billing-lockout evidence: Anthropic emails on 2026-07-01 said API access for the `FluxCapacitor` and `Stealth` organizations was disabled because each was out of usage credits. That matches the API credit-balance failure mode and is not a routing-quality result.
 
 <details>
 <summary>LLM / Machine-readable details</summary>
@@ -79,7 +80,7 @@ This page points maintainers to current frontier receipts for every retained MCP
 | Slack mcp | MCP | passed | 16 | 16 | 0 | 0 | [summary](https://github.com/cfregly/claude-agent-harness-opt/blob/main/evals/results/slack_mcp_tool_selection_frontier_anthropic_live_2026-07-01.md) | [json](https://github.com/cfregly/claude-agent-harness-opt/blob/main/evals/results/slack_mcp_tool_selection_frontier_anthropic_live_2026-07-01.json) |
 | Supabase mcp database | MCP | passed | 24 | 24 | 0 | 0 | [summary](https://github.com/cfregly/claude-agent-harness-opt/blob/main/evals/results/supabase_mcp_database_tool_selection_frontier_anthropic_live_2026-07-01.md) | [json](https://github.com/cfregly/claude-agent-harness-opt/blob/main/evals/results/supabase_mcp_database_tool_selection_frontier_anthropic_live_2026-07-01.json) |
 | Zymtrace mcp | MCP | stress findings | 136 | 118 | 18 | 0 | [summary](https://github.com/cfregly/claude-agent-harness-opt/blob/main/evals/results/zymtrace_mcp_tool_selection_frontier_anthropic_live_2026-07-01.md) | [json](https://github.com/cfregly/claude-agent-harness-opt/blob/main/evals/results/zymtrace_mcp_tool_selection_frontier_anthropic_live_2026-07-01.json) |
-| gstack Skill Routing | Skill | provider blocker | 248 | 0 | 0 | 248 | [summary](https://github.com/cfregly/claude-agent-harness-opt/blob/main/evals/results/gstack_skill_matrix_frontier_anthropic_attempt_2026-07-01.md) | [json](https://github.com/cfregly/claude-agent-harness-opt/blob/main/evals/results/gstack_skill_matrix_frontier_anthropic_attempt_2026-07-01.json) |
+| gstack Skill Routing | Skill | provider blocker (248 provider-blocked) | 248 | 0 | 0 | 0 | [summary](https://github.com/cfregly/claude-agent-harness-opt/blob/main/evals/results/gstack_skill_matrix_frontier_anthropic_attempt_2026-07-01.md) | [json](https://github.com/cfregly/claude-agent-harness-opt/blob/main/evals/results/gstack_skill_matrix_frontier_anthropic_attempt_2026-07-01.json) |
 
 ## Run Shape
 

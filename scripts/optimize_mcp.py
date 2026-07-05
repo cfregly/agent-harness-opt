@@ -295,9 +295,15 @@ def optimization_gate(
         return None
     optimized_failed = sum(int(cell.get("failed", 0)) for cell in optimized_cells)
     optimized_errors = sum(int(cell.get("errors", 0)) for cell in optimized_cells)
+    optimized_provider_blocked = sum(int(cell.get("provider_blocked", 0)) for cell in optimized_cells)
     optimized_skipped = sum(int(cell.get("skipped", 0)) for cell in optimized_cells)
     live = bool(result.get("live"))
-    passed = optimized_failed == 0 and optimized_errors == 0 and optimized_skipped == 0
+    passed = (
+        optimized_failed == 0
+        and optimized_errors == 0
+        and optimized_provider_blocked == 0
+        and optimized_skipped == 0
+    )
     if live:
         passed = passed and sum(int(cell.get("passed", 0)) for cell in optimized_cells) > 0
 
@@ -308,15 +314,18 @@ def optimization_gate(
     ]
     baseline_failed = sum(int(cell.get("failed", 0)) for cell in baseline_cells)
     baseline_errors = sum(int(cell.get("errors", 0)) for cell in baseline_cells)
+    baseline_provider_blocked = sum(int(cell.get("provider_blocked", 0)) for cell in baseline_cells)
     baseline_skipped = sum(int(cell.get("skipped", 0)) for cell in baseline_cells)
     return {
         "baseline_errors": baseline_errors,
         "baseline_failed": baseline_failed,
+        "baseline_provider_blocked": baseline_provider_blocked,
         "baseline_score": _average_score(baseline_cells),
         "baseline_skipped": baseline_skipped,
         "baseline_variant": target.baseline_variant,
         "optimized_errors": optimized_errors,
         "optimized_failed": optimized_failed,
+        "optimized_provider_blocked": optimized_provider_blocked,
         "optimized_score": _average_score(optimized_cells),
         "optimized_skipped": optimized_skipped,
         "optimized_variants": sorted(optimized),
@@ -324,7 +333,7 @@ def optimization_gate(
         "reason": (
             "optimized variants passed every selected cell"
             if passed
-            else "at least one optimized variant cell failed, errored, or skipped"
+            else "at least one optimized variant cell failed, errored, provider-blocked, or skipped"
         ),
     }
 
@@ -343,9 +352,11 @@ def render_optimization_gate_markdown(gate: dict[str, object]) -> str:
             f"Optimized score: {gate['optimized_score']:.3f}",
             f"Baseline failures: {gate['baseline_failed']}",
             f"Baseline errors: {gate['baseline_errors']}",
+            f"Baseline provider blocked: {gate['baseline_provider_blocked']}",
             f"Baseline skipped: {gate['baseline_skipped']}",
             f"Optimized failures: {gate['optimized_failed']}",
             f"Optimized errors: {gate['optimized_errors']}",
+            f"Optimized provider blocked: {gate['optimized_provider_blocked']}",
             f"Optimized skipped: {gate['optimized_skipped']}",
             "",
             str(gate["reason"]),

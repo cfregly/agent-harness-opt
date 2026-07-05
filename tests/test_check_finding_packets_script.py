@@ -491,6 +491,69 @@ class CheckFindingPacketsScriptTests(unittest.TestCase):
 
         self.assertEqual([], failures)
 
+    def test_model_matrix_receipt_allows_provider_blocked_rows(self):
+        path = ROOT / "evals" / "results" / "model_matrix_provider_blocked_receipt.json"
+        path.write_text(
+            """
+{
+  "live": true,
+  "passed": false,
+  "results": [
+    {
+      "case": "default project metrics discovery skips search",
+      "provider": "anthropic",
+      "harness": "prompt_json",
+      "tool_variant": "tuned_zymtrace_mcp_boundaries",
+      "instruction_variant": "zymtrace_host_and_skill_rules",
+      "status": "provider_blocked",
+      "provider_status": "provider_blocked",
+      "provider_block_reason": "anthropic_billing_or_usage_credits",
+      "error": "Anthropic provider blocked by billing or usage credits.",
+      "passed": false,
+      "chosen_tools": []
+    }
+  ],
+  "cells": [
+    {
+      "provider": "anthropic",
+      "harness": "prompt_json",
+      "tool_variant": "tuned_zymtrace_mcp_boundaries",
+      "instruction_variant": "zymtrace_host_and_skill_rules",
+      "passed": 0,
+      "failed": 0,
+      "errors": 0,
+      "provider_blocked": 1,
+      "skipped": 0,
+      "score": 0.0
+    }
+  ],
+  "case_definitions": [
+    {"name": "default project metrics discovery skips search"}
+  ],
+  "summary": {
+    "errors": 0,
+    "failed_cases": 0,
+    "passed_cases": 0,
+    "planned": 1,
+    "provider_blocked": 1,
+    "score": 0.0,
+    "skipped": 0,
+    "total": 1
+  },
+  "matrix_path": "evals/model_matrix/zymtrace_mcp_tool_selection.json",
+  "matrix": "zymtrace mcp tool-selection matrix",
+  "source": {"commit": "sample"}
+}
+""",
+            encoding="utf-8",
+        )
+        try:
+            failures = _check_result_json(path)
+        finally:
+            path.unlink()
+
+        self.assertEqual([], failures)
+
     def test_model_matrix_receipt_rows_must_match_matrix_surface(self):
         path = ROOT / "evals" / "results" / "bad_model_matrix_surface_receipt.json"
         path.write_text(
@@ -1915,6 +1978,34 @@ class CheckFindingPacketsScriptTests(unittest.TestCase):
         self.assertIn("Failed cases summary does not match Results table", joined)
         self.assertIn("raw matrix Passed summary does not match Results table", joined)
         self.assertIn("Score summary does not match Results table", joined)
+
+    def test_raw_matrix_markdown_accepts_provider_blocked_summary(self):
+        path = ROOT / "evals" / "results" / "provider_blocked_matrix_report.md"
+        path.write_text(
+            "# Matrix Report\n\n"
+            "Passed: no\n\n"
+            "## Raw Matrix\n\n"
+            "Live: yes\n"
+            "Passed: no\n"
+            "Planned: 1\n"
+            "Passed cases: 0\n"
+            "Failed cases: 0\n"
+            "Errors: 0\n"
+            "Provider blocked: 1\n"
+            "Skipped: 0\n"
+            "Score: 0.000\n\n"
+            "## Results\n\n"
+            "| Provider | Model | Harness | Tool Variant | Instruction Variant | Case | Status | Chosen |\n"
+            "|---|---|---|---|---|---|---|---|\n"
+            "| anthropic | model | prompt_json | stock | rules | first | provider_blocked |  |\n",
+            encoding="utf-8",
+        )
+        try:
+            failures = _check_result_markdown(path)
+        finally:
+            path.unlink()
+
+        self.assertEqual([], failures)
 
     def test_model_matrix_markdown_result_rows_require_shape_status_and_identity(self):
         path = ROOT / "evals" / "results" / "bad_result_rows_report.md"
