@@ -17,8 +17,8 @@ over the baseline.
 ## Install
 
 ```bash
-git clone https://github.com/cfregly/claude-agent-harness-opt.git
-cd claude-agent-harness-opt
+git clone https://github.com/cfregly/agent-harness-opt.git
+cd agent-harness-opt
 python3.11 -m venv .venv
 source .venv/bin/activate
 pip install -e .
@@ -46,7 +46,7 @@ Do not commit `.env` files or API keys. The repo ignores local environment files
 Set a repository secret named `ANTHROPIC_API_KEY`.
 
 ```bash
-gh secret set ANTHROPIC_API_KEY --repo cfregly/claude-agent-harness-opt
+gh secret set ANTHROPIC_API_KEY --repo cfregly/agent-harness-opt
 ```
 
 CI runs deterministic tests, the value-bar gate, the trace suite, the agent audit, and live Claude

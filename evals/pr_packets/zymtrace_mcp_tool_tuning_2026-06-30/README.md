@@ -1,6 +1,6 @@
 # Zymtrace MCP Tool Tuning PR Packet
 
-Share link: [Zymtrace full PR/evidence bundle](https://github.com/cfregly/claude-agent-harness-opt/tree/main/evals/pr_packets/zymtrace_mcp_tool_tuning_2026-06-30)
+Share link: [Zymtrace full PR/evidence bundle](https://github.com/cfregly/agent-harness-opt/tree/main/evals/pr_packets/zymtrace_mcp_tool_tuning_2026-06-30)
 
 ## Summary
 
@@ -70,7 +70,7 @@ Replace `/path/to/repo` with the target team's local checkout. These commands as
 ```bash
 cat <<'PROMPT' | codex exec -C /path/to/repo --sandbox read-only -
 Review this action-first finding:
-https://github.com/cfregly/claude-agent-harness-opt/tree/main/docs/findings/zymtrace
+https://github.com/cfregly/agent-harness-opt/tree/main/docs/findings/zymtrace
 
 Then inspect this local repo and tell us exactly what to change.
 
@@ -89,7 +89,7 @@ PROMPT
 ```bash
 claude -p --permission-mode plan "$(cat <<'PROMPT'
 Review this action-first finding:
-https://github.com/cfregly/claude-agent-harness-opt/tree/main/docs/findings/zymtrace
+https://github.com/cfregly/agent-harness-opt/tree/main/docs/findings/zymtrace
 
 Then inspect this local repo and tell us exactly what to change.
 
@@ -109,7 +109,7 @@ PROMPT
 ```bash
 gemini --approval-mode plan --output-format text -p "$(cat <<'PROMPT'
 Review this action-first finding:
-https://github.com/cfregly/claude-agent-harness-opt/tree/main/docs/findings/zymtrace
+https://github.com/cfregly/agent-harness-opt/tree/main/docs/findings/zymtrace
 
 Then inspect this local repo and tell us exactly what to change.
 
@@ -138,14 +138,14 @@ Provider/model rows are evidence lanes. The target repo actions above are the on
 
 ## Evidence Bundle
 
-- Public harness repo: [claude-agent-harness-opt](https://github.com/cfregly/claude-agent-harness-opt)
-- Bundle folder: [zymtrace_mcp_tool_tuning_2026-06-30](https://github.com/cfregly/claude-agent-harness-opt/tree/main/evals/pr_packets/zymtrace_mcp_tool_tuning_2026-06-30)
-- Matrix: [zymtrace_mcp_tool_selection.json](https://github.com/cfregly/claude-agent-harness-opt/blob/main/evals/model_matrix/zymtrace_mcp_tool_selection.json)
-- Result artifact: [zymtrace_mcp_matrix_live_2026-06-30.json](https://github.com/cfregly/claude-agent-harness-opt/blob/main/evals/results/zymtrace_mcp_matrix_live_2026-06-30.json)
-- PR_TITLE.txt: [PR_TITLE.txt](https://github.com/cfregly/claude-agent-harness-opt/blob/main/evals/pr_packets/zymtrace_mcp_tool_tuning_2026-06-30/PR_TITLE.txt)
-- PR_BODY.md: [PR_BODY.md](https://github.com/cfregly/claude-agent-harness-opt/blob/main/evals/pr_packets/zymtrace_mcp_tool_tuning_2026-06-30/PR_BODY.md)
-- REPRODUCTION.md: [REPRODUCTION.md](https://github.com/cfregly/claude-agent-harness-opt/blob/main/evals/pr_packets/zymtrace_mcp_tool_tuning_2026-06-30/REPRODUCTION.md)
-- evidence.json: [evidence.json](https://github.com/cfregly/claude-agent-harness-opt/blob/main/evals/pr_packets/zymtrace_mcp_tool_tuning_2026-06-30/evidence.json)
+- Public harness repo: [agent-harness-opt](https://github.com/cfregly/agent-harness-opt)
+- Bundle folder: [zymtrace_mcp_tool_tuning_2026-06-30](https://github.com/cfregly/agent-harness-opt/tree/main/evals/pr_packets/zymtrace_mcp_tool_tuning_2026-06-30)
+- Matrix: [zymtrace_mcp_tool_selection.json](https://github.com/cfregly/agent-harness-opt/blob/main/evals/model_matrix/zymtrace_mcp_tool_selection.json)
+- Result artifact: [zymtrace_mcp_matrix_live_2026-06-30.json](https://github.com/cfregly/agent-harness-opt/blob/main/evals/results/zymtrace_mcp_matrix_live_2026-06-30.json)
+- PR_TITLE.txt: [PR_TITLE.txt](https://github.com/cfregly/agent-harness-opt/blob/main/evals/pr_packets/zymtrace_mcp_tool_tuning_2026-06-30/PR_TITLE.txt)
+- PR_BODY.md: [PR_BODY.md](https://github.com/cfregly/agent-harness-opt/blob/main/evals/pr_packets/zymtrace_mcp_tool_tuning_2026-06-30/PR_BODY.md)
+- REPRODUCTION.md: [REPRODUCTION.md](https://github.com/cfregly/agent-harness-opt/blob/main/evals/pr_packets/zymtrace_mcp_tool_tuning_2026-06-30/REPRODUCTION.md)
+- evidence.json: [evidence.json](https://github.com/cfregly/agent-harness-opt/blob/main/evals/pr_packets/zymtrace_mcp_tool_tuning_2026-06-30/evidence.json)
 - Target repo: [zymtrace](https://github.com/zystem-io/zymtrace)
 
 <details>
@@ -162,11 +162,11 @@ round, not as a replacement for the confirmed 24/24 held-out improvement.
 
 Anthropic `claude-fable-5` was not available to the provided key. The accessible `claude-opus-4-8` rerun completed 136 cells with 118 passed, 18 failed, and 0 errors.
 The all-provider attempt is retained here:
-[zymtrace_mcp_frontier_all_providers_attempt_2026-07-01.md](https://github.com/cfregly/claude-agent-harness-opt/blob/main/evals/results/zymtrace_mcp_frontier_all_providers_attempt_2026-07-01.md).
+[zymtrace_mcp_frontier_all_providers_attempt_2026-07-01.md](https://github.com/cfregly/agent-harness-opt/blob/main/evals/results/zymtrace_mcp_frontier_all_providers_attempt_2026-07-01.md).
 
 ## Reproduce
 
-[REPRODUCTION.md](https://github.com/cfregly/claude-agent-harness-opt/blob/main/evals/pr_packets/zymtrace_mcp_tool_tuning_2026-06-30/REPRODUCTION.md)
+[REPRODUCTION.md](https://github.com/cfregly/agent-harness-opt/blob/main/evals/pr_packets/zymtrace_mcp_tool_tuning_2026-06-30/REPRODUCTION.md)
 contains the exact live matrix command and retained source pins.
 
 </details>

@@ -1,6 +1,6 @@
 # Humwork MCP Guardrail PR Packet
 
-Share link: [Humwork MCP Guardrail full PR/evidence bundle](https://github.com/cfregly/claude-agent-harness-opt/tree/main/evals/pr_packets/humwork_mcp_guardrail_2026-06-28)
+Share link: [Humwork MCP Guardrail full PR/evidence bundle](https://github.com/cfregly/agent-harness-opt/tree/main/evals/pr_packets/humwork_mcp_guardrail_2026-06-28)
 
 ## Summary
 
@@ -50,7 +50,7 @@ Replace `/path/to/repo` with the target team's local checkout. These commands as
 ```bash
 cat <<'PROMPT' | codex exec -C /path/to/repo --sandbox read-only -
 Review this action-first finding:
-https://github.com/cfregly/claude-agent-harness-opt/tree/main/docs/findings/humwork
+https://github.com/cfregly/agent-harness-opt/tree/main/docs/findings/humwork
 
 Then inspect this local repo and tell us exactly what to change.
 
@@ -69,7 +69,7 @@ PROMPT
 ```bash
 claude -p --permission-mode plan "$(cat <<'PROMPT'
 Review this action-first finding:
-https://github.com/cfregly/claude-agent-harness-opt/tree/main/docs/findings/humwork
+https://github.com/cfregly/agent-harness-opt/tree/main/docs/findings/humwork
 
 Then inspect this local repo and tell us exactly what to change.
 
@@ -89,7 +89,7 @@ PROMPT
 ```bash
 gemini --approval-mode plan --output-format text -p "$(cat <<'PROMPT'
 Review this action-first finding:
-https://github.com/cfregly/claude-agent-harness-opt/tree/main/docs/findings/humwork
+https://github.com/cfregly/agent-harness-opt/tree/main/docs/findings/humwork
 
 Then inspect this local repo and tell us exactly what to change.
 
@@ -116,14 +116,14 @@ Provider/model rows are evidence lanes. The target repo actions above are the on
 
 ## Evidence Bundle
 
-- Public harness repo: [claude-agent-harness-opt](https://github.com/cfregly/claude-agent-harness-opt)
-- Bundle folder: [humwork_mcp_guardrail_2026-06-28](https://github.com/cfregly/claude-agent-harness-opt/tree/main/evals/pr_packets/humwork_mcp_guardrail_2026-06-28)
-- Matrix: [humwork_mcp_tool_selection.json](https://github.com/cfregly/claude-agent-harness-opt/blob/main/evals/model_matrix/humwork_mcp_tool_selection.json)
-- Result artifact: [humwork_mcp_tool_selection_2026-06-28.md](https://github.com/cfregly/claude-agent-harness-opt/blob/main/evals/results/humwork_mcp_tool_selection_2026-06-28.md)
-- PR_TITLE.txt: [PR_TITLE.txt](https://github.com/cfregly/claude-agent-harness-opt/blob/main/evals/pr_packets/humwork_mcp_guardrail_2026-06-28/PR_TITLE.txt)
-- PR_BODY.md: [PR_BODY.md](https://github.com/cfregly/claude-agent-harness-opt/blob/main/evals/pr_packets/humwork_mcp_guardrail_2026-06-28/PR_BODY.md)
-- REPRODUCTION.md: [REPRODUCTION.md](https://github.com/cfregly/claude-agent-harness-opt/blob/main/evals/pr_packets/humwork_mcp_guardrail_2026-06-28/REPRODUCTION.md)
-- evidence.json: [evidence.json](https://github.com/cfregly/claude-agent-harness-opt/blob/main/evals/pr_packets/humwork_mcp_guardrail_2026-06-28/evidence.json)
+- Public harness repo: [agent-harness-opt](https://github.com/cfregly/agent-harness-opt)
+- Bundle folder: [humwork_mcp_guardrail_2026-06-28](https://github.com/cfregly/agent-harness-opt/tree/main/evals/pr_packets/humwork_mcp_guardrail_2026-06-28)
+- Matrix: [humwork_mcp_tool_selection.json](https://github.com/cfregly/agent-harness-opt/blob/main/evals/model_matrix/humwork_mcp_tool_selection.json)
+- Result artifact: [humwork_mcp_tool_selection_2026-06-28.md](https://github.com/cfregly/agent-harness-opt/blob/main/evals/results/humwork_mcp_tool_selection_2026-06-28.md)
+- PR_TITLE.txt: [PR_TITLE.txt](https://github.com/cfregly/agent-harness-opt/blob/main/evals/pr_packets/humwork_mcp_guardrail_2026-06-28/PR_TITLE.txt)
+- PR_BODY.md: [PR_BODY.md](https://github.com/cfregly/agent-harness-opt/blob/main/evals/pr_packets/humwork_mcp_guardrail_2026-06-28/PR_BODY.md)
+- REPRODUCTION.md: [REPRODUCTION.md](https://github.com/cfregly/agent-harness-opt/blob/main/evals/pr_packets/humwork_mcp_guardrail_2026-06-28/REPRODUCTION.md)
+- evidence.json: [evidence.json](https://github.com/cfregly/agent-harness-opt/blob/main/evals/pr_packets/humwork_mcp_guardrail_2026-06-28/evidence.json)
 - Target repo: [humwork-mcp](https://github.com/humworkai/humwork-mcp)
 
 <details>
@@ -132,13 +132,13 @@ Provider/model rows are evidence lanes. The target repo actions above are the on
 ## Artifact Pointers
 
 - Source: [Humwork MCP repo](https://github.com/humworkai/humwork-mcp)
-- Matrix: [humwork_mcp_tool_selection.json](https://github.com/cfregly/claude-agent-harness-opt/blob/main/evals/model_matrix/humwork_mcp_tool_selection.json)
-- Live result: [humwork_mcp_tool_selection_2026-06-28.md](https://github.com/cfregly/claude-agent-harness-opt/blob/main/evals/results/humwork_mcp_tool_selection_2026-06-28.md)
-- Detailed note: [yc-p2026-mcp-sweep.md](https://github.com/cfregly/claude-agent-harness-opt/blob/main/docs/yc-p2026-mcp-sweep.md)
-- Ledger: [Confirmed Improvements](https://github.com/cfregly/claude-agent-harness-opt/blob/main/docs/confirmed-improvements.md)
+- Matrix: [humwork_mcp_tool_selection.json](https://github.com/cfregly/agent-harness-opt/blob/main/evals/model_matrix/humwork_mcp_tool_selection.json)
+- Live result: [humwork_mcp_tool_selection_2026-06-28.md](https://github.com/cfregly/agent-harness-opt/blob/main/evals/results/humwork_mcp_tool_selection_2026-06-28.md)
+- Detailed note: [yc-p2026-mcp-sweep.md](https://github.com/cfregly/agent-harness-opt/blob/main/docs/yc-p2026-mcp-sweep.md)
+- Ledger: [Confirmed Improvements](https://github.com/cfregly/agent-harness-opt/blob/main/docs/confirmed-improvements.md)
 
 ## Reproduce
 
-[REPRODUCTION.md](https://github.com/cfregly/claude-agent-harness-opt/blob/main/evals/pr_packets/humwork_mcp_guardrail_2026-06-28/REPRODUCTION.md) contains the exact command and pinned matrix surface.
+[REPRODUCTION.md](https://github.com/cfregly/agent-harness-opt/blob/main/evals/pr_packets/humwork_mcp_guardrail_2026-06-28/REPRODUCTION.md) contains the exact command and pinned matrix surface.
 
 </details>

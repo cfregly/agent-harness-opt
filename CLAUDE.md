@@ -1,6 +1,6 @@
 # CLAUDE.md
 
-Conventions for any agent working on `claude-agent-harness-opt`. Read this first.
+Conventions for any agent working on `agent-harness-opt`. Read this first.
 
 ## What this is
 

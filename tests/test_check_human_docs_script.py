@@ -63,9 +63,9 @@ class CheckHumanDocsScriptTests(unittest.TestCase):
             finding.mkdir(parents=True)
             (finding / "README.md").write_text(
                 "# Sample Finding\n\n"
-                "Share link: [Sample](https://github.com/cfregly/claude-agent-harness-opt/tree/main/docs/findings/sample)\n\n"
+                "Share link: [Sample](https://github.com/cfregly/agent-harness-opt/tree/main/docs/findings/sample)\n\n"
                 "## Evidence Bundle\n\n"
-                "Bundle folder: [Sample](https://github.com/cfregly/claude-agent-harness-opt/tree/main/docs/findings/sample)\n",
+                "Bundle folder: [Sample](https://github.com/cfregly/agent-harness-opt/tree/main/docs/findings/sample)\n",
                 encoding="utf-8",
             )
 
@@ -82,7 +82,7 @@ class CheckHumanDocsScriptTests(unittest.TestCase):
             finding.mkdir(parents=True)
             (finding / "README.md").write_text(
                 "# Sample Finding\n\n"
-                "Share link: [Sample](https://github.com/cfregly/claude-agent-harness-opt/tree/main/docs/findings/sample)\n\n"
+                "Share link: [Sample](https://github.com/cfregly/agent-harness-opt/tree/main/docs/findings/sample)\n\n"
                 "## Summary\n\n"
                 "| Suggested change | Baseline / before description | Suggested / after description | Result |\n|---|---|---|---|\n| Update routing. | Before. | After. | Result. |\n\n"
                 "## Why This Matters\n\n"
@@ -94,7 +94,7 @@ class CheckHumanDocsScriptTests(unittest.TestCase):
                 "## Model Coverage\n\n"
                 "- Coverage.\n\n"
                 "## Evidence Bundle\n\n"
-                "Bundle folder: [Sample](https://github.com/cfregly/claude-agent-harness-opt/tree/main/evals/pr_packets/sample)\n",
+                "Bundle folder: [Sample](https://github.com/cfregly/agent-harness-opt/tree/main/evals/pr_packets/sample)\n",
                 encoding="utf-8",
             )
 
@@ -413,9 +413,9 @@ class CheckHumanDocsScriptTests(unittest.TestCase):
                 "|---|---|---|---|\n"
                 + "\n".join(
                     "| Sample | "
-                    "[Bundle](https://github.com/cfregly/claude-agent-harness-opt/tree/main/evals/pr_packets/sample) | "
-                    "[Matrix](https://github.com/cfregly/claude-agent-harness-opt/blob/main/evals/model_matrix/sample.json) | "
-                    "[Receipt](https://github.com/cfregly/claude-agent-harness-opt/blob/main/evals/results/sample.md) |"
+                    "[Bundle](https://github.com/cfregly/agent-harness-opt/tree/main/evals/pr_packets/sample) | "
+                    "[Matrix](https://github.com/cfregly/agent-harness-opt/blob/main/evals/model_matrix/sample.json) | "
+                    "[Receipt](https://github.com/cfregly/agent-harness-opt/blob/main/evals/results/sample.md) |"
                     for _ in range(12)
                 )
                 + "\n\n"
@@ -439,7 +439,7 @@ def _write_readme(root: Path, *, extra_before_details: str = "") -> None:
         "## Demo\n\n"
         "Demo text.\n\n"
         "## Share This\n\n"
-        "| Audience | Send this |\n|---|---|\n| maintainer | [bundle](https://github.com/cfregly/claude-agent-harness-opt/tree/main/docs/findings/sample) |\n\n"
+        "| Audience | Send this |\n|---|---|\n| maintainer | [bundle](https://github.com/cfregly/agent-harness-opt/tree/main/docs/findings/sample) |\n\n"
         "## Quickstart\n\n"
         "Run it.\n\n"
         "## What it implements\n\n"

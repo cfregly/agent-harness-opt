@@ -46,7 +46,7 @@ python -m claude_agent_harness_opt upstream-pr-packet /tmp/firecrawl-matrix.json
   --baseline-variant legacy_firecrawl_mcp \
   --candidate-variant tuned_firecrawl_mcp_boundaries \
   --change-summary "Clarify the single-page scrape versus extract boundary." \
-  --evidence-url https://github.com/cfregly/claude-agent-harness-opt/blob/main/docs/confirmed-improvements.md \
+  --evidence-url https://github.com/cfregly/agent-harness-opt/blob/main/docs/confirmed-improvements.md \
   --out-dir /tmp/firecrawl-upstream-pr
 ```
 

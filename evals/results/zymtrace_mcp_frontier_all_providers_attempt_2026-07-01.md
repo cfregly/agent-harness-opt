@@ -30,4 +30,4 @@ This is the retained historical all-provider frontier attempt. It includes Anthr
 
 ## Machine-readable Receipt
 
-[JSON receipt](https://github.com/cfregly/claude-agent-harness-opt/blob/main/evals/results/zymtrace_mcp_frontier_all_providers_attempt_2026-07-01.json)
+[JSON receipt](https://github.com/cfregly/agent-harness-opt/blob/main/evals/results/zymtrace_mcp_frontier_all_providers_attempt_2026-07-01.json)

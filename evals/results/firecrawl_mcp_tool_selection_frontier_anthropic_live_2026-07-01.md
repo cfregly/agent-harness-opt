@@ -35,4 +35,4 @@ This retained receipt uses the accessible `claude-opus-4-8` profile.
 
 ## Machine-readable Receipt
 
-[JSON receipt](https://github.com/cfregly/claude-agent-harness-opt/blob/main/evals/results/firecrawl_mcp_tool_selection_frontier_anthropic_live_2026-07-01.json)
+[JSON receipt](https://github.com/cfregly/agent-harness-opt/blob/main/evals/results/firecrawl_mcp_tool_selection_frontier_anthropic_live_2026-07-01.json)

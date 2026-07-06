@@ -16,8 +16,9 @@ if str(ROOT) not in sys.path:
 README = ROOT / "README.md"
 MAKEFILE = ROOT / "Makefile"
 PYPROJECT = ROOT / "pyproject.toml"
+PUBLIC_REPO_NAME = "agent-harness-opt"
 REPO_URL_RE = re.compile(
-    r"https://github\.com/cfregly/claude-agent-harness-opt/(blob|tree)/main/([^)\s#]+)"
+    r"https://github\.com/cfregly/agent-harness-opt/(blob|tree)/main/([^)\s#]+)"
 )
 OLD_REPO_SLUGS = (
     "claude-agent-harness-optimization",
@@ -156,8 +157,8 @@ def _check_pyproject_entry_points(root: Path = ROOT) -> list[str]:
     project = data.get("project", {})
     readme_h1 = _readme_h1(root / "README.md")
     failures: list[str] = []
-    if project.get("name") != readme_h1:
-        failures.append("pyproject.toml: project.name must match README H1")
+    if readme_h1 != PUBLIC_REPO_NAME:
+        failures.append(f"README.md: H1 must be public repo name {PUBLIC_REPO_NAME}")
     scripts = project.get("scripts", {})
     for name, target in scripts.items():
         try:

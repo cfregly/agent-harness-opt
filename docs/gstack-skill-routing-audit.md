@@ -50,7 +50,7 @@ This audit treats the generated `gstack` Codex-compatible skills as a skills-as-
 
 The pinned gstack packet still has a confirmed baseline-to-tuned improvement on the original
 720-cell sweep. It now also has a current available-frontier stress receipt for OpenAI `gpt-5.5`
-and Gemini `gemini-3.1-pro-preview-customtools`: [gstack_skill_matrix_frontier_available_live_2026-07-01.md](https://github.com/cfregly/claude-agent-harness-opt/blob/main/evals/results/gstack_skill_matrix_frontier_available_live_2026-07-01.md).
+and Gemini `gemini-3.1-pro-preview-customtools`: [gstack_skill_matrix_frontier_available_live_2026-07-01.md](https://github.com/cfregly/agent-harness-opt/blob/main/evals/results/gstack_skill_matrix_frontier_available_live_2026-07-01.md).
 
 That current receipt completed 496 live cells with 484 passed, 8 failed, and 4 errors. Treat it as
 hill-descending evidence for the next tuning pass. Anthropic Opus is now retained in a separate receipt. The new key passed smoke testing, then later calls hit credit exhaustion where shown in the receipt.

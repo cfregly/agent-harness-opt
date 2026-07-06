@@ -36,8 +36,8 @@ class CheckDocsNavigationScriptTests(unittest.TestCase):
             docs.mkdir()
             (root / "README.md").write_text(
                 "# sample\n\n"
-                "[Bad](https://github.com/cfregly/claude-agent-harness-opt/blob/main/docs/missing.md)\n"
-                "[Bad tree](https://github.com/cfregly/claude-agent-harness-opt/tree/main/docs/missing)\n",
+                "[Bad](https://github.com/cfregly/agent-harness-opt/blob/main/docs/missing.md)\n"
+                "[Bad tree](https://github.com/cfregly/agent-harness-opt/tree/main/docs/missing)\n",
                 encoding="utf-8",
             )
 

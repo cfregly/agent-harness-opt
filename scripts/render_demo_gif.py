@@ -110,11 +110,11 @@ COMMANDS = (
     ),
     DemoCommand(
         title="5. Print the shareable public bundle",
-        display="python -c 'print(\"Supabase PR/evidence bundle: https://github.com/cfregly/claude-agent-harness-opt/tree/main/evals/pr_packets/supabase_mcp_database_tool_tuning_2026-06-25\")'",
+        display="python -c 'print(\"Supabase PR/evidence bundle: https://github.com/cfregly/agent-harness-opt/tree/main/evals/pr_packets/supabase_mcp_database_tool_tuning_2026-06-25\")'",
         args=(
             sys.executable,
             "-c",
-            "print('Supabase PR/evidence bundle: https://github.com/cfregly/claude-agent-harness-opt/tree/main/evals/pr_packets/supabase_mcp_database_tool_tuning_2026-06-25')",
+            "print('Supabase PR/evidence bundle: https://github.com/cfregly/agent-harness-opt/tree/main/evals/pr_packets/supabase_mcp_database_tool_tuning_2026-06-25')",
         ),
         keep_lines=4,
         output_hold=8,
@@ -146,7 +146,7 @@ def build_frames(width: int, height: int, font_size: int):
     image, draw, font = _load_pillow(width, height, font_size)
     frames = []
     terminal: list[tuple[str, str]] = [
-        ("title", "claude-agent-harness-opt: Supabase MCP migration-boundary demo")
+        ("title", "agent-harness-opt: Supabase MCP migration-boundary demo")
     ]
     _append_frame(frames, _render_terminal(image, draw, font, terminal, width, height), repeats=4)
     for command in COMMANDS:

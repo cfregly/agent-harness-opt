@@ -156,9 +156,9 @@ class CheckFindingPacketsScriptTests(unittest.TestCase):
 
     def test_pr_packet_text_requires_packet_type_language(self):
         public_links = """
-- Evidence JSON: [evidence.json](https://github.com/cfregly/claude-agent-harness-opt/blob/main/evals/pr_packets/sample_guardrail/evidence.json)
-- Matrix: [sample_matrix.json](https://github.com/cfregly/claude-agent-harness-opt/blob/main/evals/model_matrix/sample_matrix.json)
-- Result artifact: [sample_result.md](https://github.com/cfregly/claude-agent-harness-opt/blob/main/evals/results/sample_result.md)
+- Evidence JSON: [evidence.json](https://github.com/cfregly/agent-harness-opt/blob/main/evals/pr_packets/sample_guardrail/evidence.json)
+- Matrix: [sample_matrix.json](https://github.com/cfregly/agent-harness-opt/blob/main/evals/model_matrix/sample_matrix.json)
+- Result artifact: [sample_result.md](https://github.com/cfregly/agent-harness-opt/blob/main/evals/results/sample_result.md)
 """
         failures = _check_pr_packet_text(
             ROOT / "evals" / "pr_packets" / "sample_guardrail",

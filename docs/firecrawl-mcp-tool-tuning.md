@@ -44,7 +44,7 @@ known page, and reserve `extract` for multi-page or broader structured extractio
 
 ## Matrix
 
-Matrix: [firecrawl_mcp_tool_selection.json](https://github.com/cfregly/claude-agent-harness-opt/blob/main/evals/model_matrix/firecrawl_mcp_tool_selection.json)
+Matrix: [firecrawl_mcp_tool_selection.json](https://github.com/cfregly/agent-harness-opt/blob/main/evals/model_matrix/firecrawl_mcp_tool_selection.json)
 
 It compares:
 

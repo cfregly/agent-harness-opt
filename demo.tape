@@ -13,4 +13,4 @@ Run "python -c \"print('Supabase live evidence: terse 6/9 -> tuned 9/9'); print(
 Run "python scripts/check_finding_packets.py"
 Run "python scripts/check_public_links.py"
 Run "python scripts/check_human_docs.py"
-Run "python -c 'print(\"Supabase PR/evidence bundle: https://github.com/cfregly/claude-agent-harness-opt/tree/main/evals/pr_packets/supabase_mcp_database_tool_tuning_2026-06-25\")'"
+Run "python -c 'print(\"Supabase PR/evidence bundle: https://github.com/cfregly/agent-harness-opt/tree/main/evals/pr_packets/supabase_mcp_database_tool_tuning_2026-06-25\")'"

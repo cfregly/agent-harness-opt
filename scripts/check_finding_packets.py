@@ -26,7 +26,7 @@ PR_PACKETS_DIR = ROOT / "evals" / "pr_packets"
 RESULTS_DIR = ROOT / "evals" / "results"
 TARGETS_DIR = ROOT / "evals" / "targets"
 REPO_LINK_RE = re.compile(
-    r"https://github\.com/cfregly/claude-agent-harness-opt/(?:blob|tree)/main/([^)\s]+)"
+    r"https://github\.com/cfregly/agent-harness-opt/(?:blob|tree)/main/([^)\s]+)"
 )
 LOCAL_ARTIFACT_RE = re.compile(r"`((?:docs|evals|README\.md)[^`]+)`")
 MATRIX_LINK_RE = re.compile(r"evals/(?:model_matrix/[^)`\s]+|targets/[^)`\s]+)\.json")

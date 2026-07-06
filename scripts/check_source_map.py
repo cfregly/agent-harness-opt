@@ -15,7 +15,7 @@ CHECKED_RE = re.compile(r"^Checked on \d{4}-\d{2}-\d{2}\.$", flags=re.MULTILINE)
 H2_RE = re.compile(r"^##\s+(.+)$", flags=re.MULTILINE)
 FENCE_RE = re.compile(r"^```.*?$.*?^```$", flags=re.DOTALL | re.MULTILINE)
 EXCLUDED_SOURCE_PREFIXES = (
-    "https://github.com/cfregly/claude-agent-harness-opt/",
+    "https://github.com/cfregly/agent-harness-opt/",
     "https://img.shields.io/",
     "https://example.com/",
     "http://example.com/",

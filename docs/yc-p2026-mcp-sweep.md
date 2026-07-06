@@ -18,9 +18,9 @@ The table below is the exact handoff text. Baseline / before is the current beha
 
 | Company | Public MCP Surface | Matrix | Live Result |
 |---|---|---|---|
-| InsForge | [InsForge/insforge-mcp](https://github.com/InsForge/insforge-mcp) | [insforge_mcp_tool_selection.json](https://github.com/cfregly/claude-agent-harness-opt/blob/main/evals/model_matrix/insforge_mcp_tool_selection.json) | Confirmed improvement. README-level relative deploy path chose `create-deployment`, tuned chose `NO_TOOL`. |
-| Humwork | [humworkai/humwork-mcp](https://github.com/humworkai/humwork-mcp) | [humwork_mcp_tool_selection.json](https://github.com/cfregly/claude-agent-harness-opt/blob/main/evals/model_matrix/humwork_mcp_tool_selection.json) | Guardrail. README-level and skill-tuned variants both passed 7/7. |
-| OpenWork | [different-ai/openwork](https://github.com/different-ai/openwork), package `openwork-ui-mcp` | [openwork_ui_mcp_tool_selection.json](https://github.com/cfregly/claude-agent-harness-opt/blob/main/evals/model_matrix/openwork_ui_mcp_tool_selection.json) | Guardrail. Docs-level and source-tuned variants both passed 7/7. |
+| InsForge | [InsForge/insforge-mcp](https://github.com/InsForge/insforge-mcp) | [insforge_mcp_tool_selection.json](https://github.com/cfregly/agent-harness-opt/blob/main/evals/model_matrix/insforge_mcp_tool_selection.json) | Confirmed improvement. README-level relative deploy path chose `create-deployment`, tuned chose `NO_TOOL`. |
+| Humwork | [humworkai/humwork-mcp](https://github.com/humworkai/humwork-mcp) | [humwork_mcp_tool_selection.json](https://github.com/cfregly/agent-harness-opt/blob/main/evals/model_matrix/humwork_mcp_tool_selection.json) | Guardrail. README-level and skill-tuned variants both passed 7/7. |
+| OpenWork | [different-ai/openwork](https://github.com/different-ai/openwork), package `openwork-ui-mcp` | [openwork_ui_mcp_tool_selection.json](https://github.com/cfregly/agent-harness-opt/blob/main/evals/model_matrix/openwork_ui_mcp_tool_selection.json) | Guardrail. Docs-level and source-tuned variants both passed 7/7. |
 
 ## Commands
 
@@ -53,21 +53,21 @@ InsForge:
 - Anthropic prompt JSON: README-level 15/16, source-tuned 16/16.
 - Baseline failure: relative path deployment request chose `create-deployment`.
 - Tuned fix: require absolute `sourceDirectory`, and choose `NO_TOOL` for relative deploy paths.
-- Receipt: [insforge_mcp_tool_selection_2026-06-28.md](https://github.com/cfregly/claude-agent-harness-opt/blob/main/evals/results/insforge_mcp_tool_selection_2026-06-28.md).
+- Receipt: [insforge_mcp_tool_selection_2026-06-28.md](https://github.com/cfregly/agent-harness-opt/blob/main/evals/results/insforge_mcp_tool_selection_2026-06-28.md).
 
 Humwork:
 
 - Anthropic prompt JSON: README-level 7/7, skill-tuned 7/7.
 - Covered expert consultation start, active session follow-up, message retrieval, close, rating,
   basic-docs no-tool, and secrets no-tool.
-- Receipt: [humwork_mcp_tool_selection_2026-06-28.md](https://github.com/cfregly/claude-agent-harness-opt/blob/main/evals/results/humwork_mcp_tool_selection_2026-06-28.md).
+- Receipt: [humwork_mcp_tool_selection_2026-06-28.md](https://github.com/cfregly/agent-harness-opt/blob/main/evals/results/humwork_mcp_tool_selection_2026-06-28.md).
 
 OpenWork:
 
 - Anthropic prompt JSON: docs-level 7/7, source-tuned 7/7.
 - Covered status, snapshot, action listing, known action execution, unknown action discovery,
   coordinate-click no-tool, and app-closed status check.
-- Receipt: [openwork_ui_mcp_tool_selection_2026-06-28.md](https://github.com/cfregly/claude-agent-harness-opt/blob/main/evals/results/openwork_ui_mcp_tool_selection_2026-06-28.md).
+- Receipt: [openwork_ui_mcp_tool_selection_2026-06-28.md](https://github.com/cfregly/agent-harness-opt/blob/main/evals/results/openwork_ui_mcp_tool_selection_2026-06-28.md).
 
 ## Related Non-P2026 Result
 
@@ -76,7 +76,7 @@ than Spring/P2026. Keep it in the broader public MCP sweep and founder packets. 
 Spring/P2026 deck win.
 
 - Anthropic prompt JSON: README-level 6/7, source-tuned 7/7.
-- Receipt: [screenpipe_mcp_tool_selection_2026-06-28.md](https://github.com/cfregly/claude-agent-harness-opt/blob/main/evals/results/screenpipe_mcp_tool_selection_2026-06-28.md).
+- Receipt: [screenpipe_mcp_tool_selection_2026-06-28.md](https://github.com/cfregly/agent-harness-opt/blob/main/evals/results/screenpipe_mcp_tool_selection_2026-06-28.md).
 
 ```bash
 make optimize mcp=screenpipe
@@ -101,7 +101,7 @@ find a public server or tool list with enough concrete callable descriptions to 
 
 Do not describe these as optimized. The honest deck line is that they are candidate workloads, while
 the confirmed Spring/P2026 public MCP optimization is
-[InsForge](https://github.com/cfregly/claude-agent-harness-opt/tree/main/docs/findings/insforge).
+[InsForge](https://github.com/cfregly/agent-harness-opt/tree/main/docs/findings/insforge).
 Humwork and OpenWork are useful guardrails because their public descriptions already routed
 correctly on the tested Anthropic slice. Screenpipe is confirmed but belongs in the broader YC S26
 or public MCP story, not the Spring/P2026 count.

@@ -51,7 +51,7 @@ The current sweep covers:
   and no-tool boundaries.
 
 Founder-facing packets live under
-[Founder Findings](https://github.com/cfregly/claude-agent-harness-opt/tree/main/docs/findings).
+[Founder Findings](https://github.com/cfregly/agent-harness-opt/tree/main/docs/findings).
 Use those links when sending a result to a startup.
 
 ## What Cleared
@@ -67,7 +67,7 @@ Firecrawl produced a confirmed improvement:
 - Rationale: current Firecrawl guidance says one known page with specific fields should use
   `firecrawl_scrape` with a focused JSON format. `firecrawl_extract` is better for multi-page or
   broader structured extraction jobs.
-- Packet: [Firecrawl finding](https://github.com/cfregly/claude-agent-harness-opt/tree/main/docs/findings/firecrawl).
+- Packet: [Firecrawl finding](https://github.com/cfregly/agent-harness-opt/tree/main/docs/findings/firecrawl).
 
 Supabase produced a confirmed improvement:
 
@@ -75,7 +75,7 @@ Supabase produced a confirmed improvement:
 - Tuned description: the same DDL and RLS policy tasks chose `apply_migration`.
 - Rationale: Supabase schema changes should be tracked as migrations. `execute_sql` is for regular
   SQL that does not change schema.
-- Packet: [Supabase finding](https://github.com/cfregly/claude-agent-harness-opt/tree/main/docs/findings/supabase).
+- Packet: [Supabase finding](https://github.com/cfregly/agent-harness-opt/tree/main/docs/findings/supabase).
 
 Zymtrace produced a confirmed improvement:
 
@@ -85,7 +85,7 @@ Zymtrace produced a confirmed improvement:
   GPU call-tree, and selected-trace drilldown cases across Anthropic, OpenAI, and Gemini prompt JSON.
 - Rationale: the live Zymtrace MCP server has resource-first/default-project rules, and the
   installed CPU/GPU skills add workflow constraints that must be present in the tool surface.
-- Packet: [Zymtrace finding](https://github.com/cfregly/claude-agent-harness-opt/tree/main/docs/findings/zymtrace).
+- Packet: [Zymtrace finding](https://github.com/cfregly/agent-harness-opt/tree/main/docs/findings/zymtrace).
 
 Screenpipe produced a confirmed improvement:
 
@@ -94,7 +94,7 @@ Screenpipe produced a confirmed improvement:
 - Rationale: Screenpipe has a dedicated keyword search tool for literal terms and exact phrases.
   Broader content search remains useful for transcript lines, screen text, speakers, windows, tags,
   and memories.
-- Packet: [Screenpipe finding](https://github.com/cfregly/claude-agent-harness-opt/tree/main/docs/findings/screenpipe).
+- Packet: [Screenpipe finding](https://github.com/cfregly/agent-harness-opt/tree/main/docs/findings/screenpipe).
 
 InsForge produced a confirmed improvement:
 
@@ -103,18 +103,18 @@ InsForge produced a confirmed improvement:
 - Source-level tuned description: the same task chose `NO_TOOL`.
 - Rationale: InsForge deployment requires an absolute `sourceDirectory`. Relative paths should be
   rejected before the deployment tool is called.
-- Packet: [InsForge finding](https://github.com/cfregly/claude-agent-harness-opt/tree/main/docs/findings/insforge).
+- Packet: [InsForge finding](https://github.com/cfregly/agent-harness-opt/tree/main/docs/findings/insforge).
 
 Humwork and OpenWork did not produce a confirmed tuning win on the current Anthropic slices. Their
 public descriptions already routed the tested expert-consultation and UI-control cases correctly.
-Packets: [Humwork guardrail](https://github.com/cfregly/claude-agent-harness-opt/tree/main/docs/findings/humwork)
-and [OpenWork guardrail](https://github.com/cfregly/claude-agent-harness-opt/tree/main/docs/findings/openwork).
+Packets: [Humwork guardrail](https://github.com/cfregly/agent-harness-opt/tree/main/docs/findings/humwork)
+and [OpenWork guardrail](https://github.com/cfregly/agent-harness-opt/tree/main/docs/findings/openwork).
 
 This is the useful pattern: do not broadly rewrite a tool catalog. Identify one ambiguous boundary,
 write a realistic prompt that isolates it, and prove the tuned wording changes the next tool call.
 
 The pinned improvement ledger lives in
-[Confirmed Improvements](https://github.com/cfregly/claude-agent-harness-opt/blob/main/docs/confirmed-improvements.md).
+[Confirmed Improvements](https://github.com/cfregly/agent-harness-opt/blob/main/docs/confirmed-improvements.md).
 Use that page when you need the exact upstream MCP version or commit attached to each result.
 
 <details>

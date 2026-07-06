@@ -1,6 +1,6 @@
 # Supabase MCP Database Tool Tuning PR Packet
 
-Share link: [Supabase MCP Database Tool Tuning full PR/evidence bundle](https://github.com/cfregly/claude-agent-harness-opt/tree/main/evals/pr_packets/supabase_mcp_database_tool_tuning_2026-06-25)
+Share link: [Supabase MCP Database Tool Tuning full PR/evidence bundle](https://github.com/cfregly/agent-harness-opt/tree/main/evals/pr_packets/supabase_mcp_database_tool_tuning_2026-06-25)
 
 ## Summary
 
@@ -56,7 +56,7 @@ Replace `/path/to/repo` with the target team's local checkout. These commands as
 ```bash
 cat <<'PROMPT' | codex exec -C /path/to/repo --sandbox read-only -
 Review this action-first finding:
-https://github.com/cfregly/claude-agent-harness-opt/tree/main/docs/findings/supabase
+https://github.com/cfregly/agent-harness-opt/tree/main/docs/findings/supabase
 
 Then inspect this local repo and tell us exactly what to change.
 
@@ -75,7 +75,7 @@ PROMPT
 ```bash
 claude -p --permission-mode plan "$(cat <<'PROMPT'
 Review this action-first finding:
-https://github.com/cfregly/claude-agent-harness-opt/tree/main/docs/findings/supabase
+https://github.com/cfregly/agent-harness-opt/tree/main/docs/findings/supabase
 
 Then inspect this local repo and tell us exactly what to change.
 
@@ -95,7 +95,7 @@ PROMPT
 ```bash
 gemini --approval-mode plan --output-format text -p "$(cat <<'PROMPT'
 Review this action-first finding:
-https://github.com/cfregly/claude-agent-harness-opt/tree/main/docs/findings/supabase
+https://github.com/cfregly/agent-harness-opt/tree/main/docs/findings/supabase
 
 Then inspect this local repo and tell us exactly what to change.
 
@@ -124,14 +124,14 @@ Provider/model rows are evidence lanes. The target repo actions above are the on
 
 ## Evidence Bundle
 
-- Public harness repo: [claude-agent-harness-opt](https://github.com/cfregly/claude-agent-harness-opt)
-- Bundle folder: [supabase_mcp_database_tool_tuning_2026-06-25](https://github.com/cfregly/claude-agent-harness-opt/tree/main/evals/pr_packets/supabase_mcp_database_tool_tuning_2026-06-25)
-- Matrix: [supabase_mcp_database_tool_selection.json](https://github.com/cfregly/claude-agent-harness-opt/blob/main/evals/model_matrix/supabase_mcp_database_tool_selection.json)
-- Result artifact: [supabase_mcp_ddl_boundary_live_2026-06-25.md](https://github.com/cfregly/claude-agent-harness-opt/blob/main/evals/results/supabase_mcp_ddl_boundary_live_2026-06-25.md)
-- PR_TITLE.txt: [PR_TITLE.txt](https://github.com/cfregly/claude-agent-harness-opt/blob/main/evals/pr_packets/supabase_mcp_database_tool_tuning_2026-06-25/PR_TITLE.txt)
-- PR_BODY.md: [PR_BODY.md](https://github.com/cfregly/claude-agent-harness-opt/blob/main/evals/pr_packets/supabase_mcp_database_tool_tuning_2026-06-25/PR_BODY.md)
-- REPRODUCTION.md: [REPRODUCTION.md](https://github.com/cfregly/claude-agent-harness-opt/blob/main/evals/pr_packets/supabase_mcp_database_tool_tuning_2026-06-25/REPRODUCTION.md)
-- evidence.json: [evidence.json](https://github.com/cfregly/claude-agent-harness-opt/blob/main/evals/pr_packets/supabase_mcp_database_tool_tuning_2026-06-25/evidence.json)
+- Public harness repo: [agent-harness-opt](https://github.com/cfregly/agent-harness-opt)
+- Bundle folder: [supabase_mcp_database_tool_tuning_2026-06-25](https://github.com/cfregly/agent-harness-opt/tree/main/evals/pr_packets/supabase_mcp_database_tool_tuning_2026-06-25)
+- Matrix: [supabase_mcp_database_tool_selection.json](https://github.com/cfregly/agent-harness-opt/blob/main/evals/model_matrix/supabase_mcp_database_tool_selection.json)
+- Result artifact: [supabase_mcp_ddl_boundary_live_2026-06-25.md](https://github.com/cfregly/agent-harness-opt/blob/main/evals/results/supabase_mcp_ddl_boundary_live_2026-06-25.md)
+- PR_TITLE.txt: [PR_TITLE.txt](https://github.com/cfregly/agent-harness-opt/blob/main/evals/pr_packets/supabase_mcp_database_tool_tuning_2026-06-25/PR_TITLE.txt)
+- PR_BODY.md: [PR_BODY.md](https://github.com/cfregly/agent-harness-opt/blob/main/evals/pr_packets/supabase_mcp_database_tool_tuning_2026-06-25/PR_BODY.md)
+- REPRODUCTION.md: [REPRODUCTION.md](https://github.com/cfregly/agent-harness-opt/blob/main/evals/pr_packets/supabase_mcp_database_tool_tuning_2026-06-25/REPRODUCTION.md)
+- evidence.json: [evidence.json](https://github.com/cfregly/agent-harness-opt/blob/main/evals/pr_packets/supabase_mcp_database_tool_tuning_2026-06-25/evidence.json)
 - Target repo: [mcp](https://github.com/supabase/mcp)
 
 <details>
@@ -140,13 +140,13 @@ Provider/model rows are evidence lanes. The target repo actions above are the on
 ## Artifact Pointers
 
 - Source: [Supabase MCP repo](https://github.com/supabase/mcp)
-- Matrix: [supabase_mcp_database_tool_selection.json](https://github.com/cfregly/claude-agent-harness-opt/blob/main/evals/model_matrix/supabase_mcp_database_tool_selection.json)
-- Live result: [supabase_mcp_ddl_boundary_live_2026-06-25.md](https://github.com/cfregly/claude-agent-harness-opt/blob/main/evals/results/supabase_mcp_ddl_boundary_live_2026-06-25.md)
-- Detailed note: [supabase-mcp-tool-tuning.md](https://github.com/cfregly/claude-agent-harness-opt/blob/main/docs/supabase-mcp-tool-tuning.md)
-- Ledger: [Confirmed Improvements](https://github.com/cfregly/claude-agent-harness-opt/blob/main/docs/confirmed-improvements.md)
+- Matrix: [supabase_mcp_database_tool_selection.json](https://github.com/cfregly/agent-harness-opt/blob/main/evals/model_matrix/supabase_mcp_database_tool_selection.json)
+- Live result: [supabase_mcp_ddl_boundary_live_2026-06-25.md](https://github.com/cfregly/agent-harness-opt/blob/main/evals/results/supabase_mcp_ddl_boundary_live_2026-06-25.md)
+- Detailed note: [supabase-mcp-tool-tuning.md](https://github.com/cfregly/agent-harness-opt/blob/main/docs/supabase-mcp-tool-tuning.md)
+- Ledger: [Confirmed Improvements](https://github.com/cfregly/agent-harness-opt/blob/main/docs/confirmed-improvements.md)
 
 ## Reproduce
 
-[REPRODUCTION.md](https://github.com/cfregly/claude-agent-harness-opt/blob/main/evals/pr_packets/supabase_mcp_database_tool_tuning_2026-06-25/REPRODUCTION.md) contains the exact command and pinned matrix surface.
+[REPRODUCTION.md](https://github.com/cfregly/agent-harness-opt/blob/main/evals/pr_packets/supabase_mcp_database_tool_tuning_2026-06-25/REPRODUCTION.md) contains the exact command and pinned matrix surface.
 
 </details>

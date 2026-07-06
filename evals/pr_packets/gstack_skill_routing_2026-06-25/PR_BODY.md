@@ -57,7 +57,7 @@ Replace `/path/to/repo` with the target team's local checkout. These commands as
 ```bash
 cat <<'PROMPT' | codex exec -C /path/to/repo --sandbox read-only -
 Review this action-first finding:
-https://github.com/cfregly/claude-agent-harness-opt/tree/main/docs/findings/gstack
+https://github.com/cfregly/agent-harness-opt/tree/main/docs/findings/gstack
 
 Then inspect this local repo and tell us exactly what to change.
 
@@ -76,7 +76,7 @@ PROMPT
 ```bash
 claude -p --permission-mode plan "$(cat <<'PROMPT'
 Review this action-first finding:
-https://github.com/cfregly/claude-agent-harness-opt/tree/main/docs/findings/gstack
+https://github.com/cfregly/agent-harness-opt/tree/main/docs/findings/gstack
 
 Then inspect this local repo and tell us exactly what to change.
 
@@ -96,7 +96,7 @@ PROMPT
 ```bash
 gemini --approval-mode plan --output-format text -p "$(cat <<'PROMPT'
 Review this action-first finding:
-https://github.com/cfregly/claude-agent-harness-opt/tree/main/docs/findings/gstack
+https://github.com/cfregly/agent-harness-opt/tree/main/docs/findings/gstack
 
 Then inspect this local repo and tell us exactly what to change.
 
@@ -125,14 +125,14 @@ Provider/model rows are evidence lanes. The target repo actions above are the on
 
 ## Evidence Bundle
 
-- Public harness repo: [claude-agent-harness-opt](https://github.com/cfregly/claude-agent-harness-opt)
-- Bundle folder: [gstack_skill_routing_2026-06-25](https://github.com/cfregly/claude-agent-harness-opt/tree/main/evals/pr_packets/gstack_skill_routing_2026-06-25)
-- Matrix: [gstack_skill_selection_matrix.json](https://github.com/cfregly/claude-agent-harness-opt/blob/main/evals/targets/gstack/gstack_skill_selection_matrix.json)
-- Result artifact: [gstack_skill_matrix_live_2026-06-25.json](https://github.com/cfregly/claude-agent-harness-opt/blob/main/evals/results/gstack_skill_matrix_live_2026-06-25.json)
-- PR_TITLE.txt: [PR_TITLE.txt](https://github.com/cfregly/claude-agent-harness-opt/blob/main/evals/pr_packets/gstack_skill_routing_2026-06-25/PR_TITLE.txt)
-- PR_BODY.md: [PR_BODY.md](https://github.com/cfregly/claude-agent-harness-opt/blob/main/evals/pr_packets/gstack_skill_routing_2026-06-25/PR_BODY.md)
-- REPRODUCTION.md: [REPRODUCTION.md](https://github.com/cfregly/claude-agent-harness-opt/blob/main/evals/pr_packets/gstack_skill_routing_2026-06-25/REPRODUCTION.md)
-- evidence.json: [evidence.json](https://github.com/cfregly/claude-agent-harness-opt/blob/main/evals/pr_packets/gstack_skill_routing_2026-06-25/evidence.json)
+- Public harness repo: [agent-harness-opt](https://github.com/cfregly/agent-harness-opt)
+- Bundle folder: [gstack_skill_routing_2026-06-25](https://github.com/cfregly/agent-harness-opt/tree/main/evals/pr_packets/gstack_skill_routing_2026-06-25)
+- Matrix: [gstack_skill_selection_matrix.json](https://github.com/cfregly/agent-harness-opt/blob/main/evals/targets/gstack/gstack_skill_selection_matrix.json)
+- Result artifact: [gstack_skill_matrix_live_2026-06-25.json](https://github.com/cfregly/agent-harness-opt/blob/main/evals/results/gstack_skill_matrix_live_2026-06-25.json)
+- PR_TITLE.txt: [PR_TITLE.txt](https://github.com/cfregly/agent-harness-opt/blob/main/evals/pr_packets/gstack_skill_routing_2026-06-25/PR_TITLE.txt)
+- PR_BODY.md: [PR_BODY.md](https://github.com/cfregly/agent-harness-opt/blob/main/evals/pr_packets/gstack_skill_routing_2026-06-25/PR_BODY.md)
+- REPRODUCTION.md: [REPRODUCTION.md](https://github.com/cfregly/agent-harness-opt/blob/main/evals/pr_packets/gstack_skill_routing_2026-06-25/REPRODUCTION.md)
+- evidence.json: [evidence.json](https://github.com/cfregly/agent-harness-opt/blob/main/evals/pr_packets/gstack_skill_routing_2026-06-25/evidence.json)
 - Target repo: [gstack](https://github.com/garrytan/gstack)
 
 <details>
@@ -140,10 +140,10 @@ Provider/model rows are evidence lanes. The target repo actions above are the on
 
 ## Frontier Receipts
 
-- Anthropic Opus frontier receipt: [gstack_skill_matrix_frontier_anthropic_attempt_2026-07-01.md](https://github.com/cfregly/claude-agent-harness-opt/blob/main/evals/results/gstack_skill_matrix_frontier_anthropic_attempt_2026-07-01.md)
-- Anthropic Opus JSON receipt: [gstack_skill_matrix_frontier_anthropic_attempt_2026-07-01.json](https://github.com/cfregly/claude-agent-harness-opt/blob/main/evals/results/gstack_skill_matrix_frontier_anthropic_attempt_2026-07-01.json)
-- Current frontier stress receipt: [gstack_skill_matrix_frontier_available_live_2026-07-01.md](https://github.com/cfregly/claude-agent-harness-opt/blob/main/evals/results/gstack_skill_matrix_frontier_available_live_2026-07-01.md)
-- Current frontier JSON receipt: [gstack_skill_matrix_frontier_available_live_2026-07-01.json](https://github.com/cfregly/claude-agent-harness-opt/blob/main/evals/results/gstack_skill_matrix_frontier_available_live_2026-07-01.json)
+- Anthropic Opus frontier receipt: [gstack_skill_matrix_frontier_anthropic_attempt_2026-07-01.md](https://github.com/cfregly/agent-harness-opt/blob/main/evals/results/gstack_skill_matrix_frontier_anthropic_attempt_2026-07-01.md)
+- Anthropic Opus JSON receipt: [gstack_skill_matrix_frontier_anthropic_attempt_2026-07-01.json](https://github.com/cfregly/agent-harness-opt/blob/main/evals/results/gstack_skill_matrix_frontier_anthropic_attempt_2026-07-01.json)
+- Current frontier stress receipt: [gstack_skill_matrix_frontier_available_live_2026-07-01.md](https://github.com/cfregly/agent-harness-opt/blob/main/evals/results/gstack_skill_matrix_frontier_available_live_2026-07-01.md)
+- Current frontier JSON receipt: [gstack_skill_matrix_frontier_available_live_2026-07-01.json](https://github.com/cfregly/agent-harness-opt/blob/main/evals/results/gstack_skill_matrix_frontier_available_live_2026-07-01.json)
 
 ## How This Is Proven Useful
 
@@ -154,7 +154,7 @@ Provider/model rows are evidence lanes. The target repo actions above are the on
 
 ## Current Frontier Coverage
 
-- The packet now includes a current available-frontier sweep: [gstack_skill_matrix_frontier_available_live_2026-07-01.md](https://github.com/cfregly/claude-agent-harness-opt/blob/main/evals/results/gstack_skill_matrix_frontier_available_live_2026-07-01.md).
+- The packet now includes a current available-frontier sweep: [gstack_skill_matrix_frontier_available_live_2026-07-01.md](https://github.com/cfregly/agent-harness-opt/blob/main/evals/results/gstack_skill_matrix_frontier_available_live_2026-07-01.md).
 - The available-frontier sweep completed 496 current available-frontier cells, 484 passed, 8 failed, 4 errors across OpenAI `gpt-5.5` and Gemini `gemini-3.1-pro-preview-customtools`.
 - The older `claude-sonnet-4-5`, `gpt-4.1`, and `gemini-2.5-pro` cells remain regression evidence, while the 2026-07-01 receipt is the current hill-descending surface.
 - Anthropic Opus is now retained in a separate receipt: the new key passed smoke testing, then later calls hit credit exhaustion where shown in the receipt.
@@ -264,10 +264,10 @@ python -m claude_agent_harness_opt model-matrix evals/targets/gstack/gstack_skil
 
 ## Artifact Pointers
 
-- Public harness repo: [claude-agent-harness-opt](https://github.com/cfregly/claude-agent-harness-opt)
-- Reproduction doc: [REPRODUCTION.md](https://github.com/cfregly/claude-agent-harness-opt/blob/main/evals/pr_packets/gstack_skill_routing_2026-06-25/REPRODUCTION.md)
-- Evidence JSON: [evidence.json](https://github.com/cfregly/claude-agent-harness-opt/blob/main/evals/pr_packets/gstack_skill_routing_2026-06-25/evidence.json)
-- Matrix: [gstack_skill_selection_matrix.json](https://github.com/cfregly/claude-agent-harness-opt/blob/main/evals/targets/gstack/gstack_skill_selection_matrix.json)
-- Result artifact: [gstack_skill_matrix_live_2026-06-25.json](https://github.com/cfregly/claude-agent-harness-opt/blob/main/evals/results/gstack_skill_matrix_live_2026-06-25.json)
+- Public harness repo: [agent-harness-opt](https://github.com/cfregly/agent-harness-opt)
+- Reproduction doc: [REPRODUCTION.md](https://github.com/cfregly/agent-harness-opt/blob/main/evals/pr_packets/gstack_skill_routing_2026-06-25/REPRODUCTION.md)
+- Evidence JSON: [evidence.json](https://github.com/cfregly/agent-harness-opt/blob/main/evals/pr_packets/gstack_skill_routing_2026-06-25/evidence.json)
+- Matrix: [gstack_skill_selection_matrix.json](https://github.com/cfregly/agent-harness-opt/blob/main/evals/targets/gstack/gstack_skill_selection_matrix.json)
+- Result artifact: [gstack_skill_matrix_live_2026-06-25.json](https://github.com/cfregly/agent-harness-opt/blob/main/evals/results/gstack_skill_matrix_live_2026-06-25.json)
 
 </details>

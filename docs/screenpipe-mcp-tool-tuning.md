@@ -4,7 +4,7 @@ This audit adds a YC S26 public MCP target to the harness suite and confirms a n
 tool-description optimization. README-level descriptions routed exact keyword lookup to broad
 content search. Source-level tuned descriptions routed it to the dedicated keyword search tool.
 
-Matrix: [screenpipe_mcp_tool_selection.json](https://github.com/cfregly/claude-agent-harness-opt/blob/main/evals/model_matrix/screenpipe_mcp_tool_selection.json)
+Matrix: [screenpipe_mcp_tool_selection.json](https://github.com/cfregly/agent-harness-opt/blob/main/evals/model_matrix/screenpipe_mcp_tool_selection.json)
 
 ## Summary
 
@@ -70,7 +70,7 @@ The source-level tuned pass was:
 
 - exact keyword lookup chose `keyword-search`
 
-Receipt: [screenpipe_mcp_tool_selection_2026-06-28.md](https://github.com/cfregly/claude-agent-harness-opt/blob/main/evals/results/screenpipe_mcp_tool_selection_2026-06-28.md)
+Receipt: [screenpipe_mcp_tool_selection_2026-06-28.md](https://github.com/cfregly/agent-harness-opt/blob/main/evals/results/screenpipe_mcp_tool_selection_2026-06-28.md)
 
 ## Run It
 

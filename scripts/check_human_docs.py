@@ -10,7 +10,7 @@ import re
 ROOT = Path(__file__).resolve().parents[1]
 PUBLIC_MARKDOWN_GLOBS = ("README.md", "docs/**/*.md", "evals/pr_packets/**/*.md")
 LLM_SUMMARY = "<summary>LLM / Machine-readable details</summary>"
-REPO_LINK = "https://github.com/cfregly/claude-agent-harness-opt/"
+REPO_LINK = "https://github.com/cfregly/agent-harness-opt/"
 ACTION_SUMMARY_DOCS = {
     "docs/confirmed-improvements.md",
     "docs/public-mcp-sweep.md",

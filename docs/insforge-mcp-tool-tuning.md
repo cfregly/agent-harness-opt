@@ -35,8 +35,8 @@ Provider/model rows are evidence lanes. The target repo actions above are the on
 - Upstream repo: [InsForge/insforge-mcp](https://github.com/InsForge/insforge-mcp)
 - Commit: `dad794d445d05e7df2efcb8280dba59682b97a87`
 - Package: `@insforge/mcp` `1.2.10`
-- Matrix: [insforge_mcp_tool_selection.json](https://github.com/cfregly/claude-agent-harness-opt/blob/main/evals/model_matrix/insforge_mcp_tool_selection.json)
-- Receipt: [insforge_mcp_tool_selection_2026-06-28.md](https://github.com/cfregly/claude-agent-harness-opt/blob/main/evals/results/insforge_mcp_tool_selection_2026-06-28.md)
+- Matrix: [insforge_mcp_tool_selection.json](https://github.com/cfregly/agent-harness-opt/blob/main/evals/model_matrix/insforge_mcp_tool_selection.json)
+- Receipt: [insforge_mcp_tool_selection_2026-06-28.md](https://github.com/cfregly/agent-harness-opt/blob/main/evals/results/insforge_mcp_tool_selection_2026-06-28.md)
 
 The tested catalog covers docs, SDK docs, anon token generation, container logs, backend metadata,
 table schema, raw SQL, starter templates, bulk import, storage buckets, edge functions, and

@@ -29,16 +29,16 @@ class PrPacketTests(unittest.TestCase):
                     target_repo="https://github.com/example/mcp",
                     change_summary="Clarify when to call the tuned tool.",
                     evidence_url=(
-                        "https://github.com/cfregly/claude-agent-harness-opt/blob/main/"
+                        "https://github.com/cfregly/agent-harness-opt/blob/main/"
                         "evals/results/example.json"
                     ),
                     finding_url=(
-                        "https://github.com/cfregly/claude-agent-harness-opt/tree/main/"
+                        "https://github.com/cfregly/agent-harness-opt/tree/main/"
                         "docs/findings/example"
                     ),
                     minimum_delta=0.1,
                     packet_url=(
-                        "https://github.com/cfregly/claude-agent-harness-opt/tree/main/"
+                        "https://github.com/cfregly/agent-harness-opt/tree/main/"
                         "evals/pr_packets/example"
                     ),
                     target_actions=("Add an explicit tuned-tool routing regression.",),
@@ -83,7 +83,7 @@ class PrPacketTests(unittest.TestCase):
             self.assertIn("claude -p --permission-mode plan", body)
             self.assertIn("gemini --approval-mode plan --output-format text", body)
             self.assertIn("Review this action-first finding:", body)
-            self.assertIn("https://github.com/cfregly/claude-agent-harness-opt/tree/main/docs/findings/example", body)
+            self.assertIn("https://github.com/cfregly/agent-harness-opt/tree/main/docs/findings/example", body)
             self.assertIn("## Evidence Bundle", body)
             self.assertIn("evals/pr_packets/example/evidence.json", body)
             self.assertNotIn("Founder handoff:", body)
@@ -106,7 +106,7 @@ class PrPacketTests(unittest.TestCase):
             self.assertIn("passed=1", body)
             self.assertIn("single page extraction", body)
             self.assertIn("python -m claude_agent_harness_opt model-matrix", body)
-            self.assertIn("public harness repo: https://github.com/cfregly/claude-agent-harness-opt", body)
+            self.assertIn("public harness repo: https://github.com/cfregly/agent-harness-opt", body)
             self.assertIn("## What We Learned", body)
             self.assertIn("`tuned` beat `stock` by 1.000", body)
             self.assertIn("confusable alternatives checked: example_stock", body)

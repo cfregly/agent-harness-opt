@@ -5,7 +5,7 @@ Checked on 2026-06-25.
 This repo now separates terminal products from SDK harnesses.
 
 For the public, versioned explanation of how the SDK harnesses work, including
-examples and maintenance steps, see [Agent SDK Harnesses](https://github.com/cfregly/claude-agent-harness-opt/blob/main/docs/agent-sdk-harnesses.md).
+examples and maintenance steps, see [Agent SDK Harnesses](https://github.com/cfregly/agent-harness-opt/blob/main/docs/agent-sdk-harnesses.md).
 
 | Vendor | Product or SDK | What is covered |
 |---|---|---|

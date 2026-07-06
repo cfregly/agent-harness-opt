@@ -6,7 +6,7 @@ Live: yes
 This retained frontier receipt runs the current available frontier profiles in this workspace: OpenAI `gpt-5.5` and Gemini `gemini-3.1-pro-preview-customtools`.
 
 > [!NOTE]
-> Anthropic frontier is tracked in separate Anthropic Opus receipts. The current MCP Opus receipts have 0 provider errors after the targeted Anthropic rerun; gstack Anthropic skill routing remains a separate provider-state receipt with `provider_blocked` billing/usage-credit rows, not model-quality failures. See [Frontier Stress Receipts](https://github.com/cfregly/claude-agent-harness-opt/blob/main/docs/frontier-stress-2026-07-01.md).
+> Anthropic frontier is tracked in separate Anthropic Opus receipts. The current MCP Opus receipts have 0 provider errors after the targeted Anthropic rerun; gstack Anthropic skill routing remains a separate provider-state receipt with `provider_blocked` billing/usage-credit rows, not model-quality failures. See [Frontier Stress Receipts](https://github.com/cfregly/agent-harness-opt/blob/main/docs/frontier-stress-2026-07-01.md).
 
 ## Matrix Summary
 
@@ -40,4 +40,4 @@ This retained frontier receipt runs the current available frontier profiles in t
 
 ## Machine-readable Receipt
 
-[JSON receipt](https://github.com/cfregly/claude-agent-harness-opt/blob/main/evals/results/gstack_skill_matrix_frontier_available_live_2026-07-01.json)
+[JSON receipt](https://github.com/cfregly/agent-harness-opt/blob/main/evals/results/gstack_skill_matrix_frontier_available_live_2026-07-01.json)

@@ -44,7 +44,7 @@ operations and `execute_sql` for regular queries that do not change schema.
 
 ## Matrix
 
-Matrix: [supabase_mcp_database_tool_selection.json](https://github.com/cfregly/claude-agent-harness-opt/blob/main/evals/model_matrix/supabase_mcp_database_tool_selection.json)
+Matrix: [supabase_mcp_database_tool_selection.json](https://github.com/cfregly/agent-harness-opt/blob/main/evals/model_matrix/supabase_mcp_database_tool_selection.json)
 
 It compares:
 

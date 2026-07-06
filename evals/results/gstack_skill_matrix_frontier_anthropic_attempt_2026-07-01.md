@@ -37,4 +37,4 @@ This retained receipt uses the newly provided Anthropic key against the accessib
 
 ## Machine-readable Receipt
 
-[JSON receipt](https://github.com/cfregly/claude-agent-harness-opt/blob/main/evals/results/gstack_skill_matrix_frontier_anthropic_attempt_2026-07-01.json)
+[JSON receipt](https://github.com/cfregly/agent-harness-opt/blob/main/evals/results/gstack_skill_matrix_frontier_anthropic_attempt_2026-07-01.json)

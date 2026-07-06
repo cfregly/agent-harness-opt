@@ -12,7 +12,7 @@ from typing import Any
 from .adapters import load_json
 
 
-PROJECT_EVIDENCE_REPO = "https://github.com/cfregly/claude-agent-harness-opt"
+PROJECT_EVIDENCE_REPO = "https://github.com/cfregly/agent-harness-opt"
 
 
 @dataclass(frozen=True)
@@ -750,7 +750,7 @@ def _evidence_bundle_lines(
     source: dict[str, Any],
     options: PacketOptions,
 ) -> list[str]:
-    lines = [f"- Public harness repo: [claude-agent-harness-opt]({PROJECT_EVIDENCE_REPO})"]
+    lines = [f"- Public harness repo: [agent-harness-opt]({PROJECT_EVIDENCE_REPO})"]
     if options.packet_url:
         lines.append(f"- Bundle folder: [{_last_url_part(options.packet_url)}]({options.packet_url})")
     matrix_path = str(result.get("matrix_path", "")).strip()

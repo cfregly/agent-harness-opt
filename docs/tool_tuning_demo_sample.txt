@@ -33,5 +33,5 @@ public link check passed
 $ python scripts/check_human_docs.py
 human docs check passed
 
-$ python -c 'print("Supabase PR/evidence bundle: https://github.com/cfregly/claude-agent-harness-opt/tree/main/evals/pr_packets/supabase_mcp_database_tool_tuning_2026-06-25")'
-Supabase PR/evidence bundle: https://github.com/cfregly/claude-agent-harness-opt/tree/main/evals/pr_packets/supabase_mcp_database_tool_tuning_2026-06-25
+$ python -c 'print("Supabase PR/evidence bundle: https://github.com/cfregly/agent-harness-opt/tree/main/evals/pr_packets/supabase_mcp_database_tool_tuning_2026-06-25")'
+Supabase PR/evidence bundle: https://github.com/cfregly/agent-harness-opt/tree/main/evals/pr_packets/supabase_mcp_database_tool_tuning_2026-06-25

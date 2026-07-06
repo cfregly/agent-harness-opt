@@ -172,7 +172,7 @@ Checked on 2026-07-01.
 
 ## Public MCP Sources
 
-- [claude-agent-harness-opt](https://github.com/cfregly/claude-agent-harness-opt)
+- [agent-harness-opt](https://github.com/cfregly/agent-harness-opt)
   - Used for public founder handoff pages, retained packet links, evidence-bundle links, and local
     coding-agent CTA examples.
 - [gstack repo](https://github.com/garrytan/gstack)
