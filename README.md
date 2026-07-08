@@ -15,10 +15,9 @@ The value bar is adversarially-confirmed to add value. A prompt, tool, harness, 
 promoted only when it names the value claim, compares against a baseline, clears the threshold, and
 survives an adversarial check with no open objections.
 
-For ProofPlane pilots, this repo is the runtime and harness behavior proof layer. See
-[ProofPlane Evidence Role](https://github.com/cfregly/agent-harness-opt/blob/main/docs/proofplane-evidence-role.md)
-for the boundary with ProofPlane workflow receipts, gpu-perf-tune workload packets, and macro-kernel
-backend artifacts.
+The proof loop is local first: define a risky tool or harness boundary, run the same cases through
+baseline and candidate surfaces, inspect trace behavior, keep the receipts, and promote only the
+smallest measured improvement that survives held-out checks.
 
 > [!NOTE]
 > This page is optimized for founders and maintainers first. The exhaustive harness gates, retained surfaces, and LLM-readable audit details are preserved at the bottom in a collapsible section.
@@ -97,7 +96,6 @@ that clears held-out checks.
 | Review the YC P2026 sweep | [YC P2026 MCP Sweep](https://github.com/cfregly/agent-harness-opt/blob/main/docs/yc-p2026-mcp-sweep.md) |
 | Learn the tool-writing standard | [Tool Writing Best Practices](https://github.com/cfregly/agent-harness-opt/blob/main/docs/tool-writing-best-practices.md) |
 | Decide whether a workflow is a skill or a tool | [Skills vs Tools](https://github.com/cfregly/agent-harness-opt/blob/main/docs/skills-vs-tools.md) |
-| Place this in a ProofPlane pilot | [ProofPlane Evidence Role](https://github.com/cfregly/agent-harness-opt/blob/main/docs/proofplane-evidence-role.md) |
 | Run the broader public MCP sweep | [Public MCP Sweep](https://github.com/cfregly/agent-harness-opt/blob/main/docs/public-mcp-sweep.md) |
 | Audit retained surfaces and gates | [Surface Inventory](https://github.com/cfregly/agent-harness-opt/blob/main/docs/surface-inventory.md) |
 | Review current frontier sweeps | [Available-frontier stress receipts](https://github.com/cfregly/agent-harness-opt/blob/main/docs/frontier-stress-2026-07-01.md) |
@@ -307,6 +305,7 @@ smoke invocation in `.github/workflows/ci.yml`.
 | gstack routing audit | [gstack Skill Routing Audit](https://github.com/cfregly/agent-harness-opt/blob/main/docs/gstack-skill-routing-audit.md) |
 | Model migration harnesses | [Codex and Model Migration Harnesses](https://github.com/cfregly/agent-harness-opt/blob/main/docs/codex-and-model-migration-harnesses.md) |
 | Surface inventory | [Surface Inventory](https://github.com/cfregly/agent-harness-opt/blob/main/docs/surface-inventory.md) |
+| Optional workflow mapping | [Optional Workflow Integration Note](https://github.com/cfregly/agent-harness-opt/blob/main/docs/workflow-evidence-role.md) |
 
 ## Claude Code Skill
 

@@ -27,9 +27,11 @@ Tune the smallest surface that explains the failure:
 Do not promote a change because it sounds better. Promote only when it is adversarially-confirmed
 to add value against a baseline.
 
-For ProofPlane pilots, harness optimization supplies runtime-lane confidence
-before the workflow is governed and promoted. The boundary is documented in
-[ProofPlane Evidence Role](https://github.com/cfregly/agent-harness-opt/blob/main/docs/proofplane-evidence-role.md).
+The output is standalone harness behavior evidence: it names the baseline,
+candidate, risky boundary, retained cases, and receipt that justify a promotion.
+If another workflow proof system consumes the result, use the
+[Optional Workflow Integration Note](https://github.com/cfregly/agent-harness-opt/blob/main/docs/workflow-evidence-role.md)
+to map this local evidence into that wider review.
 
 ## Trace Contract
 

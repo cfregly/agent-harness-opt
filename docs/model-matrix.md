@@ -34,10 +34,12 @@ export the same trace contract. The useful question is whether a model plus harn
 right tool, passes the right arguments, reasons visibly between tool calls, and uses tool outputs
 before the final answer.
 
-For ProofPlane pilots, the matrix result is upstream harness behavior evidence.
-It can support a runtime lane in the Customer Workflow Proof Pack, but it is not
-GPU workload proof or hosted readiness proof. See
-[ProofPlane Evidence Role](https://github.com/cfregly/agent-harness-opt/blob/main/docs/proofplane-evidence-role.md).
+The matrix result is standalone harness behavior evidence. It can show that a
+model/runtime/tool surface improved against a baseline and survived held-out
+cases, but it is not workload proof, hosted readiness proof, or a production
+verdict. See the
+[Optional Workflow Integration Note](https://github.com/cfregly/agent-harness-opt/blob/main/docs/workflow-evidence-role.md)
+when this evidence needs to be mapped into a wider review system.
 
 ## Included Matrix
 
